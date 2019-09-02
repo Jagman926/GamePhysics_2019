@@ -12,7 +12,7 @@ public class Particle2D : MonoBehaviour
 
     [Header("Motion Method")]
     [SerializeField]
-    private bool EulerExplicit = false;
+    private MotionMethod motionMethod = 0;
 
     // step 1
     [Header("Motion Variables")]
@@ -32,40 +32,52 @@ public class Particle2D : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (EulerExplicit)
+        switch (motionMethod)
         {
-            // step 3
-            // integrate
-            UpdatePositionEulerExplicit(Time.fixedDeltaTime);
-            UpdateRotationEulerExplicit(Time.fixedDeltaTime);
-            // apply to transform
-            transform.position = position;
-            transform.eulerAngles = rotation;
-            // step 4
-            // test
-            acceleration.x = -Mathf.Sin(Time.fixedTime);
-            angularAcceleration.x = -Mathf.Sin(Time.fixedTime);
+            case MotionMethod.EULER:
+                EulerMethodUpdate(Time.fixedDeltaTime);
+                break;
+
+            case MotionMethod.KINEMATICS:
+                KinematicsMethodUpdate(Time.fixedDeltaTime);
+                break;
         }
-        else
-        {
-            // step 3
-            // integrate
-            UpdatePositionKinematic(Time.fixedDeltaTime);
-            UpdateRotationKinematics(Time.fixedDeltaTime);
-            // apply to transform
-            transform.position = position;
-            transform.eulerAngles = rotation;
-            // step 4
-            // test
-            acceleration.x = -Mathf.Sin(Time.fixedTime);
-            angularAcceleration.x = -Mathf.Sin(Time.fixedTime);
-        }
+    }
+
+    private void EulerMethodUpdate(float dt)
+    {
+        // step 3
+        // integrate
+        UpdatePositionEulerExplicit(dt);
+        UpdateRotationEulerExplicit(dt);
+        // apply to transform
+        transform.position = position;
+        transform.eulerAngles = rotation;
+        // step 4
+        // test
+        acceleration.x = -Mathf.Sin(dt);
+        angularAcceleration.x = -Mathf.Sin(dt);
+    }
+
+    private void KinematicsMethodUpdate(float dt)
+    {
+        // step 3
+        // integrate
+        UpdatePositionKinematic(dt);
+        UpdateRotationKinematics(dt);
+        // apply to transform
+        transform.position = position;
+        transform.rotation.z = rotation;
+        // step 4
+        // test
+        acceleration.x = -Mathf.Sin(dt);
+        angularAcceleration.x = -Mathf.Sin(dt);
     }
 
     // step 2
