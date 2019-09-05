@@ -243,12 +243,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 275d1c0a659833e4db7888c7ed185904, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  physicsMethod: {fileID: 0}
+  positionMethod: 0
+  rotationMethod: 0
   position: {x: 0, y: 0}
   velocity: {x: 1, y: 0}
   acceleration: {x: 0, y: 0}
-  rotation: {x: 0, y: 0}
-  angularVelocity: {x: 1, y: 0}
-  angularAcceleration: {x: 0, y: 0}
+  rotation: {x: 0, y: 0, z: 0}
+  angularVelocity: {x: 0, y: 0, z: 1}
+  angularAcceleration: {x: 0, y: 0, z: 0}
 --- !u!65 &1212155180
 BoxCollider:
   m_ObjectHideFlags: 0

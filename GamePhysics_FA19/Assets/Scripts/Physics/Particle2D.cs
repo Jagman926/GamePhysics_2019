@@ -4,30 +4,44 @@ using UnityEngine;
 
 public class Particle2D : MonoBehaviour
 {
-    enum MotionMethod
+    enum PositionMethod
+    {
+        EULER = 0,
+        KINEMATICS
+    }
+    enum RotationMethod
     {
         EULER = 0,
         KINEMATICS
     }
 
-    [Header("Motion Method")]
     [SerializeField]
-    private MotionMethod motionMethod = 0;
+    private PhysicsMethods physicsMethod;
+
+    [Header("Position Method")]
+    [SerializeField]
+    private PositionMethod positionMethod = 0;
+
+    [Header("Rotation Method")]
+    [SerializeField]
+    private RotationMethod rotationMethod = 0;
 
     // step 1
-    [Header("Motion Variables")]
+    [Header("Position Variables")]
     [SerializeField]
     private Vector2 position;
     [SerializeField]
     private Vector2 velocity;
     [SerializeField]
     private Vector2 acceleration;
+
+    [Header("Rotation Variables")]
     [SerializeField]
-    private Vector2 rotation;
+    private Vector3 rotation;
     [SerializeField]
-    private Vector2 angularVelocity;
+    private Vector3 angularVelocity;
     [SerializeField]
-    private Vector2 angularAcceleration;
+    private Vector3 angularAcceleration;
 
     // Start is called before the first frame update
     void Start()
@@ -38,46 +52,35 @@ public class Particle2D : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        switch (motionMethod)
+        switch (positionMethod)
         {
-            case MotionMethod.EULER:
-                EulerMethodUpdate(Time.fixedDeltaTime);
+            case PositionMethod.EULER:
+                UpdatePositionEulerExplicit(Time.fixedDeltaTime);
                 break;
 
-            case MotionMethod.KINEMATICS:
-                KinematicsMethodUpdate(Time.fixedDeltaTime);
+            case PositionMethod.KINEMATICS:
+                UpdatePositionKinematic(Time.fixedDeltaTime);
                 break;
         }
-    }
 
-    private void EulerMethodUpdate(float dt)
-    {
-        // step 3
-        // integrate
-        UpdatePositionEulerExplicit(dt);
-        UpdateRotationEulerExplicit(dt);
+        switch (rotationMethod)
+        {
+            case RotationMethod.EULER:
+                UpdateRotationEulerExplicit(Time.fixedDeltaTime);
+                break;
+
+            case RotationMethod.KINEMATICS:
+                UpdateRotationKinematics(Time.fixedDeltaTime);
+                break;
+        }
+
         // apply to transform
         transform.position = position;
-        transform.eulerAngles = rotation;
+        transform.eulerAngles = rotation * 20.0f;
         // step 4
         // test
-        acceleration.x = -Mathf.Sin(dt);
-        angularAcceleration.x = -Mathf.Sin(dt);
-    }
-
-    private void KinematicsMethodUpdate(float dt)
-    {
-        // step 3
-        // integrate
-        UpdatePositionKinematic(dt);
-        UpdateRotationKinematics(dt);
-        // apply to transform
-        transform.position = position;
-        transform.rotation.z = rotation;
-        // step 4
-        // test
-        acceleration.x = -Mathf.Sin(dt);
-        angularAcceleration.x = -Mathf.Sin(dt);
+        acceleration.x = -Mathf.Sin(Time.fixedTime);
+        angularAcceleration.z = -Mathf.Sin(Time.fixedTime);
     }
 
     // step 2
@@ -103,14 +106,21 @@ public class Particle2D : MonoBehaviour
 
     private void UpdateRotationEulerExplicit(float dt)
     {
+        // x(t+dt) = x(t) + v(t)dt
+        // Euler's Method
+        // F(t+dt) = F(t) + f(t)dt
+        //                + (df/dt)dt
         rotation += angularVelocity * dt;
-
+        // v(t+dt) = v(t) + a(t)dt
         angularVelocity += angularAcceleration * dt;
     }
 
     private void UpdateRotationKinematics(float dt)
     {
-
+        // v(t+dt) = v(t) + a(t)dt
+        angularVelocity += angularAcceleration * dt;
+        // x(t+dt) = x(t) + v(t+dt) + 1/2(a(t)(dt*dt))
+        rotation += (angularVelocity * dt) + (.5f * (angularAcceleration * (dt * dt)));
     }
 
 
