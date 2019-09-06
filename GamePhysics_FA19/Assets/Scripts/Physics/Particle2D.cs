@@ -4,27 +4,15 @@ using UnityEngine;
 
 public class Particle2D : MonoBehaviour
 {
-    enum PositionMethod
-    {
-        EULER = 0,
-        KINEMATICS
-    }
-    enum RotationMethod
-    {
-        EULER = 0,
-        KINEMATICS
-    }
+    [SerializeField]
+    private PhysicsMethods positionPhysicsMethod = null;
 
     [SerializeField]
-    private PhysicsMethods physicsMethod;
+    private PhysicsMethods rotationPhysicsMethod = null;
 
-    [Header("Position Method")]
-    [SerializeField]
-    private PositionMethod positionMethod = 0;
+    // Particle
 
-    [Header("Rotation Method")]
-    [SerializeField]
-    private RotationMethod rotationMethod = 0;
+    private Particle particle = null;
 
     // step 1
     [Header("Position Variables")]
@@ -46,33 +34,16 @@ public class Particle2D : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        particle = new Particle();
+        InitializeParticle();
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        switch (positionMethod)
-        {
-            case PositionMethod.EULER:
-                UpdatePositionEulerExplicit(Time.fixedDeltaTime);
-                break;
-
-            case PositionMethod.KINEMATICS:
-                UpdatePositionKinematic(Time.fixedDeltaTime);
-                break;
-        }
-
-        switch (rotationMethod)
-        {
-            case RotationMethod.EULER:
-                UpdateRotationEulerExplicit(Time.fixedDeltaTime);
-                break;
-
-            case RotationMethod.KINEMATICS:
-                UpdateRotationKinematics(Time.fixedDeltaTime);
-                break;
-        }
+        // Update position and rotation
+        positionPhysicsMethod.UpdatePosition(ref particle, Time.fixedDeltaTime);
+        rotationPhysicsMethod.UpdateRotation(ref particle, Time.fixedDeltaTime);
 
         // apply to transform
         transform.position = position;
@@ -81,6 +52,17 @@ public class Particle2D : MonoBehaviour
         // test
         acceleration.x = -Mathf.Sin(Time.fixedTime);
         angularAcceleration.z = -Mathf.Sin(Time.fixedTime);
+    }
+
+    private void InitializeParticle()
+    {
+        // Check Physics Methods
+        if (positionPhysicsMethod == null)
+            Debug.LogError("Position Physics Method Not Set for Particle2D!");
+        if (rotationPhysicsMethod == null)
+            Debug.LogError("Rotation Physics Method Not Set for Particle2D!");
+        // Init Particle Data
+        particle.InitParticle(position, velocity, acceleration, rotation, angularVelocity, angularAcceleration);
     }
 
     // step 2
@@ -122,6 +104,4 @@ public class Particle2D : MonoBehaviour
         // x(t+dt) = x(t) + v(t+dt) + 1/2(a(t)(dt*dt))
         rotation += (angularVelocity * dt) + (.5f * (angularAcceleration * (dt * dt)));
     }
-
-
 }
