@@ -5,14 +5,27 @@ using UnityEngine;
 public class Particle2D : MonoBehaviour
 {
     [SerializeField]
+    private PhysicsMethods.MethodType positionMethodType = 0;
     private PhysicsMethods positionPhysicsMethod = null;
 
     [SerializeField]
+    private PhysicsMethods.MethodType rotationMethodType = 0;
     private PhysicsMethods rotationPhysicsMethod = null;
 
-    // Particle
+    [SerializeField]
+    private List<PhysicsMethods> physicsMethods = null;
 
-    private Particle particle = null;
+    [Header("Behavior")]
+    [SerializeField]
+    private bool oscilatePosition = false;
+    [SerializeField]
+    private bool oscilateRotation = false;
+    [SerializeField]
+    [Range(0, 10)]
+    private float accelerationSpeed = 0.0f;
+    [SerializeField]
+    [Range(0, 10)]
+    private float angularAccelerationSpeed = 0.0f;
 
     // step 1
     [Header("Position Variables")]
@@ -31,77 +44,66 @@ public class Particle2D : MonoBehaviour
     [SerializeField]
     private Vector3 angularAcceleration;
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        particle = new Particle();
-        InitializeParticle();
+        // Assert physics methods
+        Debug.Assert(physicsMethods[0]);
+        Debug.Assert(physicsMethods[1]);
+
+        // Init Variables
+        InitStartingVariables();
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
+        // Update method
+        UpdatePhysicsMethod();
+
         // Update position and rotation
-        positionPhysicsMethod.UpdatePosition(ref particle, Time.fixedDeltaTime);
-        rotationPhysicsMethod.UpdateRotation(ref particle, Time.fixedDeltaTime);
+        positionPhysicsMethod.UpdatePosition(ref position, ref velocity, ref acceleration, Time.fixedDeltaTime);
+        rotationPhysicsMethod.UpdateRotation(ref rotation, ref angularVelocity, ref angularAcceleration, Time.fixedDeltaTime);
 
         // apply to transform
         transform.position = position;
-        transform.eulerAngles = rotation * 20.0f;
+        transform.eulerAngles = rotation * 20.0f; // * 20.0f is to make rotation noticable
         // step 4
         // test
-        acceleration.x = -Mathf.Sin(Time.fixedTime);
-        angularAcceleration.z = -Mathf.Sin(Time.fixedTime);
+        if (oscilatePosition)
+        {
+            acceleration.x = -Mathf.Sin(Time.fixedTime);
+        }
+        else
+        {
+            acceleration.x = accelerationSpeed;
+        }
+        if (oscilateRotation)
+        {
+            angularAcceleration.z = -Mathf.Sin(Time.fixedTime);
+        }
+        else
+        {
+            angularAcceleration.z = angularAccelerationSpeed;
+        }
     }
 
-    private void InitializeParticle()
+    // Update physics methods if they change
+    private void UpdatePhysicsMethod()
     {
-        // Check Physics Methods
-        if (positionPhysicsMethod == null)
-            Debug.LogError("Position Physics Method Not Set for Particle2D!");
-        if (rotationPhysicsMethod == null)
-            Debug.LogError("Rotation Physics Method Not Set for Particle2D!");
-        // Init Particle Data
-        particle.InitParticle(position, velocity, acceleration, rotation, angularVelocity, angularAcceleration);
+        positionPhysicsMethod = physicsMethods[(int)positionMethodType];
+        rotationPhysicsMethod = physicsMethods[(int)rotationMethodType];
     }
 
-    // step 2
-    private void UpdatePositionEulerExplicit(float dt)
+    private void InitStartingVariables()
     {
-        // x(t+dt) = x(t) + v(t)dt
-        // Euler's Method
-        // F(t+dt) = F(t) + f(t)dt
-        //                + (df/dt)dt
-        position += velocity * dt;
+        // Init test values
+        oscilatePosition = true;
+        oscilateRotation = true;
+        accelerationSpeed = 1.0f;
+        angularAccelerationSpeed = 1.0f;
 
-        // v(t+dt) = v(t) + a(t)dt
-        velocity += acceleration * dt;
-    }
-
-    private void UpdatePositionKinematic(float dt)
-    {
-        // v(t+dt) = v(t) + a(t)dt
-        velocity += acceleration * dt;
-        // x(t+dt) = x(t) + v(t+dt) + 1/2(a(t)(dt*dt))
-        position += (velocity * dt) + (.5f * (acceleration * (dt * dt)));
-    }
-
-    private void UpdateRotationEulerExplicit(float dt)
-    {
-        // x(t+dt) = x(t) + v(t)dt
-        // Euler's Method
-        // F(t+dt) = F(t) + f(t)dt
-        //                + (df/dt)dt
-        rotation += angularVelocity * dt;
-        // v(t+dt) = v(t) + a(t)dt
-        angularVelocity += angularAcceleration * dt;
-    }
-
-    private void UpdateRotationKinematics(float dt)
-    {
-        // v(t+dt) = v(t) + a(t)dt
-        angularVelocity += angularAcceleration * dt;
-        // x(t+dt) = x(t) + v(t+dt) + 1/2(a(t)(dt*dt))
-        rotation += (angularVelocity * dt) + (.5f * (angularAcceleration * (dt * dt)));
+        // Init starting position and rotation
+        position = transform.position;
+        rotation = transform.rotation.eulerAngles;
     }
 }
