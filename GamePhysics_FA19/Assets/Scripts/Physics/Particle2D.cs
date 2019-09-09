@@ -4,30 +4,12 @@ using UnityEngine;
 
 public class Particle2D : MonoBehaviour
 {
+    // lab 2 step 1
+    [Header("Mass Variables")]
     [SerializeField]
-    private PhysicsMethods.MethodType positionMethodType = 0;
-    private PhysicsMethods positionPhysicsMethod = null;
+    private float startingMass;
+    private float mass, massInv;
 
-    [SerializeField]
-    private PhysicsMethods.MethodType rotationMethodType = 0;
-    private PhysicsMethods rotationPhysicsMethod = null;
-
-    [SerializeField]
-    private List<PhysicsMethods> physicsMethods = null;
-
-    [Header("Behavior")]
-    [SerializeField]
-    private bool oscilatePosition = false;
-    [SerializeField]
-    private bool oscilateRotation = false;
-    [SerializeField]
-    [Range(0, 10)]
-    private float accelerationSpeed = 0.0f;
-    [SerializeField]
-    [Range(0, 10)]
-    private float angularAccelerationSpeed = 0.0f;
-
-    // step 1
     [Header("Position Variables")]
     [SerializeField]
     private Vector2 position;
@@ -44,66 +26,62 @@ public class Particle2D : MonoBehaviour
     [SerializeField]
     private Vector3 angularAcceleration;
 
-    void Awake()
+    void Start()
     {
-        // Assert physics methods
-        Debug.Assert(physicsMethods[0]);
-        Debug.Assert(physicsMethods[1]);
-
-        // Init Variables
         InitStartingVariables();
     }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
-        // Update method
-        UpdatePhysicsMethod();
-
         // Update position and rotation
-        positionPhysicsMethod.UpdatePosition(ref position, ref velocity, ref acceleration, Time.fixedDeltaTime);
-        rotationPhysicsMethod.UpdateRotation(ref rotation, ref angularVelocity, ref angularAcceleration, Time.fixedDeltaTime);
+        J_Physics.UpdatePosition(ref position, ref velocity, ref acceleration, Time.fixedDeltaTime);
+        J_Physics.UpdateRotation(ref rotation, ref angularVelocity, ref angularAcceleration, Time.fixedDeltaTime);
+
+        // Update acceleration
+        UpdateAcceleration();
 
         // apply to transform
         transform.position = position;
         transform.eulerAngles = rotation * 20.0f; // * 20.0f is to make rotation noticable
-        // step 4
-        // test
-        if (oscilatePosition)
-        {
-            acceleration.x = -Mathf.Sin(Time.fixedTime);
-        }
-        else
-        {
-            acceleration.x = accelerationSpeed;
-        }
-        if (oscilateRotation)
-        {
-            angularAcceleration.z = -Mathf.Sin(Time.fixedTime);
-        }
-        else
-        {
-            angularAcceleration.z = angularAccelerationSpeed;
-        }
-    }
 
-    // Update physics methods if they change
-    private void UpdatePhysicsMethod()
-    {
-        positionPhysicsMethod = physicsMethods[(int)positionMethodType];
-        rotationPhysicsMethod = physicsMethods[(int)rotationMethodType];
+        // f_gracity: f = mg
+        J_Force.GenerateForce_Gravity(mass, -J_Physics.gravity, Vector2.up);
+
     }
 
     private void InitStartingVariables()
     {
-        // Init test values
-        oscilatePosition = true;
-        oscilateRotation = true;
-        accelerationSpeed = 1.0f;
-        angularAccelerationSpeed = 1.0f;
-
+        // Init starting mass
+        SetMass(startingMass);
         // Init starting position and rotation
         position = transform.position;
         rotation = transform.rotation.eulerAngles;
+    }
+
+    public void SetMass(float newMass)
+    {
+        mass = Mathf.Max(0.0f, newMass);
+        massInv = Mathf.Max(0.0f, 1.0f / mass);
+    }
+
+    public float GetMass()
+    {
+        return mass;
+    }
+
+    // lab 2 step 2
+    private Vector2 force;
+    public void AddForce(Vector2 newForce)
+    {
+        //D'Alembert
+        force += newForce;
+    }
+
+    private void UpdateAcceleration()
+    {
+        //Newton 2
+        acceleration = massInv * force;
+        // All forces are applied for a frame and then reset
+        force = Vector2.zero;
     }
 }
