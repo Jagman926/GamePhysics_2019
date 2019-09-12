@@ -45,7 +45,7 @@ public class Particle2D : MonoBehaviour
         transform.eulerAngles = rotation * 20.0f; // * 20.0f is to make rotation noticable
 
         // f_gracity: f = mg
-        J_Force.GenerateForce_Gravity(mass, -J_Physics.gravity, Vector2.up);
+        acceleration = J_Force.GenerateForce_Gravity(mass, -J_Physics.gravity, Vector2.up);
 
     }
 
