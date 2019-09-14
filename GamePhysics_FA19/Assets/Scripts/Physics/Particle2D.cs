@@ -26,6 +26,12 @@ public class Particle2D : MonoBehaviour
     [SerializeField]
     private Vector3 angularAcceleration;
 
+    private Vector2 force;
+
+    // Test Variables
+    private bool touchingFloor;
+    Vector2 f_gravity, f_normal;
+
     void Start()
     {
         InitStartingVariables();
@@ -37,16 +43,34 @@ public class Particle2D : MonoBehaviour
         J_Physics.UpdatePosition(ref position, ref velocity, ref acceleration, Time.fixedDeltaTime);
         J_Physics.UpdateRotation(ref rotation, ref angularVelocity, ref angularAcceleration, Time.fixedDeltaTime);
 
+        // apply to transform
+        transform.position = position;
+        transform.eulerAngles = rotation;
+
         // Update acceleration
         UpdateAcceleration();
 
-        // apply to transform
-        transform.position = position;
-        transform.eulerAngles = rotation * 20.0f; // * 20.0f is to make rotation noticable
+        // Add force
+        Vector2 surfaceNormal = new Vector2(Mathf.Sin(-30), Mathf.Cos(-30));
+        // gravity
+        f_gravity = J_Force.GenerateForce_Gravity(mass, J_Physics.gravity, Vector2.up);
+        AddForce(f_gravity);
+        // normal
+        f_normal = J_Force.GenerateForce_Normal(f_gravity, surfaceNormal);
+        if (touchingFloor)
+            AddForce(f_normal);
+    }
 
-        // f_gracity: f = mg
-        acceleration = J_Force.GenerateForce_Gravity(mass, -J_Physics.gravity, Vector2.up);
-
+    void OnCollisionStay(Collision other)
+    {
+        if (other.transform.tag == "Floor")
+        {
+            touchingFloor = true;
+        }
+        else
+        {
+            touchingFloor = false;
+        }
     }
 
     private void InitStartingVariables()
@@ -69,8 +93,6 @@ public class Particle2D : MonoBehaviour
         return mass;
     }
 
-    // lab 2 step 2
-    private Vector2 force;
     public void AddForce(Vector2 newForce)
     {
         //D'Alembert

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class J_Physics
 {
-    static public float gravity = 9.8f;
+    static public float gravity = -9.8f;
 
     static public void UpdatePosition(ref Vector2 position, ref Vector2 velocity, ref Vector2 acceleration, float dt)
     {
