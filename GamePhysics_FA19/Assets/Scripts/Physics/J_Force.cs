@@ -28,7 +28,7 @@ public class J_Force
     public static Vector2 GenerateForce_Friction_Static(Vector2 f_normal, Vector2 f_opposing, float frictionCoefficient_static)
     {
         // f_friction_s = -f_opposing if less than max, else -coeff*f_normal (max amount is coeff*|f_normal|)
-        if (-f_opposing.magnitude < (AbsVec2(f_normal) * frictionCoefficient_static).magnitude)
+        if (-f_opposing.x < (f_normal.magnitude * frictionCoefficient_static))
         {
             return -f_opposing;
         }
@@ -38,7 +38,7 @@ public class J_Force
     public static Vector2 GenerateForce_Friction_Kinectic(Vector2 f_normal, Vector2 particleVelocity, float frictionCoefficient_kinetic)
     {
         // f_friction_k = -coeff*|f_normal| * unit(vel)
-        Vector2 f_friction_k = -frictionCoefficient_kinetic * AbsVec2(f_normal) * particleVelocity;
+        Vector2 f_friction_k = -frictionCoefficient_kinetic * f_normal.magnitude * particleVelocity;
         return f_friction_k;
     }
 
@@ -47,7 +47,7 @@ public class J_Force
         // set friction to static friction
         Vector2 f_friction = GenerateForce_Friction_Static(f_normal, f_opposing, frictionCoefficient_static);
         // If object is moving, calculate kinetic friction
-        if (f_friction.magnitude != f_opposing.magnitude)
+        if (f_friction != f_opposing)
         {
             f_friction = GenerateForce_Friction_Kinectic(f_normal, particleVelocity, frictionCoefficient_kinetic);
         }
@@ -68,17 +68,12 @@ public class J_Force
     public static Vector2 GenerateForce_Spring(Vector2 particlePosition, Vector2 anchorPosition, float springRestingLength, float springStiffnessCoefficient)
     {
         // f_spring = -coeff*(spring length - spring resting length)
-        Vector2 springLength = AbsVec2(particlePosition - anchorPosition);
+        Vector2 springLength = particlePosition - anchorPosition;
         Vector2 f_spring = -springStiffnessCoefficient * (springLength - new Vector2(0.0f, springRestingLength));
         return f_spring;
     }
 
     //---------------------------------------------------------------------------------------------------
-
-    private static Vector2 AbsVec2(Vector2 v2)
-    {
-        return new Vector2(Mathf.Abs(v2.x), Mathf.Abs(v2.y));
-    }
 
         private static Vector2 Vec2Sqr(Vector2 v2)
     {

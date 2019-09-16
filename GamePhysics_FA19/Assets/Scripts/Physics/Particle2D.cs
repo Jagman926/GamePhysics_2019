@@ -29,8 +29,9 @@ public class Particle2D : MonoBehaviour
     private Vector2 force;
 
     // Force Variables
-    Vector2 f_gravity, f_normal, f_sliding;
-    private float frictionCoeff_s = 0.61f, frictionCoeff_k = 0.47f; // For Aluminum	Mild Steel	Clean and Dry 
+    Vector2 f_gravity, f_normal, f_sliding, f_friction;
+    private float inclineDegrees = 340.0f;
+    private float frictionCoeff_s = 0.61f, frictionCoeff_k = 0.47f; // For: Aluminum | Mild Steel | Clean and Dry 
                                                                     // https://www.engineeringtoolbox.com/friction-coefficients-d_778.html
 
     void Start()
@@ -51,8 +52,8 @@ public class Particle2D : MonoBehaviour
         // Update acceleration
         UpdateAcceleration();
 
-        // Add force
-        Vector2 surfaceNormal = new Vector2(Mathf.Sin(20), Mathf.Cos(20));
+        // Surface normal
+        Vector2 surfaceNormal = new Vector2(Mathf.Cos(inclineDegrees * Mathf.Deg2Rad), Mathf.Sin(inclineDegrees * Mathf.Deg2Rad));
         // gravity
         f_gravity = J_Force.GenerateForce_Gravity(mass, J_Physics.gravity, Vector2.up);
         // normal
@@ -60,6 +61,9 @@ public class Particle2D : MonoBehaviour
         // sliding
         f_sliding = J_Force.GenerateForce_Sliding(f_gravity, f_normal);
         AddForce(f_sliding);
+        // friction
+        f_friction = J_Force.GenerateForce_Friction(f_normal, velocity, f_sliding, frictionCoeff_s, frictionCoeff_k);
+        AddForce(f_friction);
     }
 
     private void InitStartingVariables()
