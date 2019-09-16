@@ -28,9 +28,10 @@ public class Particle2D : MonoBehaviour
 
     private Vector2 force;
 
-    // Test Variables
-    private bool touchingFloor;
-    Vector2 f_gravity, f_normal;
+    // Force Variables
+    Vector2 f_gravity, f_normal, f_sliding;
+    private float frictionCoeff_s = 0.61f, frictionCoeff_k = 0.47f; // For Aluminum	Mild Steel	Clean and Dry 
+                                                                    // https://www.engineeringtoolbox.com/friction-coefficients-d_778.html
 
     void Start()
     {
@@ -51,26 +52,14 @@ public class Particle2D : MonoBehaviour
         UpdateAcceleration();
 
         // Add force
-        Vector2 surfaceNormal = new Vector2(Mathf.Sin(-30), Mathf.Cos(-30));
+        Vector2 surfaceNormal = new Vector2(Mathf.Sin(20), Mathf.Cos(20));
         // gravity
         f_gravity = J_Force.GenerateForce_Gravity(mass, J_Physics.gravity, Vector2.up);
-        AddForce(f_gravity);
         // normal
         f_normal = J_Force.GenerateForce_Normal(f_gravity, surfaceNormal);
-        if (touchingFloor)
-            AddForce(f_normal);
-    }
-
-    void OnCollisionStay(Collision other)
-    {
-        if (other.transform.tag == "Floor")
-        {
-            touchingFloor = true;
-        }
-        else
-        {
-            touchingFloor = false;
-        }
+        // sliding
+        f_sliding = J_Force.GenerateForce_Sliding(f_gravity, f_normal);
+        AddForce(f_sliding);
     }
 
     private void InitStartingVariables()

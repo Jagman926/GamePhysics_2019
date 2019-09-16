@@ -42,6 +42,18 @@ public class J_Force
         return f_friction_k;
     }
 
+    public static Vector2 GenerateForce_Friction(Vector2 f_normal, Vector2 particleVelocity, Vector2 f_opposing, float frictionCoefficient_static, float frictionCoefficient_kinetic)
+    {
+        // set friction to static friction
+        Vector2 f_friction = GenerateForce_Friction_Static(f_normal, f_opposing, frictionCoefficient_static);
+        // If object is moving, calculate kinetic friction
+        if (f_friction.magnitude != f_opposing.magnitude)
+        {
+            f_friction = GenerateForce_Friction_Kinectic(f_normal, particleVelocity, frictionCoefficient_kinetic);
+        }
+        return f_friction;
+    }
+
     public static Vector2 GenerateForce_Drag(Vector2 particleVelocity, Vector2 fluidVelocity, float fluidDensity, float objectArea_crossSection, float objectDragCoefficient)
     {
         // v^2
