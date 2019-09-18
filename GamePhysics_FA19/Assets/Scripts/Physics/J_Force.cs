@@ -38,30 +38,32 @@ public class J_Force
     public static Vector2 GenerateForce_Friction_Kinectic(Vector2 f_normal, Vector2 particleVelocity, float frictionCoefficient_kinetic)
     {
         // f_friction_k = -coeff*|f_normal| * unit(vel)
-        Vector2 f_friction_k = -frictionCoefficient_kinetic * f_normal.magnitude * particleVelocity;
+        Vector2 f_friction_k = -frictionCoefficient_kinetic * particleVelocity / f_normal.magnitude;
         return f_friction_k;
     }
 
     public static Vector2 GenerateForce_Friction(Vector2 f_normal, Vector2 particleVelocity, Vector2 f_opposing, float frictionCoefficient_static, float frictionCoefficient_kinetic)
     {
-        // set friction to static friction
-        Vector2 f_friction = GenerateForce_Friction_Static(f_normal, f_opposing, frictionCoefficient_static);
+        Vector2 f_friction = Vector2.zero;
+        // If object is not moving, calculate static friction
+        if(particleVelocity.magnitude == 0.0f)
+        {
+            f_friction = GenerateForce_Friction_Static(f_normal, f_opposing, frictionCoefficient_static);
+        }
         // If object is moving, calculate kinetic friction
-        if (f_friction != f_opposing)
+        else if(particleVelocity.magnitude > 0.0f)
         {
             f_friction = GenerateForce_Friction_Kinectic(f_normal, particleVelocity, frictionCoefficient_kinetic);
         }
         return f_friction;
     }
 
-    public static Vector2 GenerateForce_Drag(Vector2 particleVelocity, Vector2 fluidVelocity, float fluidDensity, float objectArea_crossSection, float objectDragCoefficient)
+    public static Vector2 GenerateForce_Drag(Vector2 fluidVelocity, float fluidDensity, float objectArea_crossSection, float objectDragCoefficient)
     {
         // v^2
         Vector2 vsqr = fluidVelocity * fluidVelocity;
-        // pressure = (1/2)density*v^2
-        Vector2 pressure = 0.5f * fluidDensity * vsqr;
         // f_drag = (p * u^2 * area * coeff)/2
-        Vector2 f_drag = 0.5f * (pressure * vsqr * objectArea_crossSection * objectDragCoefficient);
+        Vector2 f_drag = -0.5f * (fluidDensity * vsqr * objectArea_crossSection * objectDragCoefficient);
         return f_drag;
     }
 

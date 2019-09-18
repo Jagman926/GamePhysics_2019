@@ -26,13 +26,33 @@ public class Particle2D : MonoBehaviour
     [SerializeField]
     private Vector3 angularAcceleration;
 
+    [Header("Test Variables")]
+    [SerializeField]
+    private bool gravity;
+    [SerializeField]
+    private bool normal;
+    [SerializeField]
+    private bool friction;
+    [SerializeField]
+    private bool drag;
+    [SerializeField]
+    private bool spring;
+
     private Vector2 force;
 
     // Force Variables
-    Vector2 f_gravity, f_normal, f_sliding, f_friction;
+    Vector2 f_gravity, f_normal, f_sliding, f_friction, f_drag, f_spring;
     private float inclineDegrees = 340.0f;
-    private float frictionCoeff_s = 0.61f, frictionCoeff_k = 0.47f; // For: Aluminum | Mild Steel | Clean and Dry 
-                                                                    // https://www.engineeringtoolbox.com/friction-coefficients-d_778.html
+    private float frictionCoeff_s = 0.61f, frictionCoeff_k = 0.47f;     // For: Aluminum | Mild Steel | Clean and Dry 
+                                                                        // https://www.engineeringtoolbox.com/friction-coefficients-d_778.html
+    private Vector2 fluidVelocity;
+    private float fluidDensity = 0.001225f, dragCoefficient = 1.05f;    // For: Cube Drag Coefficient
+                                                                        // https://en.wikipedia.org/wiki/Drag_coefficient 
+                                                                        // For: Fluid Density
+                                                                        // https://en.wikipedia.org/wiki/Density_of_air
+    public GameObject anchorObject;
+    private Vector2 anchorPosition;
+    private float springRestingLength = 5.0f, springStiffnessCoefficient = 6.4f;
 
     void Start()
     {
@@ -55,15 +75,40 @@ public class Particle2D : MonoBehaviour
         // Surface normal
         Vector2 surfaceNormal = new Vector2(Mathf.Cos(inclineDegrees * Mathf.Deg2Rad), Mathf.Sin(inclineDegrees * Mathf.Deg2Rad));
         // gravity
-        f_gravity = J_Force.GenerateForce_Gravity(mass, J_Physics.gravity, Vector2.up);
+        if (gravity && !normal)
+        {
+            f_gravity = J_Force.GenerateForce_Gravity(mass, J_Physics.gravity, Vector2.up);
+            AddForce(f_gravity);
+        }
         // normal
-        f_normal = J_Force.GenerateForce_Normal(f_gravity, surfaceNormal);
+        if (normal && !gravity)
+        {
+            f_normal = J_Force.GenerateForce_Normal(f_gravity, surfaceNormal);
+            AddForce(f_normal);
+        }
         // sliding
-        f_sliding = J_Force.GenerateForce_Sliding(f_gravity, f_normal);
-        AddForce(f_sliding);
+        if (gravity && normal)
+        {
+            f_sliding = J_Force.GenerateForce_Sliding(f_gravity, f_normal);
+            AddForce(f_sliding);
+        }
         // friction
-        f_friction = J_Force.GenerateForce_Friction(f_normal, velocity, f_sliding, frictionCoeff_s, frictionCoeff_k);
-        AddForce(f_friction);
+        if (friction)
+        {
+            f_friction = J_Force.GenerateForce_Friction(f_normal, velocity, f_sliding, frictionCoeff_s, frictionCoeff_k);
+            AddForce(f_friction);
+        }
+        // drag
+        if (drag)
+        {
+            f_drag = J_Force.GenerateForce_Drag(velocity, fluidDensity, 1.0f, dragCoefficient);
+            AddForce(f_drag);
+        }
+        if(spring)
+        {
+            f_spring = J_Force.GenerateForce_Spring(position, anchorPosition, springRestingLength, springStiffnessCoefficient);
+            AddForce(f_spring);
+        }
     }
 
     private void InitStartingVariables()
@@ -73,6 +118,8 @@ public class Particle2D : MonoBehaviour
         // Init starting position and rotation
         position = transform.position;
         rotation = transform.rotation.eulerAngles;
+        // Init anchorPosition
+        anchorPosition = new Vector2(anchorObject.transform.position.x, anchorObject.transform.position.y);
     }
 
     public void SetMass(float newMass)
