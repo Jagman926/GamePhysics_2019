@@ -75,15 +75,15 @@ public class Particle2D : MonoBehaviour
         // Surface normal
         Vector2 surfaceNormal = new Vector2(Mathf.Cos(inclineDegrees * Mathf.Deg2Rad), Mathf.Sin(inclineDegrees * Mathf.Deg2Rad));
         // gravity
+        f_gravity = J_Force.GenerateForce_Gravity(mass, J_Physics.gravity, Vector2.up);
         if (gravity && !normal)
         {
-            f_gravity = J_Force.GenerateForce_Gravity(mass, J_Physics.gravity, Vector2.up);
             AddForce(f_gravity);
         }
         // normal
+        f_normal = J_Force.GenerateForce_Normal(f_gravity, surfaceNormal);
         if (normal && !gravity)
         {
-            f_normal = J_Force.GenerateForce_Normal(f_gravity, surfaceNormal);
             AddForce(f_normal);
         }
         // sliding
@@ -104,7 +104,7 @@ public class Particle2D : MonoBehaviour
             f_drag = J_Force.GenerateForce_Drag(velocity, fluidDensity, 1.0f, dragCoefficient);
             AddForce(f_drag);
         }
-        if(spring)
+        if (spring)
         {
             f_spring = J_Force.GenerateForce_Spring(position, anchorPosition, springRestingLength, springStiffnessCoefficient);
             AddForce(f_spring);
