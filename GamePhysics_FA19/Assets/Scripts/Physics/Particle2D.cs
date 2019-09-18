@@ -4,11 +4,26 @@ using UnityEngine;
 
 public class Particle2D : MonoBehaviour
 {
+    enum Shape
+    {
+        RECTANGLE = 0,  // I = 1/12 * m * (h^2 + w^2)
+        DISK,           // I = 1/2 * m * r^2
+        RING,           // I = 1/2 * m * (ro^2 + ri^2)
+        ROD,            // I = 1/12 * m * l^2
+    }
+
     // lab 2 step 1
     [Header("Mass Variables")]
     [SerializeField]
     private float startingMass;
     private float mass, massInv;
+
+    [Header("Inertia Variables")]
+    [SerializeField]
+    private Shape shapeType;
+    [SerializeField]
+    private float startingInertia;
+    private float inertia, inertiaInv;
 
     [Header("Position Variables")]
     [SerializeField]
@@ -26,19 +41,7 @@ public class Particle2D : MonoBehaviour
     [SerializeField]
     private Vector3 angularAcceleration;
 
-    [Header("Test Variables")]
-    [SerializeField]
-    private bool gravity;
-    [SerializeField]
-    private bool normal;
-    [SerializeField]
-    private bool friction;
-    [SerializeField]
-    private bool drag;
-    [SerializeField]
-    private bool spring;
-
-    private Vector2 force;
+    private Vector2 force, torque;
 
     // Force Variables
     Vector2 f_gravity, f_normal, f_sliding, f_friction, f_drag, f_spring;
@@ -76,45 +79,28 @@ public class Particle2D : MonoBehaviour
         Vector2 surfaceNormal = new Vector2(Mathf.Cos(inclineDegrees * Mathf.Deg2Rad), Mathf.Sin(inclineDegrees * Mathf.Deg2Rad));
         // gravity
         f_gravity = J_Force.GenerateForce_Gravity(mass, J_Physics.gravity, Vector2.up);
-        if (gravity && !normal)
-        {
-            AddForce(f_gravity);
-        }
         // normal
         f_normal = J_Force.GenerateForce_Normal(f_gravity, surfaceNormal);
-        if (normal && !gravity)
-        {
-            AddForce(f_normal);
-        }
         // sliding
-        if (gravity && normal)
-        {
-            f_sliding = J_Force.GenerateForce_Sliding(f_gravity, f_normal);
-            AddForce(f_sliding);
-        }
+        f_sliding = J_Force.GenerateForce_Sliding(f_gravity, f_normal);
+        AddForce(f_sliding);
         // friction
-        if (friction)
-        {
-            f_friction = J_Force.GenerateForce_Friction(f_normal, velocity, f_sliding, frictionCoeff_s, frictionCoeff_k);
-            AddForce(f_friction);
-        }
+        f_friction = J_Force.GenerateForce_Friction(f_normal, velocity, f_sliding, frictionCoeff_s, frictionCoeff_k);
+        AddForce(f_friction);
         // drag
-        if (drag)
-        {
-            f_drag = J_Force.GenerateForce_Drag(velocity, fluidDensity, 1.0f, dragCoefficient);
-            AddForce(f_drag);
-        }
-        if (spring)
-        {
-            f_spring = J_Force.GenerateForce_Spring(position, anchorPosition, springRestingLength, springStiffnessCoefficient);
-            AddForce(f_spring);
-        }
+        f_drag = J_Force.GenerateForce_Drag(velocity, fluidDensity, 1.0f, dragCoefficient);
+        AddForce(f_drag);
+        // spring
+        // f_spring = J_Force.GenerateForce_Spring(particlePosition, anchorPosition, springRestingLength, springStiffnessCoefficient);
+        // AddForce(f_spring);
     }
 
     private void InitStartingVariables()
     {
         // Init starting mass
         SetMass(startingMass);
+        // Init starting inertia
+        SetInertia(startingInertia);
         // Init starting position and rotation
         position = transform.position;
         rotation = transform.rotation.eulerAngles;
@@ -126,6 +112,44 @@ public class Particle2D : MonoBehaviour
     {
         mass = Mathf.Max(0.0f, newMass);
         massInv = Mathf.Max(0.0f, 1.0f / mass);
+    }
+
+    public void SetInertia(float newInertia)
+    {
+        /*
+        Inertia Equations: Ian Millington - Game Physics Engine Development (pg 493)
+        ---------------------------------------
+        RECTANGLE ||  I = 1/12 * m * (h^2 + w^2)
+        DISK      ||  I = 1/2 * m * r^2
+        RING      ||  I = 1/2 * m * (ro^2 + ri^2)
+        ROD       ||  I = 1/12 * m * l^2
+        */
+        switch (shapeType)
+        {
+            // Rectangle
+            case Shape.RECTANGLE:
+                inertia = 1/12 * mass;
+                break;
+            // Disk
+            case Shape.DISK:
+                inertia = 1/2 * mass;
+                break;
+            // Ring
+            case Shape.RING:
+                inertia = 1/2 * mass;
+                break;
+            // Rod
+            case Shape.ROD:
+                inertia = 1/12 * mass;
+                break;
+            // Default Case
+            default:
+                Debug.Log("Shape Type not set");
+                inertia = 0.0f;
+                break;
+        }
+        inertia = Mathf.Max(0.0f, inertia);
+        inertiaInv = Mathf.Max(0.0f, 1.0f / inertia);
     }
 
     public float GetMass()
