@@ -13,14 +13,26 @@ public class Particle2D : MonoBehaviour
     }
 
     // lab 2 step 1
+    [Header("Object Variables")]
+    [SerializeField]
+    private Shape shapeType;
+    [SerializeField]
+    private float height;
+    [SerializeField]
+    private float length;
+    [SerializeField]
+    private float width;
+    [SerializeField]
+    private float radiusOuter;
+    [SerializeField]
+    private float radiusInner;
+
     [Header("Mass Variables")]
     [SerializeField]
     private float startingMass;
     private float mass, massInv;
 
     [Header("Inertia Variables")]
-    [SerializeField]
-    private Shape shapeType;
     [SerializeField]
     private float startingInertia;
     private float inertia, inertiaInv;
@@ -72,8 +84,9 @@ public class Particle2D : MonoBehaviour
         transform.position = position;
         transform.eulerAngles = rotation;
 
-        // Update acceleration
+        // Update acceleration | angular acceleration
         UpdateAcceleration();
+        UpdateAngularAcceleration();
 
         // Surface normal
         Vector2 surfaceNormal = new Vector2(Mathf.Cos(inclineDegrees * Mathf.Deg2Rad), Mathf.Sin(inclineDegrees * Mathf.Deg2Rad));
@@ -118,29 +131,30 @@ public class Particle2D : MonoBehaviour
     {
         /*
         Inertia Equations: Ian Millington - Game Physics Engine Development (pg 493)
-        ---------------------------------------
+        -----------------------------------------
         RECTANGLE ||  I = 1/12 * m * (h^2 + w^2)
         DISK      ||  I = 1/2 * m * r^2
         RING      ||  I = 1/2 * m * (ro^2 + ri^2)
         ROD       ||  I = 1/12 * m * l^2
+        -----------------------------------------
         */
         switch (shapeType)
         {
             // Rectangle
             case Shape.RECTANGLE:
-                inertia = 1/12 * mass;
+                inertia = 1 / 12 * mass * ((height * height) + (width * width));
                 break;
             // Disk
             case Shape.DISK:
-                inertia = 1/2 * mass;
+                inertia = 1 / 2 * mass * (radiusOuter * radiusOuter);
                 break;
             // Ring
             case Shape.RING:
-                inertia = 1/2 * mass;
+                inertia = 1 / 2 * mass * ((radiusOuter * radiusOuter) + (radiusInner * radiusInner));
                 break;
             // Rod
             case Shape.ROD:
-                inertia = 1/12 * mass;
+                inertia = 1 / 12 * mass * (length * length);
                 break;
             // Default Case
             default:
@@ -169,5 +183,13 @@ public class Particle2D : MonoBehaviour
         acceleration = massInv * force;
         // All forces are applied for a frame and then reset
         force = Vector2.zero;
+    }
+
+    private void UpdateAngularAcceleration()
+    {
+        // Newton 2
+        angularAcceleration = inertiaInv * torque;
+        // All torques are applied for a frame and then reset
+        torque = Vector2.zero;
     }
 }

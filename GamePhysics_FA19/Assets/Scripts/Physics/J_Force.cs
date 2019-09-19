@@ -25,43 +25,36 @@ public class J_Force
         return f_sliding;
     }
 
-    public static Vector2 GenerateForce_Friction_Static(Vector2 f_normal, Vector2 f_opposing, float frictionCoefficient_static)
-    {
-        // f_friction_s = -f_opposing if less than max, else -coeff*f_normal (max amount is coeff*|f_normal|)
-        if (-f_opposing.x < (f_normal.magnitude * frictionCoefficient_static))
-        {
-            return -f_opposing;
-        }
-        return -frictionCoefficient_static * f_normal;
-    }
-
-    public static Vector2 GenerateForce_Friction_Kinectic(Vector2 f_normal, Vector2 particleVelocity, float frictionCoefficient_kinetic)
-    {
-        // f_friction_k = -coeff*|f_normal| * unit(vel)
-        Vector2 f_friction_k = -frictionCoefficient_kinetic * particleVelocity / f_normal.magnitude;
-        return f_friction_k;
-    }
-
     public static Vector2 GenerateForce_Friction(Vector2 f_normal, Vector2 particleVelocity, Vector2 f_opposing, float frictionCoefficient_static, float frictionCoefficient_kinetic)
     {
-        Vector2 f_friction = Vector2.zero;
-        // If object is not moving, calculate static friction
-        if(particleVelocity.magnitude == 0.0f)
-        {
-            f_friction = GenerateForce_Friction_Static(f_normal, f_opposing, frictionCoefficient_static);
-        }
+        // static max
+        float staticFrictionMax = f_normal.magnitude * frictionCoefficient_static;
+
         // If object is moving, calculate kinetic friction
-        else if(particleVelocity.magnitude > 0.0f)
+        if (particleVelocity.magnitude > 0.0f)
         {
-            f_friction = GenerateForce_Friction_Kinectic(f_normal, particleVelocity, frictionCoefficient_kinetic);
+            // f_friction_k = -coeff*|f_normal| * unit(vel)
+            return -frictionCoefficient_kinetic * f_normal.magnitude * particleVelocity.normalized;
         }
-        return f_friction;
+        // If opposing is less than max
+        else if (-f_opposing.magnitude < staticFrictionMax)
+        {
+            // f_friction_s = -f_opposing if less than max (max amount is coeff*|f_normal|)
+            return -f_opposing;
+        }
+        // If object is not moving, calculate static friction
+        else if (particleVelocity.magnitude == 0.0f)
+        {
+            // f_friction_s = -f_opposing if less than max, else -coeff*f_normal (max amount is coeff*|f_normal|)
+            return -frictionCoefficient_static * f_normal;
+        }
+        return Vector2.zero;
     }
 
     public static Vector2 GenerateForce_Drag(Vector2 fluidVelocity, float fluidDensity, float objectArea_crossSection, float objectDragCoefficient)
     {
         // v^2
-        Vector2 vsqr = fluidVelocity * fluidVelocity;
+        Vector2 vsqr = fluidVelocity.magnitude * fluidVelocity;
         // f_drag = (p * u^2 * area * coeff)/2
         Vector2 f_drag = -0.5f * (fluidDensity * vsqr * objectArea_crossSection * objectDragCoefficient);
         return f_drag;
@@ -76,9 +69,4 @@ public class J_Force
     }
 
     //---------------------------------------------------------------------------------------------------
-
-        private static Vector2 Vec2Sqr(Vector2 v2)
-    {
-        return (v2 * v2);
-    }
 }
