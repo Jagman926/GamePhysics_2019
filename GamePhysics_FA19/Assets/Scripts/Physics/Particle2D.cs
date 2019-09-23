@@ -31,10 +31,11 @@ public class Particle2D : MonoBehaviour
     [SerializeField]
     private float startingMass;
     private float mass, massInv;
+    [SerializeField]
+    private Vector2 centerOfMass;
 
     [Header("Inertia Variables")]
     [SerializeField]
-    private float startingInertia;
     private float inertia, inertiaInv;
 
     [Header("Position Variables")]
@@ -53,7 +54,8 @@ public class Particle2D : MonoBehaviour
     [SerializeField]
     private Vector3 angularAcceleration;
 
-    private Vector2 force, torque;
+    private Vector2 force;
+    private float torque;
 
     // Force Variables
     Vector2 f_gravity, f_normal, f_sliding, f_friction, f_drag, f_spring;
@@ -69,9 +71,26 @@ public class Particle2D : MonoBehaviour
     private Vector2 anchorPosition;
     private float springRestingLength = 5.0f, springStiffnessCoefficient = 6.4f;
 
+    // Test variables
+    public Vector2 testForce;
+    public Vector2 momentArm;
+
+
     void Start()
     {
         InitStartingVariables();
+    }
+
+    void TestTorque()
+    {
+        // Test cases
+
+        // Left Arrow
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
+            ApplyTorque(testForce, momentArm);
+        // Right Arrow
+        else if (Input.GetKeyDown(KeyCode.RightArrow))
+            ApplyTorque(testForce, momentArm);
     }
 
     void FixedUpdate()
@@ -88,6 +107,9 @@ public class Particle2D : MonoBehaviour
         UpdateAcceleration();
         UpdateAngularAcceleration();
 
+        TestTorque();
+
+        /*
         // Surface normal
         Vector2 surfaceNormal = new Vector2(Mathf.Cos(inclineDegrees * Mathf.Deg2Rad), Mathf.Sin(inclineDegrees * Mathf.Deg2Rad));
         // gravity
@@ -106,6 +128,7 @@ public class Particle2D : MonoBehaviour
         // spring
         // f_spring = J_Force.GenerateForce_Spring(particlePosition, anchorPosition, springRestingLength, springStiffnessCoefficient);
         // AddForce(f_spring);
+        */
     }
 
     private void InitStartingVariables()
@@ -113,12 +136,12 @@ public class Particle2D : MonoBehaviour
         // Init starting mass
         SetMass(startingMass);
         // Init starting inertia
-        SetInertia(startingInertia);
+        SetInertia();
         // Init starting position and rotation
         position = transform.position;
         rotation = transform.rotation.eulerAngles;
         // Init anchorPosition
-        anchorPosition = new Vector2(anchorObject.transform.position.x, anchorObject.transform.position.y);
+        // anchorPosition = new Vector2(anchorObject.transform.position.x, anchorObject.transform.position.y);
     }
 
     public void SetMass(float newMass)
@@ -127,7 +150,7 @@ public class Particle2D : MonoBehaviour
         massInv = Mathf.Max(0.0f, 1.0f / mass);
     }
 
-    public void SetInertia(float newInertia)
+    public void SetInertia()
     {
         /*
         Inertia Equations: Ian Millington - Game Physics Engine Development (pg 493)
@@ -142,19 +165,19 @@ public class Particle2D : MonoBehaviour
         {
             // Rectangle
             case Shape.RECTANGLE:
-                inertia = 1 / 12 * mass * ((height * height) + (width * width));
+                inertia = 0.083f * mass * ((height * height) + (width * width));
                 break;
             // Disk
             case Shape.DISK:
-                inertia = 1 / 2 * mass * (radiusOuter * radiusOuter);
+                inertia = 0.5f * mass * (radiusOuter * radiusOuter);
                 break;
             // Ring
             case Shape.RING:
-                inertia = 1 / 2 * mass * ((radiusOuter * radiusOuter) + (radiusInner * radiusInner));
+                inertia = 0.5f * mass * ((radiusOuter * radiusOuter) + (radiusInner * radiusInner));
                 break;
             // Rod
             case Shape.ROD:
-                inertia = 1 / 12 * mass * (length * length);
+                inertia = 0.083f * mass * (length * length);
                 break;
             // Default Case
             default:
@@ -177,6 +200,15 @@ public class Particle2D : MonoBehaviour
         force += newForce;
     }
 
+    public void ApplyTorque(Vector2 force, Vector2 momentArm)
+    {
+        //D'Alembert
+        // T = pf x F: T
+        // pf = moment arm (point of applied force relative to center of mass)
+        // F = applied force at pf
+        torque += (force.magnitude * (momentArm - centerOfMass).magnitude);
+    }
+
     private void UpdateAcceleration()
     {
         //Newton 2
@@ -188,8 +220,8 @@ public class Particle2D : MonoBehaviour
     private void UpdateAngularAcceleration()
     {
         // Newton 2
-        angularAcceleration = inertiaInv * torque;
+        angularAcceleration.z = inertiaInv * torque;
         // All torques are applied for a frame and then reset
-        torque = Vector2.zero;
+        torque = 0.0f;
     }
 }
