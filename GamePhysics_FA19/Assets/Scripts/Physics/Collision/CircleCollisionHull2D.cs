@@ -6,6 +6,9 @@ public class CircleCollisionHull2D : CollisionHull2D
 {
     public CircleCollisionHull2D() : base(CollisionHullType2D.hull_circle) { }
 
+    // Variables needed
+    // 1. Radius
+    // 2. Center (can be found using position)
     [Range(0.0f, 100f)]
     public float radius;
 

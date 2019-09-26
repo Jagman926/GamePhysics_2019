@@ -6,6 +6,8 @@ public class ObjectBoundingBoxCollisionHull2D : CollisionHull2D
 {
     public ObjectBoundingBoxCollisionHull2D() : base(CollisionHullType2D.hull_obb) { }
 
+    // Variables needed:
+
     void Start()
     {
 

@@ -72,8 +72,8 @@ public class Particle2D : MonoBehaviour
     private float springRestingLength = 5.0f, springStiffnessCoefficient = 6.4f;
 
     // Test variables
-    public Vector2 testForce;
-    public Vector2 momentArm;
+    // public Vector2 testForce;
+    // public Vector2 momentArm;
 
 
     void Start()
@@ -81,6 +81,7 @@ public class Particle2D : MonoBehaviour
         InitStartingVariables();
     }
 
+    /*
     void TestTorque()
     {
         // Test cases
@@ -92,6 +93,7 @@ public class Particle2D : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.RightArrow))
             ApplyTorque(testForce, momentArm);
     }
+    */
 
     void FixedUpdate()
     {
@@ -107,7 +109,7 @@ public class Particle2D : MonoBehaviour
         UpdateAcceleration();
         UpdateAngularAcceleration();
 
-        TestTorque();
+        // TestTorque();
 
         /*
         // Surface normal

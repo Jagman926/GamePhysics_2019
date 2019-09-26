@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class AxisAlignBoundingBoxCollisionHull2D : CollisionHull2D
 {
-
     public AxisAlignBoundingBoxCollisionHull2D() : base(CollisionHullType2D.hull_aabb) { }
+
+    // Variables needed
+    // 1. Min x/y
+    // 2. Max x/y
 
     void Start()
     {
