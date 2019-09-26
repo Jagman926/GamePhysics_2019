@@ -73,7 +73,7 @@ public class Particle2D : MonoBehaviour
 
     // Test variables
     public Vector2 testForce;
-    public Vector2 momentArm;
+    public Vector2 pointOfForce;
 
 
     void Start()
@@ -87,10 +87,10 @@ public class Particle2D : MonoBehaviour
 
         // Left Arrow
         if (Input.GetKeyDown(KeyCode.LeftArrow))
-            ApplyTorque(testForce, momentArm);
+            ApplyTorque(testForce, pointOfForce);
         // Right Arrow
         else if (Input.GetKeyDown(KeyCode.RightArrow))
-            ApplyTorque(testForce, momentArm);
+            ApplyTorque(testForce, pointOfForce);
     }
 
     void FixedUpdate()
@@ -200,13 +200,15 @@ public class Particle2D : MonoBehaviour
         force += newForce;
     }
 
-    public void ApplyTorque(Vector2 force, Vector2 momentArm)
+    public void ApplyTorque(Vector2 force, Vector2 pointOfForce)
     {
         //D'Alembert
         // T = pf x F: T
         // pf = moment arm (point of applied force relative to center of mass)
         // F = applied force at pf
-        torque += (force.magnitude * (momentArm - centerOfMass).magnitude);
+        Vector2 momentArm = pointOfForce - centerOfMass;
+        torque += (momentArm.x * force.y) - (momentArm.y * force.x);
+
     }
 
     private void UpdateAcceleration()
