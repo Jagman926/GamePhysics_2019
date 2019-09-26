@@ -11,7 +11,7 @@ public class CircleCollisionHull2D : CollisionHull2D
     // 2. Center (can be found using position)
     [Range(0.0f, 100f)]
     public float radius = 0.0f;
-    public Vector3 center = Vector2.zero;
+    public Vector2 center = Vector2.zero;
 
     void Start()
     {
@@ -33,23 +33,57 @@ public class CircleCollisionHull2D : CollisionHull2D
         // 4. add the radii
         // 5. square the sum
         // 6. DO THE TEST: pass if distanceSq <= sumSq
+        float distanceSqr = (other.center - center).sqrMagnitude;
+        float radiiSqr = (other.radius + radius) * (other.radius + radius);
 
-        return false;
+        if (distanceSqr <= radiiSqr)
+            return true;
+        else
+            return false;
     }
 
     public override bool TestCollisionVsAABB(AxisAlignBoundingBoxCollisionHull2D other)
     {
+        /*
+                            
+                     ---------------- <max
+                    |                |         
+                    |                |
+                    |                |
+                    |                |
+               min> ----------------
+
+            Top = max.y
+            Bot = min.y
+            Left = min.x
+            Right = max.x
+         */
+
         // find closest point to the circle on the box
         // (done by clamping center of circle to be within box dimensions)
         // if closest point is within circle, pass (do point vs circle test)
 
-        return false;
+        Vector2 point = center;
+
+        if (point.x > other.maxExtent.x) 
+            point.x = other.maxExtent.x;
+        if (point.x < other.minExtent.x) 
+            point.x = other.minExtent.x;
+        if (point.y > other.minExtent.y)
+            point.y = other.minExtent.y;
+        if (point.y < other.maxExtent.y)
+            point.y = other.maxExtent.y;
+
+        if((point - center).sqrMagnitude < radius)
+            return true;
+        else
+            return false;
     }
 
     public override bool TestCollisionVsOBB(ObjectBoundingBoxCollisionHull2D other)
     {
         // same as above, but first...
-        // multiply circle center by box world matrix inverse
+        // multiply circle center by box world matrix inverse -> ? https://docs.unity3d.com/ScriptReference/Transform-localToWorldMatrix.html
 
         return false;
     }

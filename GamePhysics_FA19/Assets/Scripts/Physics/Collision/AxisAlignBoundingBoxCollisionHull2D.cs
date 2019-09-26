@@ -47,8 +47,15 @@ public class AxisAlignBoundingBoxCollisionHull2D : CollisionHull2D
 
         // pass if, for all axes, max extent of A is greater than min extent of B
         // 1. maxA.x > minB.x && minA.x < maxB.x && maxA.y > minB.y && minA.y < maxB.y
+        // 2. pass if all cases are true
 
-        return false;
+        if(maxExtent.x > other.minExtent.x &&
+           minExtent.x < other.maxExtent.x &&
+           maxExtent.y > other.minExtent.y &&
+           minExtent.y < other.maxExtent.y)
+            return true;
+        else
+            return false;
     }
 
     public override bool TestCollisionVsOBB(ObjectBoundingBoxCollisionHull2D other)
