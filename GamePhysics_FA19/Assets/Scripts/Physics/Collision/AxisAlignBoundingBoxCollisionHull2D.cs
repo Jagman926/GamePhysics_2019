@@ -9,6 +9,8 @@ public class AxisAlignBoundingBoxCollisionHull2D : CollisionHull2D
     // Variables needed
     // 1. Min x/y
     // 2. Max x/y
+    public Vector2 minExtent;
+    public Vector2 maxExtent;
 
     void Start()
     {
@@ -29,8 +31,22 @@ public class AxisAlignBoundingBoxCollisionHull2D : CollisionHull2D
 
     public override bool TestCollisionVsAABB(AxisAlignBoundingBoxCollisionHull2D other)
     {
+        /*
+
+                               ---------------- <maxB
+                              |                |
+                              |                |
+                     ---------+------ <maxA    |
+                    |         |      |         |
+                    |    minB> ------+---------
+                    |                |
+                    |                |
+               minA> ----------------
+
+         */
+
         // pass if, for all axes, max extent of A is greater than min extent of B
-        // 1. ......
+        // 1. maxA.x > minB.x && minA.x < maxB.x && maxA.y > minB.y && minA.y < maxB.y
 
         return false;
     }
@@ -43,5 +59,11 @@ public class AxisAlignBoundingBoxCollisionHull2D : CollisionHull2D
         // 1. ......
 
         return false;
+    }
+
+    public override void OnDrawGizmosSelected()
+    {
+        // Draw debug square of AABB collision hull
+        Gizmos.color = Color.green;
     }
 }

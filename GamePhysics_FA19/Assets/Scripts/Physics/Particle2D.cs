@@ -15,47 +15,40 @@ public class Particle2D : MonoBehaviour
     // lab 2 step 1
     [Header("Object Variables")]
     [SerializeField]
-    private Shape shapeType;
-    [SerializeField]
-    private float height;
-    [SerializeField]
-    private float length;
-    [SerializeField]
-    private float width;
-    [SerializeField]
-    private float radiusOuter;
-    [SerializeField]
-    private float radiusInner;
+    private Shape shapeType = 0;
+    public float height = 0.0f;
+    public float length = 0.0f;
+    public float width= 0.0f;
+    public float radiusOuter = 0.0f;
+    public float radiusInner = 0.0f;
 
     [Header("Mass Variables")]
     [SerializeField]
-    private float startingMass;
-    private float mass, massInv;
+    private float startingMass = 0.0f;
+    private float mass = 0.0f, massInv = 0.0f;
     [SerializeField]
-    private Vector2 centerOfMass;
+    private Vector2 centerOfMass = Vector2.zero;
 
     [Header("Inertia Variables")]
     [SerializeField]
-    private float inertia, inertiaInv;
+    private float inertia = 0.0f, inertiaInv = 0.0f;
 
     [Header("Position Variables")]
+    public Vector2 position = Vector2.zero;
     [SerializeField]
-    private Vector2 position;
+    private Vector2 velocity = Vector2.zero;
     [SerializeField]
-    private Vector2 velocity;
-    [SerializeField]
-    private Vector2 acceleration;
+    private Vector2 acceleration = Vector2.zero;
 
     [Header("Rotation Variables")]
+    public Vector3 rotation = Vector3.zero;
     [SerializeField]
-    private Vector3 rotation;
+    private Vector3 angularVelocity = Vector3.zero;
     [SerializeField]
-    private Vector3 angularVelocity;
-    [SerializeField]
-    private Vector3 angularAcceleration;
+    private Vector3 angularAcceleration = Vector3.zero;
 
-    private Vector2 force;
-    private float torque;
+    private Vector2 force = Vector2.zero;
+    private float torque = 0.0f;
 
     // Force Variables
     Vector2 f_gravity, f_normal, f_sliding, f_friction, f_drag, f_spring;
@@ -67,8 +60,9 @@ public class Particle2D : MonoBehaviour
                                                                         // https://en.wikipedia.org/wiki/Drag_coefficient 
                                                                         // For: Fluid Density
                                                                         // https://en.wikipedia.org/wiki/Density_of_air
-    public GameObject anchorObject;
-    private Vector2 anchorPosition;
+    [SerializeField]                                                                  
+    private GameObject anchorObject = null;
+    private Vector2 anchorPosition = Vector2.zero;
     private float springRestingLength = 5.0f, springStiffnessCoefficient = 6.4f;
 
     // Test variables

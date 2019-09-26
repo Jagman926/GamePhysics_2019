@@ -36,4 +36,6 @@ public abstract class CollisionHull2D : MonoBehaviour
     public abstract bool TestCollisionVsAABB(AxisAlignBoundingBoxCollisionHull2D other);
 
     public abstract bool TestCollisionVsOBB(ObjectBoundingBoxCollisionHull2D other);
+
+    public abstract void OnDrawGizmosSelected();
 }

@@ -10,7 +10,8 @@ public class CircleCollisionHull2D : CollisionHull2D
     // 1. Radius
     // 2. Center (can be found using position)
     [Range(0.0f, 100f)]
-    public float radius;
+    public float radius = 0.0f;
+    public Vector3 center = Vector2.zero;
 
     void Start()
     {
@@ -51,5 +52,12 @@ public class CircleCollisionHull2D : CollisionHull2D
         // multiply circle center by box world matrix inverse
 
         return false;
+    }
+
+    public override void OnDrawGizmosSelected()
+    {
+        // Draw debug sphere of circle collision hull
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(center, radius);
     }
 }
