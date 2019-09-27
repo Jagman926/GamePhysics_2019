@@ -13,14 +13,10 @@ public class CircleCollisionHull2D : CollisionHull2D
     public float radius = 0.0f;
     public Vector2 center = Vector2.zero;
 
-    void Start()
+    public override void UpdateTransform()
     {
-
-    }
-
-    void Update()
-    {
-
+        center = particle.position;
+        radius = particle.radiusOuter;
     }
 
     public override bool TestCollisionVsCircle(CircleCollisionHull2D other)
@@ -65,16 +61,16 @@ public class CircleCollisionHull2D : CollisionHull2D
 
         Vector2 point = center;
 
-        if (point.x > other.maxExtent.x) 
+        if (point.x > other.maxExtent.x)
             point.x = other.maxExtent.x;
-        if (point.x < other.minExtent.x) 
+        if (point.x < other.minExtent.x)
             point.x = other.minExtent.x;
         if (point.y > other.minExtent.y)
             point.y = other.minExtent.y;
         if (point.y < other.maxExtent.y)
             point.y = other.maxExtent.y;
 
-        if((point - center).sqrMagnitude < radius)
+        if ((point - center).sqrMagnitude < radius)
             return true;
         else
             return false;
@@ -83,15 +79,30 @@ public class CircleCollisionHull2D : CollisionHull2D
     public override bool TestCollisionVsOBB(ObjectBoundingBoxCollisionHull2D other)
     {
         // same as above, but first...
-        // multiply circle center by box world matrix inverse -> ? https://docs.unity3d.com/ScriptReference/Transform-localToWorldMatrix.html
+        // multiply circle center by box world matrix inverse
+        // 1. Get world matrix of OBB
+        // 2. Multiply inverse of matrix by center point of circle
+        // 3. Same as collision vs AABB
 
-        return false;
-    }
+        Matrix4x4 objectWorldMatrix = Matrix4x4.identity;
+        objectWorldMatrix.SetTRS(other.transform.position, other.transform.rotation, Vector3.one);
 
-    public override void OnDrawGizmosSelected()
-    {
-        // Draw debug sphere of circle collision hull
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(center, radius);
+        Vector2 center_objectWorldInv = objectWorldMatrix.inverse.MultiplyPoint3x4(center);
+
+        Vector2 point = center_objectWorldInv;
+
+        if (point.x > other.maxExtent.x)
+            point.x = other.maxExtent.x;
+        if (point.x < other.minExtent.x)
+            point.x = other.minExtent.x;
+        if (point.y > other.minExtent.y)
+            point.y = other.minExtent.y;
+        if (point.y < other.maxExtent.y)
+            point.y = other.maxExtent.y;
+
+        if ((point - center).sqrMagnitude < radius)
+            return true;
+        else
+            return false;
     }
 }

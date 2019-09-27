@@ -9,17 +9,19 @@ public class AxisAlignBoundingBoxCollisionHull2D : CollisionHull2D
     // Variables needed
     // 1. Min x/y
     // 2. Max x/y
-    public Vector2 minExtent;
-    public Vector2 maxExtent;
+    public Vector2 center = Vector2.zero;
+    public Vector2 minExtent = Vector2.zero;
+    public Vector2 maxExtent = Vector2.zero;
 
-    void Start()
+    public override void UpdateTransform()
     {
-        
-    }
+        center = particle.position;
 
-    void Update()
-    {
-        
+        float xExtent = 0.5f * particle.width;
+        float yExtent = 0.5f * particle.height;
+
+        minExtent = new Vector2(center.x - xExtent, center.y - yExtent);
+        maxExtent = new Vector2(center.x + xExtent, center.y + yExtent);
     }
 
     public override bool TestCollisionVsCircle(CircleCollisionHull2D other)
@@ -49,7 +51,7 @@ public class AxisAlignBoundingBoxCollisionHull2D : CollisionHull2D
         // 1. maxA.x > minB.x && minA.x < maxB.x && maxA.y > minB.y && minA.y < maxB.y
         // 2. pass if all cases are true
 
-        if(maxExtent.x > other.minExtent.x &&
+        if (maxExtent.x > other.minExtent.x &&
            minExtent.x < other.maxExtent.x &&
            maxExtent.y > other.minExtent.y &&
            minExtent.y < other.maxExtent.y)
@@ -66,11 +68,5 @@ public class AxisAlignBoundingBoxCollisionHull2D : CollisionHull2D
         // 1. ......
 
         return false;
-    }
-
-    public override void OnDrawGizmosSelected()
-    {
-        // Draw debug square of AABB collision hull
-        Gizmos.color = Color.green;
     }
 }
