@@ -10,6 +10,7 @@ public class AxisAlignBoundingBoxCollisionHull2D : CollisionHull2D
     // 1. Min x/y
     // 2. Max x/y
     public Vector2 center = Vector2.zero;
+    public Vector2 halfExtents = Vector2.zero;
     public Vector2 minExtent = Vector2.zero;
     public Vector2 maxExtent = Vector2.zero;
 
@@ -17,18 +18,30 @@ public class AxisAlignBoundingBoxCollisionHull2D : CollisionHull2D
     {
         center = particle.position;
 
-        float xExtent = 0.5f * particle.width;
-        float yExtent = 0.5f * particle.height;
+        halfExtents = new Vector2(0.5f * particle.width, 0.5f * particle.height);
 
-        minExtent = new Vector2(center.x - xExtent, center.y - yExtent);
-        maxExtent = new Vector2(center.x + xExtent, center.y + yExtent);
+        minExtent = new Vector2(center.x - halfExtents.x, center.y - halfExtents.y);
+        maxExtent = new Vector2(center.x + halfExtents.x, center.y + halfExtents.y);
     }
 
     public override bool TestCollisionVsCircle(CircleCollisionHull2D other)
     {
         // see circle
+        // find closest point to the circle on the box
+        // (done by clamping center of circle to be within box dimensions)
+        // if closest point is within circle, pass (do point vs circle test)
 
-        return false;
+        Vector2 difference = other.center - center;
+
+        float clampX = Mathf.Clamp(difference.x, -halfExtents.x, halfExtents.x);
+        float clampY = Mathf.Clamp(difference.y, -halfExtents.y, halfExtents.y);
+
+        Vector2 closestPoint = new Vector2(center.x + clampX, center.y + clampY);
+
+        if ((closestPoint - other.center).magnitude < other.radius)
+            return true;
+        else
+            return false;
     }
 
     public override bool TestCollisionVsAABB(AxisAlignBoundingBoxCollisionHull2D other)

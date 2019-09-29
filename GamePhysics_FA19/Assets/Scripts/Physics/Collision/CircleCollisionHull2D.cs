@@ -49,32 +49,26 @@ public class CircleCollisionHull2D : CollisionHull2D
                     |                |
                min> ----------------
 
-            Top = max.y
-            Bot = min.y
-            Left = min.x
-            Right = max.x
          */
 
         // find closest point to the circle on the box
         // (done by clamping center of circle to be within box dimensions)
         // if closest point is within circle, pass (do point vs circle test)
 
-        Vector2 point = center;
+        Vector2 difference = center - other.center;
 
-        if (point.x > other.maxExtent.x)
-            point.x = other.maxExtent.x;
-        if (point.x < other.minExtent.x)
-            point.x = other.minExtent.x;
-        if (point.y > other.minExtent.y)
-            point.y = other.minExtent.y;
-        if (point.y < other.maxExtent.y)
-            point.y = other.maxExtent.y;
+        float clampX = Mathf.Clamp(difference.x, -other.halfExtents.x, other.halfExtents.x);
+        float clampY = Mathf.Clamp(difference.y, -other.halfExtents.y, other.halfExtents.y);
 
-        if ((point - center).sqrMagnitude < radius)
+        Vector2 closestPoint = new Vector2(other.center.x + clampX, other.center.y + clampY);
+
+        if ((closestPoint-center).magnitude < radius)
             return true;
         else
             return false;
     }
+
+    public Vector2 circleCenter;
 
     public override bool TestCollisionVsOBB(ObjectBoundingBoxCollisionHull2D other)
     {
@@ -84,25 +78,29 @@ public class CircleCollisionHull2D : CollisionHull2D
         // 2. Multiply inverse of matrix by center point of circle
         // 3. Same as collision vs AABB
 
-        Matrix4x4 objectWorldMatrix = Matrix4x4.identity;
-        objectWorldMatrix.SetTRS(other.transform.position, other.transform.rotation, Vector3.one);
+        Matrix4x4 objectWorldMatrix_inv = other.transform.localToWorldMatrix.inverse;
 
-        Vector2 center_objectWorldInv = objectWorldMatrix.inverse.MultiplyPoint3x4(center);
+        circleCenter = objectWorldMatrix_inv.MultiplyPoint3x4(center);
 
-        Vector2 point = center_objectWorldInv;
+        Vector2 difference = circleCenter - other.center;
 
-        if (point.x > other.maxExtent.x)
-            point.x = other.maxExtent.x;
-        if (point.x < other.minExtent.x)
-            point.x = other.minExtent.x;
-        if (point.y > other.minExtent.y)
-            point.y = other.minExtent.y;
-        if (point.y < other.maxExtent.y)
-            point.y = other.maxExtent.y;
+        float clampX = Mathf.Clamp(difference.x, -other.halfExtents.x, other.halfExtents.x);
+        float clampY = Mathf.Clamp(difference.y, -other.halfExtents.y, other.halfExtents.y);
 
-        if ((point - center).sqrMagnitude < radius)
+        Vector2 closestPoint = new Vector2(other.center.x + clampX, other.center.y + clampY);
+
+        if ((closestPoint-center).magnitude < radius)
             return true;
         else
             return false;
+    }
+
+    /// <summary>
+    /// Callback to draw gizmos only if the object is selected.
+    /// </summary>
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(circleCenter, radius);
     }
 }
