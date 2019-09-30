@@ -39,31 +39,14 @@ public abstract class CollisionHull2D : MonoBehaviour
             // Prevents checking collision on itself
             if (other.gameObject != gameObject)
             {
-                switch (other.type)
-                {
-                    // If other object is a circle hull
-                    case CollisionHullType2D.hull_circle:
-                        if (TestCollisionVsCircle((CircleCollisionHull2D)other))
-                            Debug.Log(gameObject.name + " Colliding with " + other.name);
-                        break;
-                    // If other object is a aabb hull
-                    case CollisionHullType2D.hull_aabb:
-                        if (TestCollisionVsAABB((AxisAlignBoundingBoxCollisionHull2D)other))
-                            Debug.Log(gameObject.name + " Colliding with " + other.name);
-                        break;
-                    // If other object is a obb hull
-                    case CollisionHullType2D.hull_obb:
-                        if (TestCollisionVsOBB((ObjectBoundingBoxCollisionHull2D)other))
-                            Debug.Log(gameObject.name + " Colliding with " + other.name);
-                        break;
-                    default:
-                        break;
-                }
+                isColliding(other);
             }
         }
     }
 
     public abstract void UpdateTransform();
+
+    public abstract bool isColliding(CollisionHull2D other);
 
     public abstract bool TestCollisionVsCircle(CircleCollisionHull2D other);
 

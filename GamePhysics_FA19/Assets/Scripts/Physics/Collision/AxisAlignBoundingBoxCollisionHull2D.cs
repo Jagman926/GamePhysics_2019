@@ -9,19 +9,69 @@ public class AxisAlignBoundingBoxCollisionHull2D : CollisionHull2D
     // Variables needed
     // 1. Min x/y
     // 2. Max x/y
-    public Vector2 center = Vector2.zero;
-    public Vector2 halfExtents = Vector2.zero;
-    public Vector2 minExtent = Vector2.zero;
-    public Vector2 maxExtent = Vector2.zero;
+    // 3. Center
+    public Vector2 center;
+    public Vector2 minExtent;
+    public Vector2 maxExtent;
+
+    [Header("Debug Material")]
+    bool colliding;
+    private Renderer renderer;
+    public Material mat_red;
+    public Material mat_green;
+
+    void Awake()
+    {
+        renderer = gameObject.GetComponent<Renderer>();
+    }
 
     public override void UpdateTransform()
     {
         center = particle.position;
 
-        halfExtents = new Vector2(0.5f * particle.width, 0.5f * particle.height);
+        Vector2 halfExtents = new Vector2(0.5f * particle.width, 0.5f * particle.height);
 
         minExtent = new Vector2(center.x - halfExtents.x, center.y - halfExtents.y);
         maxExtent = new Vector2(center.x + halfExtents.x, center.y + halfExtents.y);
+    }
+
+    public override bool isColliding(CollisionHull2D other)
+    {
+        switch (other.type)
+        {
+            // If other object is a circle hull
+            case CollisionHullType2D.hull_circle:
+                if (TestCollisionVsCircle((CircleCollisionHull2D)other))
+                {
+                    Debug.Log(gameObject.name + " Colliding with " + other.name);
+                    colliding = true;
+                }
+                break;
+            // If other object is a aabb hull
+            case CollisionHullType2D.hull_aabb:
+                if (TestCollisionVsAABB((AxisAlignBoundingBoxCollisionHull2D)other))
+                {
+                    Debug.Log(gameObject.name + " Colliding with " + other.name);
+                    colliding = true;
+                }
+                break;
+            // If other object is a obb hull
+            case CollisionHullType2D.hull_obb:
+                if (TestCollisionVsOBB((ObjectBoundingBoxCollisionHull2D)other))
+                {
+                    Debug.Log(gameObject.name + " Colliding with " + other.name);
+                    colliding = true;
+                }
+                break;
+            default:
+                break;
+        }
+        if (colliding)
+            renderer.material = mat_red;
+        else
+            renderer.material = mat_green;
+
+        return colliding;
     }
 
     public override bool TestCollisionVsCircle(CircleCollisionHull2D other)
@@ -31,14 +81,12 @@ public class AxisAlignBoundingBoxCollisionHull2D : CollisionHull2D
         // (done by clamping center of circle to be within box dimensions)
         // if closest point is within circle, pass (do point vs circle test)
 
-        Vector2 difference = other.center - center;
+        float clampX = Mathf.Clamp(other.center.x, minExtent.x, maxExtent.x);
+        float clampY = Mathf.Clamp(other.center.y, minExtent.y, maxExtent.y);
 
-        float clampX = Mathf.Clamp(difference.x, -halfExtents.x, halfExtents.x);
-        float clampY = Mathf.Clamp(difference.y, -halfExtents.y, halfExtents.y);
+        Vector2 closestPoint = new Vector2(clampX, clampY);
 
-        Vector2 closestPoint = new Vector2(center.x + clampX, center.y + clampY);
-
-        if ((closestPoint - other.center).magnitude < other.radius)
+        if ((closestPoint - other.center).sqrMagnitude < other.radius * other.radius)
             return true;
         else
             return false;
@@ -78,8 +126,27 @@ public class AxisAlignBoundingBoxCollisionHull2D : CollisionHull2D
         // same as above twice...
         //  first, find max extents of OBB, do AABB vs this box
         //  then, transform this box into OBB's space, find the max extents, repeat
-        // 1. ......
+        // 1. Get OBB max/min extents in rotation (done in object script)
+        // 2. Get AABB max/min extents from world matrix inv of OBB
+        // 3. use same AABB vs AABB test for both scenarios using the others normal max/min extents
 
+        Vector2 aabb_maxExtent_transInv = transform.localToWorldMatrix.inverse.MultiplyPoint3x4(maxExtent);
+        Vector2 aabb_minExtent_transInv = transform.localToWorldMatrix.inverse.MultiplyPoint3x4(minExtent);
+
+        aabb_maxExtent_transInv += other.center;
+        aabb_minExtent_transInv += other.center;
+
+        if (maxExtent.x > other.minExtent_Rotated.x &&
+            minExtent.x < other.maxExtent_Rotated.x &&
+            maxExtent.y > other.minExtent_Rotated.y &&
+            minExtent.y < other.maxExtent_Rotated.y)
+        {
+            if (aabb_maxExtent_transInv.x > other.minExtent.x &&
+                aabb_minExtent_transInv.x < other.maxExtent.x &&
+                aabb_maxExtent_transInv.y > other.minExtent.y &&
+                aabb_minExtent_transInv.y < other.maxExtent.y)
+                return true;
+        }
         return false;
     }
 }
