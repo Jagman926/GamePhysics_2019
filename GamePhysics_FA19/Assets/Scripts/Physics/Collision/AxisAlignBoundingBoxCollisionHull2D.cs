@@ -35,13 +35,13 @@ public class AxisAlignBoundingBoxCollisionHull2D : CollisionHull2D
         maxExtent = new Vector2(center.x + halfExtents.x, center.y + halfExtents.y);
     }
 
-    public override bool isColliding(CollisionHull2D other)
+    public override bool isColliding(CollisionHull2D other, ref Collision c)
     {
         switch (other.type)
         {
             // If other object is a circle hull
             case CollisionHullType2D.hull_circle:
-                if (TestCollisionVsCircle((CircleCollisionHull2D)other))
+                if (TestCollisionVsCircle((CircleCollisionHull2D)other, ref c))
                 {
                     Debug.Log(gameObject.name + " Colliding with " + other.name);
                     colliding = true;
@@ -49,7 +49,7 @@ public class AxisAlignBoundingBoxCollisionHull2D : CollisionHull2D
                 break;
             // If other object is a aabb hull
             case CollisionHullType2D.hull_aabb:
-                if (TestCollisionVsAABB((AxisAlignBoundingBoxCollisionHull2D)other))
+                if (TestCollisionVsAABB((AxisAlignBoundingBoxCollisionHull2D)other, ref c))
                 {
                     Debug.Log(gameObject.name + " Colliding with " + other.name);
                     colliding = true;
@@ -57,7 +57,7 @@ public class AxisAlignBoundingBoxCollisionHull2D : CollisionHull2D
                 break;
             // If other object is a obb hull
             case CollisionHullType2D.hull_obb:
-                if (TestCollisionVsOBB((ObjectBoundingBoxCollisionHull2D)other))
+                if (TestCollisionVsOBB((ObjectBoundingBoxCollisionHull2D)other, ref c))
                 {
                     Debug.Log(gameObject.name + " Colliding with " + other.name);
                     colliding = true;
@@ -74,7 +74,7 @@ public class AxisAlignBoundingBoxCollisionHull2D : CollisionHull2D
         return colliding;
     }
 
-    public override bool TestCollisionVsCircle(CircleCollisionHull2D other)
+    public override bool TestCollisionVsCircle(CircleCollisionHull2D other, ref Collision c)
     {
         // see circle
         // find closest point to the circle on the box
@@ -92,7 +92,7 @@ public class AxisAlignBoundingBoxCollisionHull2D : CollisionHull2D
             return false;
     }
 
-    public override bool TestCollisionVsAABB(AxisAlignBoundingBoxCollisionHull2D other)
+    public override bool TestCollisionVsAABB(AxisAlignBoundingBoxCollisionHull2D other, ref Collision c)
     {
         /*
 
@@ -121,7 +121,7 @@ public class AxisAlignBoundingBoxCollisionHull2D : CollisionHull2D
             return false;
     }
 
-    public override bool TestCollisionVsOBB(ObjectBoundingBoxCollisionHull2D other)
+    public override bool TestCollisionVsOBB(ObjectBoundingBoxCollisionHull2D other, ref Collision c)
     {
         // same as above twice...
         //  first, find max extents of OBB, do AABB vs this box
