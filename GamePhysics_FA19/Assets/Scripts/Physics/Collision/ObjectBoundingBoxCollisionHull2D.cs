@@ -98,22 +98,9 @@ public class ObjectBoundingBoxCollisionHull2D : CollisionHull2D
 
     public override bool TestCollisionVsCircle(CircleCollisionHull2D other, ref Collision c)
     {
-        // same as above, but first...
-        // multiply circle center by box world matrix inverse
-        // 1. Get world matrix of OBB
-        // 2. Multiply inverse of matrix by center point of circle
-        // 3. Same as collision vs AABB
+        // See CircleCollisionHull2D
 
-        Vector2 circleCenter = transform.InverseTransformPoint(other.center);
-
-        circleCenter += center;
-
-        float clampX = Mathf.Clamp(circleCenter.x, minExtent.x, maxExtent.x);
-        float clampY = Mathf.Clamp(circleCenter.y, minExtent.y, maxExtent.y);
-
-        Vector2 closestPoint = new Vector2(clampX, clampY);
-
-        if ((closestPoint - circleCenter).sqrMagnitude < other.radius * other.radius)
+        if (other.TestCollisionVsOBB(this, ref c))
             return true;
         else
             return false;
@@ -121,31 +108,12 @@ public class ObjectBoundingBoxCollisionHull2D : CollisionHull2D
 
     public override bool TestCollisionVsAABB(AxisAlignBoundingBoxCollisionHull2D other, ref Collision c)
     {
-        // same as above twice...
-        //  first, find max extents of OBB, do AABB vs this box
-        //  then, transform this box into OBB's space, find the max extents, repeat
-        // 1. Get OBB max/min extents in rotation (done in object script)
-        // 2. Get AABB max/min extents from world matrix inv of OBB
-        // 3. use same AABB vs AABB test for both scenarios using the others max/min extents
+        // See AxisAlignBoundingBoxCollisionHull2D
 
-        Vector2 aabb_maxExtent_transInv = other.transform.worldToLocalMatrix.MultiplyPoint(other.maxExtent);
-        Vector2 aabb_minExtent_transInv = other.transform.localToWorldMatrix.inverse.MultiplyPoint3x4(other.minExtent);
-
-        aabb_maxExtent_transInv += center;
-        aabb_minExtent_transInv += center;
-
-        if (other.maxExtent.x > minExtent_Rotated.x &&
-            other.minExtent.x < maxExtent_Rotated.x &&
-            other.maxExtent.y > minExtent_Rotated.y &&
-            other.minExtent.y < maxExtent_Rotated.y)
-        {
-            if (aabb_maxExtent_transInv.x > minExtent.x &&
-                aabb_minExtent_transInv.x < maxExtent.x &&
-                aabb_maxExtent_transInv.y > minExtent.y &&
-                aabb_minExtent_transInv.y < maxExtent.y)
-                return true;
-        }
-        return false;
+        if (other.TestCollisionVsOBB(this, ref c))
+            return true;
+        else
+            return false;
     }
 
     public override bool TestCollisionVsOBB(ObjectBoundingBoxCollisionHull2D other, ref Collision c)
@@ -156,11 +124,11 @@ public class ObjectBoundingBoxCollisionHull2D : CollisionHull2D
         // 3. For both test, and if both true, pass
 
         // Other object multiplied by inverse world matrix
-        Vector2 obb1_maxExtent_transInv = other.transform.localToWorldMatrix.inverse.MultiplyPoint3x4(other.maxExtent);
-        Vector2 obb1_minExtent_transInv = other.transform.localToWorldMatrix.inverse.MultiplyPoint3x4(other.minExtent);
+        Vector2 obb1_maxExtent_transInv = other.transform.worldToLocalMatrix.MultiplyPoint(other.maxExtent);
+        Vector2 obb1_minExtent_transInv = other.transform.worldToLocalMatrix.MultiplyPoint(other.minExtent);
         // This object multiplied by inverse world matrix
-        Vector2 obb2_maxExtent_transInv = transform.localToWorldMatrix.inverse.MultiplyPoint3x4(maxExtent);
-        Vector2 obb2_minExtent_transInv = transform.localToWorldMatrix.inverse.MultiplyPoint3x4(minExtent);
+        Vector2 obb2_maxExtent_transInv = transform.worldToLocalMatrix.MultiplyPoint(maxExtent);
+        Vector2 obb2_minExtent_transInv = transform.worldToLocalMatrix.MultiplyPoint(minExtent);
 
         obb1_maxExtent_transInv += center;
         obb1_minExtent_transInv += center;

@@ -76,17 +76,9 @@ public class AxisAlignBoundingBoxCollisionHull2D : CollisionHull2D
 
     public override bool TestCollisionVsCircle(CircleCollisionHull2D other, ref Collision c)
     {
-        // see circle
-        // find closest point to the circle on the box
-        // (done by clamping center of circle to be within box dimensions)
-        // if closest point is within circle, pass (do point vs circle test)
-
-        float clampX = Mathf.Clamp(other.center.x, minExtent.x, maxExtent.x);
-        float clampY = Mathf.Clamp(other.center.y, minExtent.y, maxExtent.y);
-
-        Vector2 closestPoint = new Vector2(clampX, clampY);
-
-        if ((closestPoint - other.center).sqrMagnitude < other.radius * other.radius)
+        // See CircleCollisionHull2D
+        
+        if (other.TestCollisionVsAABB(this, ref c))
             return true;
         else
             return false;
