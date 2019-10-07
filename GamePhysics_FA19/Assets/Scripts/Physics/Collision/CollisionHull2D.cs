@@ -7,15 +7,17 @@ public abstract class CollisionHull2D : MonoBehaviour
     public class Collision
     {
         public struct Contact{
-            Vector2 point;
-            Vector2 normal;
-            float restitution;
+            public Vector2 point;
+            public Vector2 normal;
+            public float restitution;
         }
 
         public CollisionHull2D a = null, b = null;
         public Contact[] contact = new Contact[4];
         public int contactCount = 0;
         public bool status = false;
+        public Vector2 contactNormal;
+      
 
         Vector2 closingVelocity;
     }
@@ -40,6 +42,58 @@ public abstract class CollisionHull2D : MonoBehaviour
     void Start()
     {
         particle = GetComponent<Particle2D>();
+    }
+
+
+    public void ResolveContact(ref Collision collisionData, int contactBeingCalculated)
+    {
+        //1. Calculate inital seperating velocity
+        // - if Pb != null, return (Velocitya - Velocityb) * collisionNormal
+        //2. Check if impuls is required
+        // - if SVInital >0, return
+        //3. Calculate new seperating velocity
+        // - newSV = -SVinitial * restitution
+        // - DeltaSV = newSV - SVInitial
+        //4. Caclulate total inverse mass
+        // - totalInvMass = InvMassA + invMassB
+        //5. calculate impulse
+        // - impulse = deltaSV / totalInvMass
+        // - Vector3 inpulsePerIMass = collisionNormal * impulse
+        //6. Apply inpulse to velocity
+
+        //Sets up needed variables
+
+        //Gets the particles
+        Particle2D particleA = collisionData.a.particle;
+        Particle2D particleB = collisionData.b.particle;
+
+
+        //Calculate the collision normal
+        //n = (Pa - Pb) / |(Pa - Pb)}|
+        collisionData.contactNormal = particleA.position - particleB.position;
+        collisionData.contactNormal = collisionData.contactNormal / collisionData.contactNormal.magnitude; //NOTE: this is probably inefficant (using magnitude & division) rework later.
+
+        //1. Calculate inital seperating velocity
+        float initalSeperatingVelocity = (particleA.GetVelocity() - particleB.GetVelocity()).magnitude * collisionData.contactNormal.magnitude; //NOTE Might need to be a float instead of a vector 3
+
+        //2. Check if impuls is required
+        if (initalSeperatingVelocity > 0f)
+            return;
+
+        //3. Calculate new seperating velocity
+        float newSeperatingVelocity = -initalSeperatingVelocity * collisionData.contact[contactBeingCalculated].restitution;
+        float deltaSeperatingVelocity = newSeperatingVelocity - initalSeperatingVelocity;
+
+
+        //4. Caclulate total inverse mass
+        float totalInvMass = particleA.GetInvMass() + particleB.GetInvMass();
+
+        //5. calculate impulse
+        float impulse = deltaSeperatingVelocity / totalInvMass;
+        Vector2 impulsePerIMass = collisionData.contactNormal * impulse;
+
+        //6. Apply inpulse to velocity
+
     }
 
     public static bool TestCollision(CollisionHull2D a, CollisionHull2D b, ref Collision c)

@@ -190,6 +190,16 @@ public class Particle2D : MonoBehaviour
         return mass;
     }
 
+    public float GetInvMass()
+    {
+        return massInv;
+    }
+
+    public Vector2 GetVelocity()
+    {
+        return velocity;
+    }
+
     public void AddForce(Vector2 newForce)
     {
         //D'Alembert
