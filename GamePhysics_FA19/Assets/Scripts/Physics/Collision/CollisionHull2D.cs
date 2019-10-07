@@ -17,7 +17,9 @@ public abstract class CollisionHull2D : MonoBehaviour
         public Contact[] contact = new Contact[4];
         public int contactCount = 0;
         public bool status = false;
-      
+
+        public int itterations = 3; //Max itterations allowed
+        public int iterationsUsed = 0;
 
         Vector2 closingVelocity;
     }
@@ -44,8 +46,53 @@ public abstract class CollisionHull2D : MonoBehaviour
         particle = GetComponent<Particle2D>();
     }
 
+    public void ResolveCollisions(ref Collision collisionData)
+    {
+        //TODO: Calculate contact normals on collision
+        //TODO: Calculate penetration on collisions
+        //TODO: Fill the collision class on collison lol
 
-    public void ResolveContact(ref Collision collisionData, int contactBeingCalculated)
+        //Gets the particles
+        Particle2D particleA = collisionData.a.particle;
+        Particle2D particleB = collisionData.b.particle;
+
+        collisionData.iterationsUsed = 0;
+        int i = 0;
+
+        while(collisionData.iterationsUsed < collisionData.itterations)
+        {
+            float max = float.MaxValue;
+            int maxIndex = collisionData.contactCount;
+
+            for(i = 0; i < collisionData.contactCount; i++)
+            {
+                Vector2 contactNormal = collisionData.contact[i].normal;
+                float seperatingVelocity = (particleA.GetVelocity() - particleB.GetVelocity()).magnitude * contactNormal.magnitude; //NOTE Might need to be a float instead of a vector 3
+
+                if(seperatingVelocity < max &&
+                    seperatingVelocity < 0 && collisionData.contact[i].penetration > 0)
+                {
+                    max = seperatingVelocity;
+                    maxIndex = i;
+                }
+            }
+
+            if (maxIndex == collisionData.contactCount)
+                break;
+
+            Resolve(ref collisionData, maxIndex);
+
+            collisionData.iterationsUsed++;
+        }
+    }
+
+    void Resolve(ref Collision collisionData, int contactBeingCalculated)
+    {
+        ResolveContact(ref collisionData, contactBeingCalculated);
+        ResolveInterpenetration(ref collisionData, contactBeingCalculated);
+    }
+
+    void ResolveContact(ref Collision collisionData, int contactBeingCalculated)
     {
         //1. Calculate inital seperating velocity
         // - if Pb != null, return (Velocitya - Velocityb) * collisionNormal
@@ -107,7 +154,7 @@ public abstract class CollisionHull2D : MonoBehaviour
 
     }
 
-    public void ResolveInterpenetration(ref Collision collisionData, int contactBeingCalculated)
+    void ResolveInterpenetration(ref Collision collisionData, int contactBeingCalculated)
     {
         //1. Get penetration (though collision)
         //2. Check for penetration
