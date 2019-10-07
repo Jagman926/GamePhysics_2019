@@ -200,6 +200,11 @@ public class Particle2D : MonoBehaviour
         return velocity;
     }
 
+    public void SetVelocity(Vector2 newVelocity)
+    {
+        velocity = newVelocity;
+    }
+
     public void AddForce(Vector2 newForce)
     {
         //D'Alembert

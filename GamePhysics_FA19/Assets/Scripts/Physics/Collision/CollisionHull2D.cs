@@ -93,6 +93,14 @@ public abstract class CollisionHull2D : MonoBehaviour
         Vector2 impulsePerIMass = collisionData.contactNormal * impulse;
 
         //6. Apply inpulse to velocity
+        //Two potentail ways to handle this, either A: Set the velocity directly, or B: Add the impulse as a force.
+        //Method A
+        particleA.SetVelocity(particleA.GetVelocity() + impulsePerIMass * particleA.GetInvMass());
+        particleB.SetVelocity(particleA.GetVelocity() + impulsePerIMass * -particleA.GetInvMass());
+
+        //Method B
+        //particleA.AddForce(particleA.GetVelocity() + impulsePerIMass * particleA.GetInvMass());
+        //particleB.AddForce(particleA.GetVelocity() + impulsePerIMass * -particleA.GetInvMass());
 
     }
 
