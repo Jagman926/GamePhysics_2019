@@ -76,17 +76,9 @@ public class AxisAlignBoundingBoxCollisionHull2D : CollisionHull2D
 
     public override bool TestCollisionVsCircle(CircleCollisionHull2D other, ref Collision c)
     {
-        // see circle
-        // find closest point to the circle on the box
-        // (done by clamping center of circle to be within box dimensions)
-        // if closest point is within circle, pass (do point vs circle test)
-
-        float clampX = Mathf.Clamp(other.center.x, minExtent.x, maxExtent.x);
-        float clampY = Mathf.Clamp(other.center.y, minExtent.y, maxExtent.y);
-
-        Vector2 closestPoint = new Vector2(clampX, clampY);
-
-        if ((closestPoint - other.center).sqrMagnitude < other.radius * other.radius)
+        // See CircleCollisionHull2D
+        
+        if (other.TestCollisionVsAABB(this, ref c))
             return true;
         else
             return false;
@@ -130,8 +122,8 @@ public class AxisAlignBoundingBoxCollisionHull2D : CollisionHull2D
         // 2. Get AABB max/min extents from world matrix inv of OBB
         // 3. use same AABB vs AABB test for both scenarios using the others normal max/min extents
 
-        Vector2 aabb_maxExtent_transInv = transform.localToWorldMatrix.inverse.MultiplyPoint3x4(maxExtent);
-        Vector2 aabb_minExtent_transInv = transform.localToWorldMatrix.inverse.MultiplyPoint3x4(minExtent);
+        Vector2 aabb_maxExtent_transInv = transform.worldToLocalMatrix.MultiplyPoint(maxExtent);
+        Vector2 aabb_minExtent_transInv = transform.worldToLocalMatrix.MultiplyPoint(minExtent);
 
         aabb_maxExtent_transInv += other.center;
         aabb_minExtent_transInv += other.center;
