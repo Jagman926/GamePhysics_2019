@@ -10,13 +10,13 @@ public abstract class CollisionHull2D : MonoBehaviour
             public Vector2 point;
             public Vector2 normal;
             public float restitution;
+            public float penetration;
         }
 
         public CollisionHull2D a = null, b = null;
         public Contact[] contact = new Contact[4];
         public int contactCount = 0;
         public bool status = false;
-        public Vector2 contactNormal;
       
 
         Vector2 closingVelocity;
@@ -67,14 +67,17 @@ public abstract class CollisionHull2D : MonoBehaviour
         Particle2D particleA = collisionData.a.particle;
         Particle2D particleB = collisionData.b.particle;
 
+        Vector2 contactNormal = collisionData.contact[contactBeingCalculated].normal;
+
+        //I think this is calculated on collision for effeciancy
 
         //Calculate the collision normal
         //n = (Pa - Pb) / |(Pa - Pb)}|
-        collisionData.contactNormal = particleA.position - particleB.position;
-        collisionData.contactNormal = collisionData.contactNormal / collisionData.contactNormal.magnitude; //NOTE: this is probably inefficant (using magnitude & division) rework later.
+        //contactNormal = particleA.position - particleB.position; 
+        //collisionData.contact[contactBeingCalculated].normal = collisionData.contact[contactBeingCalculated].normal / collisionData.contact[contactBeingCalculated].normal.magnitude; //NOTE: this is probably inefficant (using magnitude & division) rework later.
 
         //1. Calculate inital seperating velocity
-        float initalSeperatingVelocity = (particleA.GetVelocity() - particleB.GetVelocity()).magnitude * collisionData.contactNormal.magnitude; //NOTE Might need to be a float instead of a vector 3
+        float initalSeperatingVelocity = (particleA.GetVelocity() - particleB.GetVelocity()).magnitude * contactNormal.magnitude; //NOTE Might need to be a float instead of a vector 3
 
         //2. Check if impuls is required
         if (initalSeperatingVelocity > 0f)
@@ -90,7 +93,7 @@ public abstract class CollisionHull2D : MonoBehaviour
 
         //5. calculate impulse
         float impulse = deltaSeperatingVelocity / totalInvMass;
-        Vector2 impulsePerIMass = collisionData.contactNormal * impulse;
+        Vector2 impulsePerIMass = collisionData.contact[contactBeingCalculated].normal * impulse;
 
         //6. Apply inpulse to velocity
         //Two potentail ways to handle this, either A: Set the velocity directly, or B: Add the impulse as a force.
@@ -101,6 +104,61 @@ public abstract class CollisionHull2D : MonoBehaviour
         //Method B
         //particleA.AddForce(particleA.GetVelocity() + impulsePerIMass * particleA.GetInvMass());
         //particleB.AddForce(particleA.GetVelocity() + impulsePerIMass * -particleA.GetInvMass());
+
+    }
+
+    public void ResolveInterpenetration(ref Collision collisionData, int contactBeingCalculated)
+    {
+        //1. Get penetration (though collision)
+        //2. Check for penetration
+        // - ifPenetraction <= 0, return
+        //3. Caculate total inverse mass
+        //4. find amount of penitration per inverse mass
+        // - collisionNormal * (penitration / totalInverseMass)
+        //5. Calculate movement amounts
+        // - particleMovementA = movePerInverseMass * particleAInverseMass
+        // - particleMovementB = movePerInverseMass * -particleBInverseMass
+        //6. Apply to positions
+        // - particleAPosition += particleMovementA
+        // - particleBPosition += -particleMovementB
+
+        //Sets up needed variables
+
+        //Gets the particles
+        Particle2D particleA = collisionData.a.particle;
+        Particle2D particleB = collisionData.b.particle;
+
+        //I think this is calculated on collision for effeciancy
+
+        //Calculate the collision normal
+        //n = (Pa - Pb) / |(Pa - Pb)}|
+        //collisionData.contactNormal = particleA.position - particleB.position;
+        //collisionData.contactNormal = collisionData.contactNormal / collisionData.contactNormal.magnitude; //NOTE: this is probably inefficant (using magnitude & division) rework later.
+
+        //1. Get penetration (though collision) 
+        //This is done on collision detection, so ignore here
+
+        //2. Check for penetration
+        if (collisionData.contact[contactBeingCalculated].penetration <= 0)
+            return;
+
+        //3. Caculate total inverse mass
+        float totalInvMass = particleA.GetInvMass() + particleB.GetInvMass();
+
+        //4. find amount of penitration per inverse mass
+        Vector2 movmentPerInvMass = -collisionData.contact[contactBeingCalculated].normal * (collisionData.contact[contactBeingCalculated].penetration / totalInvMass);
+
+        //5. Calculate movement amounts
+        // - particleMovementA = movePerInverseMass * particleAInverseMass
+        // - particleMovementB = movePerInverseMass * -particleBInverseMass
+        Vector2 particleMovmentA = movmentPerInvMass * particleA.GetInvMass();
+        Vector2 particleMovmentB = movmentPerInvMass * -particleB.GetInvMass();
+
+        //6. Apply to positions
+        // - particleAPosition += particleMovementA
+        // - particleBPosition += -particleMovementB
+        particleA.SetPosition(particleA.GetPosition() + particleMovmentA);
+        particleB.SetPosition(particleB.GetPosition() - particleMovmentB);
 
     }
 

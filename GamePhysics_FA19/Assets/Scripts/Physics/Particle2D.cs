@@ -220,6 +220,16 @@ public class Particle2D : MonoBehaviour
         torque += (force.magnitude * (momentArm - centerOfMass).magnitude);
     }
 
+    public Vector2 GetPosition()
+    {
+        return position;
+    }
+
+    public void SetPosition(Vector2 newPosition)
+    {
+        position = newPosition;
+    }
+
     private void UpdateAcceleration()
     {
         //Newton 2
