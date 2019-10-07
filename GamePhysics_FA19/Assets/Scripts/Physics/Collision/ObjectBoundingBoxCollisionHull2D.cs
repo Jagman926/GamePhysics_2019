@@ -128,7 +128,7 @@ public class ObjectBoundingBoxCollisionHull2D : CollisionHull2D
         // 2. Get AABB max/min extents from world matrix inv of OBB
         // 3. use same AABB vs AABB test for both scenarios using the others max/min extents
 
-        Vector2 aabb_maxExtent_transInv = other.transform.localToWorldMatrix.inverse.MultiplyPoint3x4(other.maxExtent);
+        Vector2 aabb_maxExtent_transInv = other.transform.worldToLocalMatrix.MultiplyPoint(other.maxExtent);
         Vector2 aabb_minExtent_transInv = other.transform.localToWorldMatrix.inverse.MultiplyPoint3x4(other.minExtent);
 
         aabb_maxExtent_transInv += center;

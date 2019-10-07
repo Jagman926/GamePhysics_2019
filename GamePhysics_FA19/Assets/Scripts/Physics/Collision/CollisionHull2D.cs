@@ -20,8 +20,6 @@ public abstract class CollisionHull2D : MonoBehaviour
         Vector2 closingVelocity;
     }
 
-    Collision collision;
-
     public enum CollisionHullType2D
     {
         hull_circle,
@@ -39,28 +37,9 @@ public abstract class CollisionHull2D : MonoBehaviour
 
     protected Particle2D particle;
 
-    protected CollisionHull2D[] collisionObjects;
-
     void Start()
     {
         particle = GetComponent<Particle2D>();
-        collisionObjects = FindObjectsOfType(typeof(CollisionHull2D)) as CollisionHull2D[];
-
-    }
-
-    void Update()
-    {
-        // Updates transform variables
-        UpdateTransform();
-
-        foreach (CollisionHull2D other in collisionObjects)
-        {
-            // Prevents checking collision on itself
-            if (other.gameObject != gameObject)
-            {
-                isColliding(other, ref collision);
-            }
-        }
     }
 
     public static bool TestCollision(CollisionHull2D a, CollisionHull2D b, ref Collision c)
