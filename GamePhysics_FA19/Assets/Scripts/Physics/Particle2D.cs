@@ -69,25 +69,10 @@ public class Particle2D : MonoBehaviour
     // public Vector2 testForce;
     // public Vector2 momentArm;
 
-
     void Start()
     {
         InitStartingVariables();
     }
-
-    /*
-    void TestTorque()
-    {
-        // Test cases
-
-        // Left Arrow
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
-            ApplyTorque(testForce, momentArm);
-        // Right Arrow
-        else if (Input.GetKeyDown(KeyCode.RightArrow))
-            ApplyTorque(testForce, momentArm);
-    }
-    */
 
     void FixedUpdate()
     {
@@ -102,29 +87,6 @@ public class Particle2D : MonoBehaviour
         // Update acceleration | angular acceleration
         UpdateAcceleration();
         UpdateAngularAcceleration();
-
-        // TestTorque();
-
-        /*
-        // Surface normal
-        Vector2 surfaceNormal = new Vector2(Mathf.Cos(inclineDegrees * Mathf.Deg2Rad), Mathf.Sin(inclineDegrees * Mathf.Deg2Rad));
-        // gravity
-        f_gravity = J_Force.GenerateForce_Gravity(mass, J_Physics.gravity, Vector2.up);
-        // normal
-        f_normal = J_Force.GenerateForce_Normal(f_gravity, surfaceNormal);
-        // sliding
-        f_sliding = J_Force.GenerateForce_Sliding(f_gravity, f_normal);
-        AddForce(f_sliding);
-        // friction
-        f_friction = J_Force.GenerateForce_Friction(f_normal, velocity, f_sliding, frictionCoeff_s, frictionCoeff_k);
-        AddForce(f_friction);
-        // drag
-        f_drag = J_Force.GenerateForce_Drag(velocity, fluidDensity, 1.0f, dragCoefficient);
-        AddForce(f_drag);
-        // spring
-        // f_spring = J_Force.GenerateForce_Spring(particlePosition, anchorPosition, springRestingLength, springStiffnessCoefficient);
-        // AddForce(f_spring);
-        */
     }
 
     private void InitStartingVariables()
@@ -211,13 +173,21 @@ public class Particle2D : MonoBehaviour
         force += newForce;
     }
 
-    public void ApplyTorque(Vector2 force, Vector2 momentArm)
+    public void AddForceForward(float forceIntensity)
+    {
+        // Get rotated vector
+        Vector2 rotatedVector = gameObject.transform.rotation * Vector3.up * forceIntensity;
+        // add force
+        AddForce(rotatedVector);
+    }
+
+    public void ApplyTorque(float force, Vector2 momentArm)
     {
         //D'Alembert
         // T = pf x F: T
         // pf = moment arm (point of applied force relative to center of mass)
         // F = applied force at pf
-        torque += (force.magnitude * (momentArm - centerOfMass).magnitude);
+        torque += (force * (momentArm - centerOfMass).magnitude);
     }
 
     public Vector2 GetPosition()
