@@ -39,7 +39,7 @@ public abstract class CollisionHull2D : MonoBehaviour
         type = type_set;
     }
 
-    protected Particle2D particle;
+    public Particle2D particle;
 
     void Start()
     {
@@ -206,6 +206,36 @@ public abstract class CollisionHull2D : MonoBehaviour
         // - particleBPosition += -particleMovementB
         particleA.SetPosition(particleA.GetPosition() + particleMovmentA);
         particleB.SetPosition(particleB.GetPosition() - particleMovmentB);
+
+    }
+
+    void PopulateCollisionClass(CollisionHull2D a, CollisionHull2D b, ref Collision c)
+    {
+        //Big confusions right now...
+        //1. how do we get contacts?
+        //2. how do we get penetration?
+
+        //Populate the collision class
+        c.a = a;
+        c.b = b;
+
+        Particle2D particleA = c.a.particle;
+        Particle2D particleB = c.b.particle;
+
+        //Gets the point
+
+        //Gets the contacts?
+
+        //Gets the normal
+        //Calculate the collision normal
+        //n = (Pa - Pb) / |(Pa - Pb)}|
+        Vector2 contactNormal;
+
+        //NOTE: this can be uncomented once we know what contact to put normal into
+
+        //contactNormal = particleA.position - particleB.position; 
+        //collisionData.contact[contactBeingCalculated].normal = collisionData.contact[contactBeingCalculated].normal / collisionData.contact[contactBeingCalculated].normal.magnitude; //NOTE: this is probably inefficant (using magnitude & division) rework later.
+
 
     }
 
