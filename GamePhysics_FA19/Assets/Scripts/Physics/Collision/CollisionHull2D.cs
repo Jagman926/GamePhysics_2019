@@ -288,14 +288,13 @@ public abstract class CollisionHull2D : MonoBehaviour
         Vector2 center = cirlce.particle.position;
         Vector2 closestPoint = new Vector2(0, 0);
 
-        closestPoint.x = Mathf.Clamp(cirlce.particle.position.x, aabb.minExtent.x, aabb.minExtent.x);
-        closestPoint.y = Mathf.Clamp(cirlce.particle.position.y, aabb.minExtent.y, aabb.minExtent.y);
+        closestPoint.x = Mathf.Clamp(cirlce.particle.position.x, aabb.minExtent.x, aabb.maxExtent.x);
+        closestPoint.y = Mathf.Clamp(cirlce.particle.position.y, aabb.minExtent.y, aabb.maxExtent.y);
 
         c.contact[0].normal = center - closestPoint;
         c.contact[0].normal = c.contact[0].normal.normalized;
         c.contact[0].point = closestPoint;
         c.contact[0].penetration = cirlce.radius - (center - closestPoint).magnitude;
-        c.contact[0].penetration *= -1;
 
         c.contactCount = 1;
 
