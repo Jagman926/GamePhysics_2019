@@ -147,7 +147,7 @@ public abstract class CollisionHull2D : MonoBehaviour
         //Two potentail ways to handle this, either A: Set the velocity directly, or B: Add the impulse as a force.
         //Method A
         particleA.SetVelocity(particleA.GetVelocity() + impulsePerIMass * -particleA.GetInvMass());
-        particleB.SetVelocity(particleA.GetVelocity() + impulsePerIMass * particleA.GetInvMass());
+        particleB.SetVelocity(particleB.GetVelocity() + impulsePerIMass * particleB.GetInvMass());
 
         //Method B
         //particleA.AddForce(particleA.GetVelocity() + impulsePerIMass * particleA.GetInvMass());

@@ -225,7 +225,7 @@ MonoBehaviour:
   inertia: 0
   inertiaInv: 0
   position: {x: 0, y: 0}
-  velocity: {x: 0, y: 1}
+  velocity: {x: 0, y: 0}
   acceleration: {x: 0, y: 0}
   rotation: {x: 0, y: 0, z: 0}
   angularVelocity: {x: 0, y: 0, z: 0}
@@ -526,7 +526,7 @@ MonoBehaviour:
   inertia: 0
   inertiaInv: 0
   position: {x: 0, y: 2}
-  velocity: {x: 0, y: 0}
+  velocity: {x: 0, y: -1}
   acceleration: {x: 0, y: 0}
   rotation: {x: 0, y: 0, z: 0}
   angularVelocity: {x: 0, y: 0, z: 0}
