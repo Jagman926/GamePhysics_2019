@@ -150,9 +150,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12ddceb6d8692e84c87d9c19467661c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameManagerObject: {fileID: 2023411727}
   forceRotation2D: 5
-  forceForward2D: 1
-  forceReverse2D: 1
+  forceForward2D: 2
+  forceReverse2D: 2
   rotationMomentArmRight: {x: 1, y: -1}
   rotationMomentArmLeft: {x: -1, y: -1}
 --- !u!4 &12344868
@@ -593,6 +594,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2023411728}
+  - component: {fileID: 2023411729}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -614,3 +616,24 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2023411729
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2023411727}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bde3756244b7fdf40b32fd4892e2bd5e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  asteroidPrefab: {fileID: 0}
+  maxAsteroidCount: 0
+  currentAsteroidCount: 0
+  asteroidSpawnBuffer: 0
+  edgeRight: 18
+  edgeLeft: -18
+  edgeTop: 10.3
+  edgeBot: -10.3
+  buffer: 0.1
