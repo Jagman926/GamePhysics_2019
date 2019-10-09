@@ -256,39 +256,51 @@ public abstract class CollisionHull2D : MonoBehaviour
         // 4. Check for contact
         // 5. Compile the contact & generate the values
 
-        // 1. Transform the center of the sphere into box coordinates
-        Vector2 ceneter = cirlce.particle.position;
-        Vector2 relCenter = aabb.particle.transform.InverseTransformPoint(ceneter);
+        //// 1. Transform the center of the sphere into box coordinates
+        //Vector2 ceneter = cirlce.particle.position;
+        //Vector2 relCenter = aabb.particle.transform.InverseTransformPoint(ceneter);
 
-        // 2. Check to see if it's valid based on center
-        if (Mathf.Abs(relCenter.x) - cirlce.radius > aabb.maxExtent.x ||
-            Mathf.Abs(relCenter.y) - cirlce.radius > aabb.maxExtent.y)
-            return false;
+        //// 2. Check to see if it's valid based on center
+        //if (Mathf.Abs(relCenter.x) - cirlce.radius > aabb.maxExtent.x ||
+        //    Mathf.Abs(relCenter.y) - cirlce.radius > aabb.maxExtent.y)
+        //    return false;
 
-        // 3. Clamp each coordinate to the box 
-        float distance;
-        Vector2 closestPoint = new Vector2(0,0);
+        //// 3. Clamp each coordinate to the box 
+        //float distance;
+        //Vector2 closestPoint = new Vector2(0,0);
 
-        distance = relCenter.x;
-        if (distance > aabb.maxExtent.x) distance = aabb.maxExtent.x;
-        if (distance < -aabb.maxExtent.x) distance = -aabb.maxExtent.x;
-        closestPoint.x = distance;
+        //distance = relCenter.x;
+        //if (distance > aabb.maxExtent.x) distance = aabb.maxExtent.x;
+        //if (distance < -aabb.maxExtent.x) distance = -aabb.maxExtent.x;
+        //closestPoint.x = distance;
 
-        distance = relCenter.y;
-        if (distance > aabb.maxExtent.y) distance = aabb.maxExtent.y;
-        if (distance < -aabb.maxExtent.y) distance = -aabb.maxExtent.y;
-        closestPoint.y = distance;
+        //distance = relCenter.y;
+        //if (distance > aabb.maxExtent.y) distance = aabb.maxExtent.y;
+        //if (distance < -aabb.maxExtent.y) distance = -aabb.maxExtent.y;
+        //closestPoint.y = distance;
 
-        distance = (closestPoint - relCenter).sqrMagnitude;
-        if (distance > cirlce.radius * cirlce.radius)
-            return false;
+        //distance = (closestPoint - relCenter).sqrMagnitude;
+        //if (distance > cirlce.radius * cirlce.radius)
+        //    return false;
 
-        Vector2 closestPtWorld = aabb.transform.TransformVector(closestPoint);
+        //Vector2 closestPtWorld = aabb.transform.TransformVector(closestPoint);
 
-        c.contact[0].normal = closestPtWorld - ceneter;
-        c.contact[0].normal = Vector3.Normalize(c.contact[0].normal);
-        c.contact[0].point = closestPtWorld;
-        c.contact[0].penetration = cirlce.radius - Mathf.Sqrt(distance);
+        Vector2 center = cirlce.particle.position;
+        Vector2 closestPoint = new Vector2(0, 0);
+
+        closestPoint.x = Mathf.Clamp(cirlce.particle.position.x, aabb.minExtent.x, aabb.minExtent.x);
+        closestPoint.y = Mathf.Clamp(cirlce.particle.position.y, aabb.minExtent.y, aabb.minExtent.y);
+
+        c.contact[0].normal = center - closestPoint;
+        c.contact[0].normal = c.contact[0].normal.normalized;
+        c.contact[0].point = closestPoint;
+        c.contact[0].penetration = cirlce.radius - (center - closestPoint).magnitude;
+        c.contact[0].penetration *= -1;
+
+        c.contactCount = 1;
+
+        c.a = cirlce;
+        c.b = aabb;
 
         return true;
 

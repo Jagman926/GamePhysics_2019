@@ -43,6 +43,11 @@ public class AxisAlignBoundingBoxCollisionHull2D : CollisionHull2D
             case CollisionHullType2D.hull_circle:
                 if (TestCollisionVsCircle((CircleCollisionHull2D)other, ref c))
                 {
+                    PopulateCollisionClassAABBVSCircle((CircleCollisionHull2D)other, this, ref c);
+                    //Resolves the collisions
+                    ResolveCollisions(ref c);
+                    clearContacts(ref c); //Clears the information used after contacts have been resolved
+
                     Debug.Log(gameObject.name + " Colliding with " + other.name);
                     colliding = true;
                 }
@@ -51,6 +56,8 @@ public class AxisAlignBoundingBoxCollisionHull2D : CollisionHull2D
             case CollisionHullType2D.hull_aabb:
                 if (TestCollisionVsAABB((AxisAlignBoundingBoxCollisionHull2D)other, ref c))
                 {
+
+
                     Debug.Log(gameObject.name + " Colliding with " + other.name);
                     colliding = true;
                 }
