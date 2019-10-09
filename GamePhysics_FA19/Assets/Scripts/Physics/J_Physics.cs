@@ -18,6 +18,8 @@ public class J_Physics
     {
         // x(t+dt) = x(t) + v(t+dt) + 1/2(a(t)(dt*dt))
         rotation += (angularVelocity * dt) + (.5f * (angularAcceleration * (dt * dt)));
+        // clamp degrees between 0 and 360
+        rotation.z = rotation.z % 360;
         // v(t+dt) = v(t) + a(t)dt
         angularVelocity += angularAcceleration * dt;
     }
