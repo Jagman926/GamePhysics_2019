@@ -250,56 +250,67 @@ public abstract class CollisionHull2D : MonoBehaviour
 
     public bool PopulateCollisionClassAABBVSCircle(CircleCollisionHull2D cirlce, AxisAlignBoundingBoxCollisionHull2D aabb, ref Collision c)
     {
-        // 1. Transform the center of teh sphere into box coordinates
-        // 2. Check to see if it's valid based on center
-        // 3. Clamp each coordinate to the box 
-        // 4. Check for contact
-        // 5. Compile the contact & generate the values
+        // 1. Calculate the closest point by clamping the circle into the square
+        // 2. Get the normal by minising the center by the closest point
+        // 3. Calculate the penetration by doing radius - (center - closestpoint) 
+        // 4. Fill in the other values
 
-        //// 1. Transform the center of the sphere into box coordinates
-        //Vector2 ceneter = cirlce.particle.position;
-        //Vector2 relCenter = aabb.particle.transform.InverseTransformPoint(ceneter);
-
-        //// 2. Check to see if it's valid based on center
-        //if (Mathf.Abs(relCenter.x) - cirlce.radius > aabb.maxExtent.x ||
-        //    Mathf.Abs(relCenter.y) - cirlce.radius > aabb.maxExtent.y)
-        //    return false;
-
-        //// 3. Clamp each coordinate to the box 
-        //float distance;
-        //Vector2 closestPoint = new Vector2(0,0);
-
-        //distance = relCenter.x;
-        //if (distance > aabb.maxExtent.x) distance = aabb.maxExtent.x;
-        //if (distance < -aabb.maxExtent.x) distance = -aabb.maxExtent.x;
-        //closestPoint.x = distance;
-
-        //distance = relCenter.y;
-        //if (distance > aabb.maxExtent.y) distance = aabb.maxExtent.y;
-        //if (distance < -aabb.maxExtent.y) distance = -aabb.maxExtent.y;
-        //closestPoint.y = distance;
-
-        //distance = (closestPoint - relCenter).sqrMagnitude;
-        //if (distance > cirlce.radius * cirlce.radius)
-        //    return false;
-
-        //Vector2 closestPtWorld = aabb.transform.TransformVector(closestPoint);
 
         Vector2 center = cirlce.particle.position;
         Vector2 closestPoint = new Vector2(0, 0);
 
+        // 1. Calculate the closest point by clamping the circle into the square
         closestPoint.x = Mathf.Clamp(cirlce.particle.position.x, aabb.minExtent.x, aabb.maxExtent.x);
         closestPoint.y = Mathf.Clamp(cirlce.particle.position.y, aabb.minExtent.y, aabb.maxExtent.y);
 
+        // 2. Get the normal by minising the center by the closest point
         c.contact[0].normal = center - closestPoint;
         c.contact[0].normal = c.contact[0].normal.normalized;
+
         c.contact[0].point = closestPoint;
+
+        // 3. Calculate the penetration by doing radius - (center - closestpoint) 
         c.contact[0].penetration = cirlce.radius - (center - closestPoint).magnitude;
 
+        // 4. Fill in the other values
         c.contactCount = 1;
 
         c.a = cirlce;
         c.b = aabb;
+
+        return true;
+
+    }
+
+    public bool PopulateCollisionClassOBBVSCircle(CircleCollisionHull2D cirlce, ObjectBoundingBoxCollisionHull2D obb, ref Collision c)
+    {
+        // 1. Calculate the closest point by clamping the circle into the square
+        // 2. Get the normal by minising the center by the closest point
+        // 3. Calculate the penetration by doing radius - (center - closestpoint) 
+        // 4. Fill in the other values
+
+
+        Vector2 center = cirlce.particle.position;
+        Vector2 closestPoint = new Vector2(0, 0);
+
+        // 1. Calculate the closest point by clamping the circle into the square
+        closestPoint.x = Mathf.Clamp(cirlce.particle.position.x, obb.minExtent_Rotated.x, obb.maxExtent_Rotated.x);
+        closestPoint.y = Mathf.Clamp(cirlce.particle.position.y, obb.minExtent_Rotated.y, obb.maxExtent_Rotated.y);
+
+        // 2. Get the normal by minising the center by the closest point
+        c.contact[0].normal = center - closestPoint;
+        c.contact[0].normal = c.contact[0].normal.normalized;
+
+        c.contact[0].point = closestPoint;
+
+        // 3. Calculate the penetration by doing radius - (center - closestpoint) 
+        c.contact[0].penetration = cirlce.radius - (center - closestPoint).magnitude;
+
+        // 4. Fill in the other values
+        c.contactCount = 1;
+
+        c.a = cirlce;
+        c.b = obb;
 
         return true;
 
@@ -312,8 +323,6 @@ public abstract class CollisionHull2D : MonoBehaviour
             c.contact[i].normal = Vector2.zero;
             c.contact[i].point = Vector2.zero;
             c.contact[i].penetration = 0;
-           
-
         }
 
         c.a = null;

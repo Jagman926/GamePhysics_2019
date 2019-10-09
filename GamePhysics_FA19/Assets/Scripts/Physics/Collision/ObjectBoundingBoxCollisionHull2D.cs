@@ -66,6 +66,10 @@ public class ObjectBoundingBoxCollisionHull2D : CollisionHull2D
                 if (TestCollisionVsCircle((CircleCollisionHull2D)other, ref c))
                 {
                     Debug.Log(gameObject.name + " Colliding with " + other.name);
+                    PopulateCollisionClassOBBVSCircle((CircleCollisionHull2D)other, this, ref c);
+                    //Resolves the collisions
+                    ResolveCollisions(ref c);
+                    clearContacts(ref c); //Clears the information used after contacts have been resolved
                     colliding = true;
                 }
                 break;
@@ -82,6 +86,7 @@ public class ObjectBoundingBoxCollisionHull2D : CollisionHull2D
                 if (TestCollisionVsOBB((ObjectBoundingBoxCollisionHull2D)other, ref c))
                 {
                     Debug.Log(gameObject.name + " Colliding with " + other.name);
+
                     colliding = true;
                 }
                 break;
