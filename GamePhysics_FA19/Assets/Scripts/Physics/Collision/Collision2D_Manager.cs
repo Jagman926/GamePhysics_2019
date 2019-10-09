@@ -15,6 +15,7 @@ public class Collision2D_Manager : MonoBehaviour
     void Start()
     {
         collisionObjects = FindObjectsOfType(typeof(CollisionHull2D)) as CollisionHull2D[];
+        collision = new CollisionHull2D.Collision(); //Creates the collision class
     }
 
     void Update()

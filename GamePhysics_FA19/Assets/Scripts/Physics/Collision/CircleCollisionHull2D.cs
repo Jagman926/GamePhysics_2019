@@ -45,6 +45,9 @@ public class CircleCollisionHull2D : CollisionHull2D
                     //Resolves the collisions
                     ResolveCollisions(ref c);
                     Debug.Log(gameObject.name + " Colliding with " + other.name);
+
+                    clearContacts(ref c); //Clears the information used after contacts have been resolved
+
                     colliding = true;
 
 

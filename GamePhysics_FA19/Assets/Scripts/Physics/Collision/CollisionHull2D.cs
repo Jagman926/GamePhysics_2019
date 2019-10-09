@@ -71,7 +71,7 @@ public abstract class CollisionHull2D : MonoBehaviour
                 float seperatingVelocity = (particleA.GetVelocity() - particleB.GetVelocity()).magnitude * contactNormal.magnitude; //NOTE Might need to be a float instead of a vector 3
 
                 if(seperatingVelocity < max &&
-                    seperatingVelocity < 0 && collisionData.contact[i].penetration > 0)
+                    seperatingVelocity > 0 && collisionData.contact[i].penetration > 0)
                 {
                     max = seperatingVelocity;
                     maxIndex = i;
@@ -128,11 +128,11 @@ public abstract class CollisionHull2D : MonoBehaviour
         float initalSeperatingVelocity = (particleA.GetVelocity() - particleB.GetVelocity()).magnitude * contactNormal.magnitude; //NOTE Might need to be a float instead of a vector 3
 
         //2. Check if impuls is required
-        if (initalSeperatingVelocity > 0f)
+        if (initalSeperatingVelocity < 0f)
             return;
 
         //3. Calculate new seperating velocity
-        float newSeperatingVelocity = -initalSeperatingVelocity * collisionData.contact[contactBeingCalculated].restitution;
+        float newSeperatingVelocity = -initalSeperatingVelocity * collisionData.restitution;
         float deltaSeperatingVelocity = newSeperatingVelocity - initalSeperatingVelocity;
 
 
@@ -146,8 +146,8 @@ public abstract class CollisionHull2D : MonoBehaviour
         //6. Apply inpulse to velocity
         //Two potentail ways to handle this, either A: Set the velocity directly, or B: Add the impulse as a force.
         //Method A
-        particleA.SetVelocity(particleA.GetVelocity() + impulsePerIMass * particleA.GetInvMass());
-        particleB.SetVelocity(particleA.GetVelocity() + impulsePerIMass * -particleA.GetInvMass());
+        particleA.SetVelocity(particleA.GetVelocity() + impulsePerIMass * -particleA.GetInvMass());
+        particleB.SetVelocity(particleA.GetVelocity() + impulsePerIMass * particleA.GetInvMass());
 
         //Method B
         //particleA.AddForce(particleA.GetVelocity() + impulsePerIMass * particleA.GetInvMass());
@@ -239,6 +239,10 @@ public abstract class CollisionHull2D : MonoBehaviour
         c.contact[0].point = a.particle.position + midline * 0.5f;
         c.contact[0].penetration = (a.radius + b.radius - size);
 
+        c.contactCount = 1;
+
+        c.a = a;
+        c.b = b;
 
         return true;
 
@@ -300,6 +304,11 @@ public abstract class CollisionHull2D : MonoBehaviour
            
 
         }
+
+        c.a = null;
+        c.b = null;
+        c.contactCount = 0;
+        c.iterationsUsed = 0;
     }
 
     public static bool TestCollision(CollisionHull2D a, CollisionHull2D b, ref Collision c)
