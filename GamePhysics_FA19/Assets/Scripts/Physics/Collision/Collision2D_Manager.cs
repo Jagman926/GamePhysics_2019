@@ -9,9 +9,14 @@ public class Collision2D_Manager : MonoBehaviour
 
     private CollisionHull2D.Collision collision;
 
+    public float restitution;
+
+
     void Start()
     {
         collisionObjects = FindObjectsOfType(typeof(CollisionHull2D)) as CollisionHull2D[];
+        collision = new CollisionHull2D.Collision(); //Creates the collision class
+        collision.restitution = restitution;
     }
 
     void Update()

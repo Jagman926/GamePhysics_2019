@@ -9,10 +9,11 @@ public abstract class CollisionHull2D : MonoBehaviour
         public struct Contact{
             public Vector2 point;
             public Vector2 normal;
-            public float restitution;
             public float penetration;
+
         }
 
+        public float restitution;
         public CollisionHull2D a = null, b = null;
         public Contact[] contact = new Contact[4];
         public int contactCount = 0;
@@ -70,7 +71,7 @@ public abstract class CollisionHull2D : MonoBehaviour
                 float seperatingVelocity = (particleA.GetVelocity() - particleB.GetVelocity()).magnitude * contactNormal.magnitude; //NOTE Might need to be a float instead of a vector 3
 
                 if(seperatingVelocity < max &&
-                    seperatingVelocity < 0 && collisionData.contact[i].penetration > 0)
+                    seperatingVelocity > 0 && collisionData.contact[i].penetration > 0)
                 {
                     max = seperatingVelocity;
                     maxIndex = i;
@@ -127,11 +128,11 @@ public abstract class CollisionHull2D : MonoBehaviour
         float initalSeperatingVelocity = (particleA.GetVelocity() - particleB.GetVelocity()).magnitude * contactNormal.magnitude; //NOTE Might need to be a float instead of a vector 3
 
         //2. Check if impuls is required
-        if (initalSeperatingVelocity > 0f)
+        if (initalSeperatingVelocity < 0f)
             return;
 
         //3. Calculate new seperating velocity
-        float newSeperatingVelocity = -initalSeperatingVelocity * collisionData.contact[contactBeingCalculated].restitution;
+        float newSeperatingVelocity = -initalSeperatingVelocity * collisionData.restitution;
         float deltaSeperatingVelocity = newSeperatingVelocity - initalSeperatingVelocity;
 
 
@@ -145,8 +146,8 @@ public abstract class CollisionHull2D : MonoBehaviour
         //6. Apply inpulse to velocity
         //Two potentail ways to handle this, either A: Set the velocity directly, or B: Add the impulse as a force.
         //Method A
-        particleA.SetVelocity(particleA.GetVelocity() + impulsePerIMass * particleA.GetInvMass());
-        particleB.SetVelocity(particleA.GetVelocity() + impulsePerIMass * -particleA.GetInvMass());
+        particleA.SetVelocity(particleA.GetVelocity() + impulsePerIMass * -particleA.GetInvMass());
+        particleB.SetVelocity(particleB.GetVelocity() + impulsePerIMass * particleB.GetInvMass());
 
         //Method B
         //particleA.AddForce(particleA.GetVelocity() + impulsePerIMass * particleA.GetInvMass());
@@ -209,34 +210,105 @@ public abstract class CollisionHull2D : MonoBehaviour
 
     }
 
-    void PopulateCollisionClass(CollisionHull2D a, CollisionHull2D b, ref Collision c)
+    public bool PopulateCollisionClassCircleVsCirlce(CircleCollisionHull2D a, CircleCollisionHull2D b, ref Collision c)
     {
-        //Big confusions right now...
-        //1. how do we get contacts?
-        //2. how do we get penetration?
+        // 1. Finds the vector between objects
+        // 2. Calculate the size (magnitude of midline)
+        // 3. test to see if the size is large enough
+        // 4. Creature the normal
+        // 5. Calculate contact info (normal, point, and penetration)
 
-        //Populate the collision class
+
+        // 1. Finds the vector between objects
+        Vector2 midline = a.particle.position - b.particle.position;
+
+        // 2. Calculate the size (magnitude of midline)
+        float size = midline.magnitude;
+
+        // 3. test to see if the size is large enough
+        if (size <= 0.0f || size >= a.radius + b.radius)
+        {
+            return false;
+        }
+
+        // 4. Creature the normal
+        Vector2 normal = midline * (1.0f / size); //Potential optimization here, cut division?
+
+        // 5. Calculate contact info
+        c.contact[0].normal = normal;
+        c.contact[0].point = a.particle.position + midline * 0.5f;
+        c.contact[0].penetration = (a.radius + b.radius - size);
+
+        c.contactCount = 1;
+
         c.a = a;
         c.b = b;
 
-        Particle2D particleA = c.a.particle;
-        Particle2D particleB = c.b.particle;
+        return true;
 
-        //Gets the point
+    }
 
-        //Gets the contacts?
+    public bool PopulateCollisionClassAABBVSCircle(CircleCollisionHull2D cirlce, AxisAlignBoundingBoxCollisionHull2D aabb, ref Collision c)
+    {
+        // 1. Transform the center of teh sphere into box coordinates
+        // 2. Check to see if it's valid based on center
+        // 3. Clamp each coordinate to the box 
+        // 4. Check for contact
+        // 5. Compile the contact & generate the values
 
-        //Gets the normal
-        //Calculate the collision normal
-        //n = (Pa - Pb) / |(Pa - Pb)}|
-        Vector2 contactNormal;
+        // 1. Transform the center of the sphere into box coordinates
+        Vector2 ceneter = cirlce.particle.position;
+        Vector2 relCenter = aabb.particle.transform.InverseTransformPoint(ceneter);
 
-        //NOTE: this can be uncomented once we know what contact to put normal into
+        // 2. Check to see if it's valid based on center
+        if (Mathf.Abs(relCenter.x) - cirlce.radius > aabb.maxExtent.x ||
+            Mathf.Abs(relCenter.y) - cirlce.radius > aabb.maxExtent.y)
+            return false;
 
-        //contactNormal = particleA.position - particleB.position; 
-        //collisionData.contact[contactBeingCalculated].normal = collisionData.contact[contactBeingCalculated].normal / collisionData.contact[contactBeingCalculated].normal.magnitude; //NOTE: this is probably inefficant (using magnitude & division) rework later.
+        // 3. Clamp each coordinate to the box 
+        float distance;
+        Vector2 closestPoint = new Vector2(0,0);
 
+        distance = relCenter.x;
+        if (distance > aabb.maxExtent.x) distance = aabb.maxExtent.x;
+        if (distance < -aabb.maxExtent.x) distance = -aabb.maxExtent.x;
+        closestPoint.x = distance;
 
+        distance = relCenter.y;
+        if (distance > aabb.maxExtent.y) distance = aabb.maxExtent.y;
+        if (distance < -aabb.maxExtent.y) distance = -aabb.maxExtent.y;
+        closestPoint.y = distance;
+
+        distance = (closestPoint - relCenter).sqrMagnitude;
+        if (distance > cirlce.radius * cirlce.radius)
+            return false;
+
+        Vector2 closestPtWorld = aabb.transform.TransformVector(closestPoint);
+
+        c.contact[0].normal = closestPtWorld - ceneter;
+        c.contact[0].normal = Vector3.Normalize(c.contact[0].normal);
+        c.contact[0].point = closestPtWorld;
+        c.contact[0].penetration = cirlce.radius - Mathf.Sqrt(distance);
+
+        return true;
+
+    }
+
+    public void clearContacts(ref Collision c)
+    {
+        for(int i = 0; i < c.contactCount; i++)
+        {
+            c.contact[i].normal = Vector2.zero;
+            c.contact[i].point = Vector2.zero;
+            c.contact[i].penetration = 0;
+           
+
+        }
+
+        c.a = null;
+        c.b = null;
+        c.contactCount = 0;
+        c.iterationsUsed = 0;
     }
 
     public static bool TestCollision(CollisionHull2D a, CollisionHull2D b, ref Collision c)

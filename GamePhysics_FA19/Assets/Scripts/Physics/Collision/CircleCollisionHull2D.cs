@@ -11,6 +11,7 @@ public class CircleCollisionHull2D : CollisionHull2D
     // 2. Center (can be found using position)
     [Range(0.0f, 100f)]
     public float radius;
+    public float restitution;
     public Vector2 center;
 
     [Header("Debug Material")]
@@ -39,14 +40,26 @@ public class CircleCollisionHull2D : CollisionHull2D
             case CollisionHullType2D.hull_circle:
                 if (TestCollisionVsCircle((CircleCollisionHull2D)other, ref c))
                 {
+                    //Does the correct populate
+                    PopulateCollisionClassCircleVsCirlce(this, (CircleCollisionHull2D)other, ref c);
+                    //Resolves the collisions
+                    ResolveCollisions(ref c);
                     Debug.Log(gameObject.name + " Colliding with " + other.name);
+
+                    clearContacts(ref c); //Clears the information used after contacts have been resolved
+
                     colliding = true;
+
+
                 }
                 break;
             // If other object is a aabb hull
             case CollisionHullType2D.hull_aabb:
                 if (TestCollisionVsAABB((AxisAlignBoundingBoxCollisionHull2D)other, ref c))
                 {
+                    PopulateCollisionClassAABBVSCircle(this, (AxisAlignBoundingBoxCollisionHull2D)other, ref c);
+                    //Resolves the collisions
+                    ResolveCollisions(ref c);
                     Debug.Log(gameObject.name + " Colliding with " + other.name);
                     colliding = true;
                 }
@@ -70,6 +83,7 @@ public class CircleCollisionHull2D : CollisionHull2D
         return colliding;
     }
 
+    //Circle vs Circle
     public override bool TestCollisionVsCircle(CircleCollisionHull2D other, ref Collision c)
     {
         // collision if distance between centers is <= sum of radii
@@ -139,4 +153,6 @@ public class CircleCollisionHull2D : CollisionHull2D
         else
             return false;
     }
+
+
 }
