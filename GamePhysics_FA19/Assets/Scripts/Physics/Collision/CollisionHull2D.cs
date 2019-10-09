@@ -49,9 +49,6 @@ public abstract class CollisionHull2D : MonoBehaviour
 
     public void ResolveCollisions(ref Collision collisionData)
     {
-        //TODO: Calculate contact normals on collision
-        //TODO: Calculate penetration on collisions
-        //TODO: Fill the collision class on collison lol
 
         //Gets the particles
         Particle2D particleA = collisionData.a.particle;
@@ -175,13 +172,6 @@ public abstract class CollisionHull2D : MonoBehaviour
         //Gets the particles
         Particle2D particleA = collisionData.a.particle;
         Particle2D particleB = collisionData.b.particle;
-
-        //I think this is calculated on collision for effeciancy
-
-        //Calculate the collision normal
-        //n = (Pa - Pb) / |(Pa - Pb)}|
-        //collisionData.contactNormal = particleA.position - particleB.position;
-        //collisionData.contactNormal = collisionData.contactNormal / collisionData.contactNormal.magnitude; //NOTE: this is probably inefficant (using magnitude & division) rework later.
 
         //1. Get penetration (though collision) 
         //This is done on collision detection, so ignore here
