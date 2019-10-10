@@ -43,7 +43,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        CheckEdgeOfView();
+        gm.CheckEdgeOfView(ref p2D);
         UpdateMovement();
     }
 
@@ -68,22 +68,5 @@ public class PlayerController : MonoBehaviour
         {
             p2D.AddForceForward(-forceReverse2D);
         }
-    }
-
-//  TO-DO: Move this to GameManager and let it take in the particle2D by reference to adjust for asteroids too!
-    void CheckEdgeOfView()
-    {
-        // If moves off right side of view, move to left side
-        if (p2D.position.x > gm.edgeRight + gm.buffer)
-            p2D.position = new Vector2(gm.edgeLeft - gm.buffer, transform.position.y);
-        // If moves off left side of view, move to right side
-        else if (p2D.position.x < gm.edgeLeft - gm.buffer)
-            p2D.position = new Vector2(gm.edgeRight + gm.buffer, transform.position.y);
-        // If moves off top of view, move to bottom side
-        else if (p2D.position.y > gm.edgeTop + gm.buffer)
-            p2D.position = new Vector2(transform.position.x, gm.edgeBot - gm.buffer);
-        // If moves off bottom of view, move to top side
-        else if (p2D.position.y < gm.edgeBot - gm.buffer)
-            p2D.position = new Vector2(transform.position.x, gm.edgeTop + gm.buffer);
     }
 }

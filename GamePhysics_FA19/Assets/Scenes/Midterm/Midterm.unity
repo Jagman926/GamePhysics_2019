@@ -555,6 +555,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4266133ac29ee2d45a0fe6e37b15e570, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  restitution: 0.5
 --- !u!1 &1878996589
 GameObject:
   m_ObjectHideFlags: 0
@@ -628,10 +629,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bde3756244b7fdf40b32fd4892e2bd5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  asteroidPrefab: {fileID: 0}
-  maxAsteroidCount: 0
-  currentAsteroidCount: 0
-  asteroidSpawnBuffer: 0
+  asteroidPrefab: {fileID: 2714759852339611470, guid: a760e9502d34fdb45b95699f1bdb3226,
+    type: 3}
+  maxAsteroidCount: 10
+  asteroidMinScale: 0.5
+  asteroidMaxScale: 2.5
+  asteroidMinSpeed: 20
+  asteroidMaxSpeed: 50
+  asteroidSpawnBuffer: 1
   edgeRight: 18
   edgeLeft: -18
   edgeTop: 10.3

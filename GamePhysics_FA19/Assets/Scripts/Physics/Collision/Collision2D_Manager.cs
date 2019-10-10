@@ -21,6 +21,7 @@ public class Collision2D_Manager : MonoBehaviour
 
     void Update()
     {
+        collisionObjects = FindObjectsOfType(typeof(CollisionHull2D)) as CollisionHull2D[];
         UpdateObjectTransforms();
         CheckObjectCollisions();
     }
