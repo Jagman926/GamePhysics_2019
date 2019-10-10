@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -44,6 +45,8 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private GameObject player;
 
+    bool gameOver = false;
+
     void Start()
     {
         asteroidsList = new List<GameObject>();
@@ -54,6 +57,11 @@ public class GameManager : MonoBehaviour
     {
         CheckToSpawnAsteroid();
         CheckAsteroidWrap();
+
+        if(gameOver && Input.GetKeyDown(KeyCode.Space))
+        {
+            ResetGame();
+        }
     }
 
     public void CheckEdgeOfView(ref Particle2D p2D)
@@ -70,6 +78,19 @@ public class GameManager : MonoBehaviour
         // If moves off bottom of view, move to top side
         else if (p2D.position.y < edgeBot - buffer)
             p2D.position = new Vector2(transform.position.x, edgeTop + buffer);
+    }
+
+    public void EndGame()
+    {
+        Debug.Log("GET RECKED");
+        gameOverCanvas.enabled = true;
+        Destroy(player);
+        gameOver = true;
+    }
+
+    private void ResetGame()
+    {
+        SceneManager.LoadScene(0);
     }
 
     void CheckAsteroidWrap()
@@ -136,10 +157,5 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void EndGame()
-    {
-        Debug.Log("GET RECKED");
-        gameOverCanvas.enabled = true;
-        Destroy(player);
-    }
+
 }
