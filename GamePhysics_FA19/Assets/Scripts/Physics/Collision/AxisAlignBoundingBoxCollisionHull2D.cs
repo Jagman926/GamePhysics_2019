@@ -82,10 +82,12 @@ public class AxisAlignBoundingBoxCollisionHull2D : CollisionHull2D
             default:
                 break;
         }
-        if (colliding)
-            renderer.material = mat_red;
-        else
-            renderer.material = mat_green;
+        /*
+            if (colliding)
+                renderer.material = mat_red;
+            else
+                renderer.material = mat_green;
+        */
 
         return colliding;
     }
@@ -93,7 +95,7 @@ public class AxisAlignBoundingBoxCollisionHull2D : CollisionHull2D
     public override bool TestCollisionVsCircle(CircleCollisionHull2D other, ref Collision c)
     {
         // See CircleCollisionHull2D
-        
+
         if (other.TestCollisionVsAABB(this, ref c))
             return true;
         else

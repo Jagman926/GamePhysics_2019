@@ -110,10 +110,12 @@ public class CircleCollisionHull2D : CollisionHull2D
             default:
                 break;
         }
+        /*
         if (colliding)
             renderer.material = mat_red;
         else
             renderer.material = mat_green;
+        */
 
         return colliding;
     }

@@ -11,7 +11,6 @@ public class Collision2D_Manager : MonoBehaviour
 
     public float restitution;
 
-
     void Start()
     {
         collisionObjects = FindObjectsOfType(typeof(CollisionHull2D)) as CollisionHull2D[];
