@@ -147,8 +147,8 @@ public abstract class CollisionHull2D : MonoBehaviour
         particleB.SetVelocity(particleB.GetVelocity() + impulsePerIMass * particleB.GetInvMass());
 
         //Method B
-        //particleA.AddForce(particleA.GetVelocity() + impulsePerIMass * particleA.GetInvMass());
-        //particleB.AddForce(particleA.GetVelocity() + impulsePerIMass * -particleA.GetInvMass());
+        //particleA.AddForce(particleA.GetVelocity() + impulsePerIMass * -particleA.GetInvMass());
+        //particleB.AddForce(particleB.GetVelocity() + impulsePerIMass * particleB.GetInvMass());
 
     }
 

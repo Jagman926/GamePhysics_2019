@@ -40,13 +40,23 @@ public class CircleCollisionHull2D : CollisionHull2D
             case CollisionHullType2D.hull_circle:
                 if (TestCollisionVsCircle((CircleCollisionHull2D)other, ref c))
                 {
-                    //Does the correct populate
-                    PopulateCollisionClassCircleVsCirlce(this, (CircleCollisionHull2D)other, ref c);
-                    //Resolves the collisions
-                    ResolveCollisions(ref c);
-                    Debug.Log(gameObject.name + " Colliding with " + other.name);
 
-                    clearContacts(ref c); //Clears the information used after contacts have been resolved
+                    if (c.status)
+                    {
+                        c.status = false;
+                    }
+                    else
+                    {
+                        //Does the correct populate
+                        PopulateCollisionClassCircleVsCirlce(this, (CircleCollisionHull2D)other, ref c);
+                        //Resolves the collisions
+                        ResolveCollisions(ref c);
+
+                        clearContacts(ref c); //Clears the information used after contacts have been resolved
+                        c.status = true;
+                    }
+
+                    Debug.Log(gameObject.name + " Colliding with " + other.name);
 
                     colliding = true;
 
@@ -57,10 +67,19 @@ public class CircleCollisionHull2D : CollisionHull2D
             case CollisionHullType2D.hull_aabb:
                 if (TestCollisionVsAABB((AxisAlignBoundingBoxCollisionHull2D)other, ref c))
                 {
-                    PopulateCollisionClassAABBVSCircle(this, (AxisAlignBoundingBoxCollisionHull2D)other, ref c);
-                    //Resolves the collisions
-                    ResolveCollisions(ref c);
-                    clearContacts(ref c); //Clears the information used after contacts have been resolved
+                    if (c.status)
+                    {
+                        c.status = false;
+                    }
+                    else
+                    {
+                        PopulateCollisionClassAABBVSCircle(this, (AxisAlignBoundingBoxCollisionHull2D)other, ref c);
+                        //Resolves the collisions
+                        ResolveCollisions(ref c);
+                        clearContacts(ref c); //Clears the information used after contacts have been resolved
+                        c.status = true;
+                    }
+
 
                     Debug.Log(gameObject.name + " Colliding with " + other.name);
                     colliding = true;
@@ -71,10 +90,19 @@ public class CircleCollisionHull2D : CollisionHull2D
                 if (TestCollisionVsOBB((ObjectBoundingBoxCollisionHull2D)other, ref c))
                 {
                     Debug.Log(gameObject.name + " Colliding with " + other.name);
-                    PopulateCollisionClassOBBVSCircle(this, (ObjectBoundingBoxCollisionHull2D)other, ref c);
-                    //Resolves the collisions
-                    ResolveCollisions(ref c);
-                    clearContacts(ref c); //Clears the information used after contacts have been resolved
+                    if (c.status)
+                    {
+                        c.status = false;
+                    }
+                    else
+                    {
+                        PopulateCollisionClassOBBVSCircle(this, (ObjectBoundingBoxCollisionHull2D)other, ref c);
+                        //Resolves the collisions
+                        ResolveCollisions(ref c);
+                        clearContacts(ref c); //Clears the information used after contacts have been resolved
+                        c.status = true;
+                    }
+
 
                     colliding = true;
                 }
