@@ -38,6 +38,8 @@ public class Particle2D : MonoBehaviour
     [SerializeField]
     private Vector2 velocity = Vector2.zero;
     [SerializeField]
+    private float maxVelocity = 0.0f;
+    [SerializeField]
     private Vector2 acceleration = Vector2.zero;
 
     [Header("Rotation Variables")]
@@ -165,6 +167,9 @@ public class Particle2D : MonoBehaviour
     public void SetVelocity(Vector2 newVelocity)
     {
         velocity = newVelocity;
+
+       velocity.x = Mathf.Clamp(velocity.x, -maxVelocity, maxVelocity); 
+       velocity.y = Mathf.Clamp(velocity.y, -maxVelocity, maxVelocity);
     }
 
     public void AddForce(Vector2 newForce)

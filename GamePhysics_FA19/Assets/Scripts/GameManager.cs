@@ -106,6 +106,8 @@ public class GameManager : MonoBehaviour
         // Set scale
         generatedAsteroid.GetComponent<Particle2D>().radiusOuter = asteroidScale / 2.0f;
         generatedAsteroid.GetComponent<CircleCollisionHull2D>().radius = asteroidScale / 2.0f;
+        //Set mass
+        generatedAsteroid.GetComponent<Particle2D>().SetMass(asteroidScale);
         // Return generated asteroid
         return generatedAsteroid;
     }

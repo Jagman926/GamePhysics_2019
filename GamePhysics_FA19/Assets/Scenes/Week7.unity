@@ -149,7 +149,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4266133ac29ee2d45a0fe6e37b15e570, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  restitution: 0.25
+  restitution: 0
 --- !u!4 &51126933
 Transform:
   m_ObjectHideFlags: 0
@@ -225,7 +225,8 @@ MonoBehaviour:
   inertia: 0
   inertiaInv: 0
   position: {x: 4, y: 0}
-  velocity: {x: 1, y: -1}
+  velocity: {x: 0, y: -1}
+  maxVelocity: 0
   acceleration: {x: 0, y: 0}
   rotation: {x: 0, y: 0, z: 0}
   angularVelocity: {x: 0, y: 0, z: 0}
@@ -285,7 +286,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 995892708}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.93, y: 1.74, z: 0}
+  m_LocalPosition: {x: -1.38, y: 1.7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -530,6 +531,7 @@ MonoBehaviour:
   inertiaInv: 0
   position: {x: 0, y: 0}
   velocity: {x: 0, y: 0}
+  maxVelocity: 0
   acceleration: {x: 0, y: 0}
   rotation: {x: 0, y: 0, z: 0}
   angularVelocity: {x: 0, y: 0, z: 0}
@@ -589,7 +591,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1475990621}
   m_LocalRotation: {x: -0, y: -0, z: 0.8699872, w: 0.49307433}
-  m_LocalPosition: {x: 0.12, y: 0.13, z: 0}
+  m_LocalPosition: {x: -0.61, y: -0.25, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -657,6 +659,7 @@ MonoBehaviour:
   inertiaInv: 0
   position: {x: 0, y: 2}
   velocity: {x: 0, y: 0}
+  maxVelocity: 0
   acceleration: {x: 0, y: 0}
   rotation: {x: 0, y: 0, z: 0}
   angularVelocity: {x: 0, y: 0, z: 0}
@@ -716,7 +719,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1499929151}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.93, y: -3.31, z: 0}
+  m_LocalPosition: {x: -4.98, y: 1.81, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -784,6 +787,7 @@ MonoBehaviour:
   inertiaInv: 0
   position: {x: 0, y: -4}
   velocity: {x: 0, y: 0}
+  maxVelocity: 0
   acceleration: {x: 0, y: 0}
   rotation: {x: 0, y: 0, z: 0}
   angularVelocity: {x: 0, y: 0, z: 0}
@@ -843,7 +847,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2133031322}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.46, y: 0, z: 0}
+  m_LocalPosition: {x: -6.46, y: -2.37, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

@@ -78,6 +78,7 @@ public abstract class CollisionHull2D : MonoBehaviour
             if (maxIndex == collisionData.contactCount)
                 break;
 
+
             Resolve(ref collisionData, maxIndex);
 
             collisionData.iterationsUsed++;
@@ -143,8 +144,8 @@ public abstract class CollisionHull2D : MonoBehaviour
         //6. Apply inpulse to velocity
         //Two potentail ways to handle this, either A: Set the velocity directly, or B: Add the impulse as a force.
         //Method A
-        particleA.SetVelocity(particleA.GetVelocity() + impulsePerIMass * -particleA.GetInvMass());
-        particleB.SetVelocity(particleB.GetVelocity() + impulsePerIMass * particleB.GetInvMass());
+        particleA.SetVelocity(impulsePerIMass * -particleA.GetInvMass());
+        particleB.SetVelocity(impulsePerIMass * particleB.GetInvMass());
 
         //Method B
         //particleA.AddForce(particleA.GetVelocity() + impulsePerIMass * -particleA.GetInvMass());
@@ -165,7 +166,7 @@ public abstract class CollisionHull2D : MonoBehaviour
         // - particleMovementB = movePerInverseMass * -particleBInverseMass
         //6. Apply to positions
         // - particleAPosition += particleMovementA
-        // - particleBPosition += -particleMovementB
+        // - particleBPosition += particleMovementB
 
         //Sets up needed variables
 
@@ -177,14 +178,17 @@ public abstract class CollisionHull2D : MonoBehaviour
         //This is done on collision detection, so ignore here
 
         //2. Check for penetration
-        if (collisionData.contact[contactBeingCalculated].penetration <= 0)
+        if (collisionData.contact[contactBeingCalculated].penetration <= 0.01)
             return;
 
         //3. Caculate total inverse mass
         float totalInvMass = particleA.GetInvMass() + particleB.GetInvMass();
 
         //4. find amount of penitration per inverse mass
-        Vector2 movmentPerInvMass = -collisionData.contact[contactBeingCalculated].normal * (collisionData.contact[contactBeingCalculated].penetration / totalInvMass);
+        Vector2 movmentPerInvMass = collisionData.contact[contactBeingCalculated].normal * (collisionData.contact[contactBeingCalculated].penetration / totalInvMass);
+
+        //if (movmentPerInvMass.x <= 0 && movmentPerInvMass.y <= 0)
+        //    return;
 
         //5. Calculate movement amounts
         // - particleMovementA = movePerInverseMass * particleAInverseMass
@@ -194,9 +198,11 @@ public abstract class CollisionHull2D : MonoBehaviour
 
         //6. Apply to positions
         // - particleAPosition += particleMovementA
-        // - particleBPosition += -particleMovementB
+        // - particleBPosition += particleMovementB
         particleA.SetPosition(particleA.GetPosition() + particleMovmentA);
-        particleB.SetPosition(particleB.GetPosition() - particleMovmentB);
+        particleB.SetPosition(particleB.GetPosition() + particleMovmentB);
+
+        Debug.Log("Particle A: " + particleA.name + " || " + " Particle B: " + particleB.name);
 
     }
 
@@ -214,6 +220,8 @@ public abstract class CollisionHull2D : MonoBehaviour
 
         // 2. Calculate the size (magnitude of midline)
         float size = midline.magnitude;
+        
+       
 
         // 3. test to see if the size is large enough
         if (size <= 0.0f || size >= a.radius + b.radius)
@@ -225,9 +233,9 @@ public abstract class CollisionHull2D : MonoBehaviour
         Vector2 normal = midline * (1.0f / size); //Potential optimization here, cut division?
 
         // 5. Calculate contact info
-        c.contact[0].normal = normal;
+        c.contact[0].normal = normal.normalized;
         c.contact[0].point = a.particle.position + midline * 0.5f;
-        c.contact[0].penetration = (a.radius + b.radius - size);
+        c.contact[0].penetration = (a.radius + b.radius ) - size;
 
         c.contactCount = 1;
 
