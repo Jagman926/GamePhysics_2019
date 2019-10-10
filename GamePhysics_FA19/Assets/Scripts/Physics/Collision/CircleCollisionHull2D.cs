@@ -48,7 +48,7 @@ public class CircleCollisionHull2D : CollisionHull2D
                     else
                     {
                         c.status = true;
-                         //Does the correct populate
+                        //Does the correct populate
                         PopulateCollisionClassCircleVsCirlce(this, (CircleCollisionHull2D)other, ref c);
                         //Resolves the collisions
                         ResolveCollisions(ref c);
@@ -62,6 +62,8 @@ public class CircleCollisionHull2D : CollisionHull2D
 
 
                 }
+                else
+                    colliding = false;
                 break;
             // If other object is a aabb hull
             case CollisionHullType2D.hull_aabb:
@@ -84,6 +86,8 @@ public class CircleCollisionHull2D : CollisionHull2D
                     Debug.Log(gameObject.name + " Colliding with " + other.name);
                     colliding = true;
                 }
+                else
+                    colliding = false;
                 break;
             // If other object is a obb hull
             case CollisionHullType2D.hull_obb:
@@ -106,6 +110,8 @@ public class CircleCollisionHull2D : CollisionHull2D
 
                     colliding = true;
                 }
+                else
+                    colliding = false;
                 break;
             default:
                 break;

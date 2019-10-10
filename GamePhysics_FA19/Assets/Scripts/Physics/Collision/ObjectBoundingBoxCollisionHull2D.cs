@@ -84,6 +84,8 @@ public class ObjectBoundingBoxCollisionHull2D : CollisionHull2D
 
                     colliding = true;
                 }
+                else
+                    colliding = false;
                 break;
             // If other object is a aabb hull
             case CollisionHullType2D.hull_aabb:
@@ -92,6 +94,8 @@ public class ObjectBoundingBoxCollisionHull2D : CollisionHull2D
                     Debug.Log(gameObject.name + " Colliding with " + other.name);
                     colliding = true;
                 }
+                else
+                    colliding = false;
                 break;
             // If other object is a obb hull
             case CollisionHullType2D.hull_obb:
@@ -101,6 +105,8 @@ public class ObjectBoundingBoxCollisionHull2D : CollisionHull2D
 
                     colliding = true;
                 }
+                else
+                    colliding = false;
                 break;
             default:
                 break;
