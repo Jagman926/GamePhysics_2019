@@ -76,7 +76,10 @@ public abstract class CollisionHull2D : MonoBehaviour
             }
 
             if (maxIndex == collisionData.contactCount)
+            {
+                collisionData.status = false;
                 break;
+            }
 
 
             Resolve(ref collisionData, maxIndex);
@@ -127,7 +130,11 @@ public abstract class CollisionHull2D : MonoBehaviour
 
         //2. Check if impuls is required
         if (initalSeperatingVelocity < 0f)
+        {
+            collisionData.status = false;
             return;
+
+        }
 
         //3. Calculate new seperating velocity
         float newSeperatingVelocity = -initalSeperatingVelocity * collisionData.restitution;

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -24,6 +25,7 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private float asteroidMaxSpeed;
 
+
     [Header("Asteroid Timing")]
     [SerializeField]
     private float asteroidSpawnBuffer;
@@ -36,9 +38,16 @@ public class GameManager : MonoBehaviour
     public float edgeBot = -10.3f;
     public float buffer = 0.1f;
 
+    [Header("Game Over Stuff")]
+    [SerializeField]
+    private Canvas gameOverCanvas;
+    [SerializeField]
+    private GameObject player;
+
     void Start()
     {
         asteroidsList = new List<GameObject>();
+        gameOverCanvas.enabled = false;
     }
 
     void Update()
@@ -125,5 +134,12 @@ public class GameManager : MonoBehaviour
             float edge = Random.Range(0,2)*2-1;
             return new Vector3(Random.Range(edgeLeft, edgeRight), edge * edgeTop, 0.0f);
         }
+    }
+
+    public void EndGame()
+    {
+        Debug.Log("GET RECKED");
+        gameOverCanvas.enabled = true;
+        Destroy(player);
     }
 }

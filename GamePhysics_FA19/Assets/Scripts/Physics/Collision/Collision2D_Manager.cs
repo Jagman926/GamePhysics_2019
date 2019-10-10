@@ -9,6 +9,9 @@ public class Collision2D_Manager : MonoBehaviour
 
     private CollisionHull2D.Collision collision;
 
+    [SerializeField]
+    private GameManager gameManager;
+
     public float restitution;
 
     void Start()
@@ -18,7 +21,7 @@ public class Collision2D_Manager : MonoBehaviour
         collision.restitution = restitution;
     }
 
-    void Update()
+    private void FixedUpdate()
     {
         collisionObjects = FindObjectsOfType(typeof(CollisionHull2D)) as CollisionHull2D[];
         UpdateObjectTransforms();
@@ -44,7 +47,17 @@ public class Collision2D_Manager : MonoBehaviour
                 CollisionHull2D thisHull = collisionObjects[i];
                 CollisionHull2D otherHull = collisionObjects[j];
                 // Check for collision
-                thisHull.isColliding(otherHull, ref collision);
+                if(thisHull.isColliding(otherHull, ref collision))
+                {
+                    //Checks if player is colliding
+                    if ((thisHull.gameObject.tag == "Player" || otherHull.gameObject.tag == "Player"))
+                    {
+                        //END GAME
+                        if(collision.status)
+                            gameManager.EndGame();
+                    }
+                }
+
             }
     }
 }

@@ -47,13 +47,13 @@ public class CircleCollisionHull2D : CollisionHull2D
                     }
                     else
                     {
-                        //Does the correct populate
+                        c.status = true;
+                         //Does the correct populate
                         PopulateCollisionClassCircleVsCirlce(this, (CircleCollisionHull2D)other, ref c);
                         //Resolves the collisions
                         ResolveCollisions(ref c);
 
                         clearContacts(ref c); //Clears the information used after contacts have been resolved
-                        c.status = true;
                     }
 
                     Debug.Log(gameObject.name + " Colliding with " + other.name);
