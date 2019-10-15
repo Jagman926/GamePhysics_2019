@@ -33,6 +33,19 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private Vector2 rotationMomentArmLeft;
 
+    [Header("Particle System")]
+    // Particle Effects
+    [SerializeField]
+    private ParticleSystem psL;
+    [SerializeField]
+    private ParticleSystem psR;
+    [SerializeField]
+    private ParticleSystem psB;
+    [SerializeField]
+    private ParticleSystem psF;
+    [SerializeField]
+    private GameObject explosionPrefab;
+
     void Start()
     {
         // Particle2D
@@ -47,26 +60,35 @@ public class PlayerController : MonoBehaviour
         UpdateMovement();
     }
 
+    void OnDestroy()
+    {
+        Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+    }
+
     void UpdateMovement()
     {
         // Clockwise Rotation
         if (Input.GetKey(keycode_yaw_CW))
         {
             p2D.ApplyTorque(-forceRotation2D, rotationMomentArmRight);
+            psR.Emit(1);
         }
         // Counter-Clockwise Rotation
         if (Input.GetKey(keycode_yaw_CCW))
         {
             p2D.ApplyTorque(forceRotation2D, rotationMomentArmRight);
+            psL.Emit(1);
         }
         // Forward Movement
         if (Input.GetKey(keycode_forward))
         {
             p2D.AddForceForward(forceForward2D);
+            psB.Emit(1);
         }
         if (Input.GetKey(keyCode_reverse))
         {
             p2D.AddForceForward(-forceReverse2D);
+            psF.Emit(1);
         }
     }
 }
