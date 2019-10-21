@@ -12,8 +12,7 @@ public class Particle3D : MonoBehaviour
         ROD,            // I = 1/12 * m * l^2
     }
 
-    // lab 2 step 1
-    [Header("Object Variables")]
+    [Header("Object Shape Variables")]
     [SerializeField]
     private Shape shapeType = 0;
     public float height = 0.0f;
@@ -29,9 +28,22 @@ public class Particle3D : MonoBehaviour
     [SerializeField]
     private Vector2 centerOfMass = Vector2.zero;
 
-    [Header("Inertia Variables")]
+    [Header("Force Variables")]
     [SerializeField]
     private float inertia = 0.0f, inertiaInv = 0.0f;
+    private Vector2 force = Vector2.zero;
+    private float torque = 0.0f;
+    //
+    Vector2 f_gravity, f_normal, f_sliding, f_friction, f_drag, f_spring;
+    private float inclineDegrees = 340.0f;
+    private float frictionCoeff_s = 0.61f, frictionCoeff_k = 0.47f;
+    private Vector2 fluidVelocity;
+    private float fluidDensity = 0.001225f, dragCoefficient = 1.05f;
+    // Spring variables
+    [SerializeField]
+    private GameObject anchorObject = null;
+    private Vector2 anchorPosition = Vector2.zero;
+    private float springRestingLength = 5.0f, springStiffnessCoefficient = 6.4f;
 
     [Header("Position Variables")]
     public Vector2 position = Vector2.zero;
@@ -49,28 +61,6 @@ public class Particle3D : MonoBehaviour
     [SerializeField]
     private Vector3 angularAcceleration = Vector3.zero;
 
-    private Vector2 force = Vector2.zero;
-    private float torque = 0.0f;
-
-    // Force Variables
-    Vector2 f_gravity, f_normal, f_sliding, f_friction, f_drag, f_spring;
-    private float inclineDegrees = 340.0f;
-    private float frictionCoeff_s = 0.61f, frictionCoeff_k = 0.47f;     // For: Aluminum | Mild Steel | Clean and Dry 
-                                                                        // https://www.engineeringtoolbox.com/friction-coefficients-d_778.html
-    private Vector2 fluidVelocity;
-    private float fluidDensity = 0.001225f, dragCoefficient = 1.05f;    // For: Cube Drag Coefficient
-                                                                        // https://en.wikipedia.org/wiki/Drag_coefficient 
-                                                                        // For: Fluid Density
-                                                                        // https://en.wikipedia.org/wiki/Density_of_air
-    [SerializeField]
-    private GameObject anchorObject = null;
-    private Vector2 anchorPosition = Vector2.zero;
-    private float springRestingLength = 5.0f, springStiffnessCoefficient = 6.4f;
-
-    // Test variables
-    // public Vector2 testForce;
-    // public Vector2 momentArm;
-
     void Start()
     {
         InitStartingVariables();
@@ -79,16 +69,16 @@ public class Particle3D : MonoBehaviour
     void FixedUpdate()
     {
         // Update position and rotation
-        J_Physics.UpdatePosition3D(ref position, ref velocity, ref acceleration, Time.fixedDeltaTime);
-        J_Physics.UpdateRotation3D(ref rotation, ref angularVelocity, ref angularAcceleration, Time.fixedDeltaTime);
+        J_Physics.UpdatePosition3D();
+        J_Physics.UpdateRotation3D();
 
         // apply to transform
         transform.position = position;
         transform.eulerAngles = rotation;
 
         // Update acceleration | angular acceleration
-        UpdateAcceleration();
-        UpdateAngularAcceleration();
+        J_Physics.UpdateAcceleration3D();
+        J_Physics.UpdateAngularAcceleration3D();
     }
 
     private void InitStartingVariables()
@@ -203,21 +193,5 @@ public class Particle3D : MonoBehaviour
     public void SetPosition(Vector2 newPosition)
     {
         position = newPosition;
-    }
-
-    private void UpdateAcceleration()
-    {
-        //Newton 2
-        acceleration = massInv * force;
-        // All forces are applied for a frame and then reset
-        force = Vector2.zero;
-    }
-
-    private void UpdateAngularAcceleration()
-    {
-        // Newton 2
-        angularAcceleration.z = inertiaInv * torque;
-        // All torques are applied for a frame and then reset
-        torque = 0.0f;
     }
 }

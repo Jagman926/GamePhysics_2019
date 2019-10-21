@@ -6,6 +6,8 @@ public class J_Physics
 {
     static public float gravity = -9.8f;
 
+    // 2D ------------------------------------------------------------------------------------
+
     static public void UpdatePosition2D(ref Vector2 position, ref Vector2 velocity, ref Vector2 acceleration, float dt)
     {
         // x(t+dt) = x(t) + v(t+dt) + 1/2(a(t)(dt*dt))
@@ -23,6 +25,25 @@ public class J_Physics
         // v(t+dt) = v(t) + a(t)dt
         angularVelocity += angularAcceleration * dt;
     }
+
+    static public void UpdateAcceleration2D(ref Vector2 acceleration, float massInv, ref Vector2 force)
+    {
+        //Newton 2
+        acceleration = massInv * force;
+        // All forces are applied for a frame and then reset
+        force = Vector2.zero;
+    }
+
+    static public void UpdateAngularAcceleration2D(ref float angularAcceleration, float inertiaInv, ref float torque)
+    {
+        // Newton 2
+        angularAcceleration = inertiaInv * torque;
+        // All torques are applied for a frame and then reset
+        torque = 0.0f;
+    }
+
+    // 3D ------------------------------------------------------------------------------------
+
     static public void UpdatePosition3D(ref Vector2 position, ref Vector2 velocity, ref Vector2 acceleration, float dt)
     {
         // x(t+dt) = x(t) + v(t+dt) + 1/2(a(t)(dt*dt))
@@ -39,5 +60,15 @@ public class J_Physics
         rotation.z = rotation.z % 360;
         // v(t+dt) = v(t) + a(t)dt
         angularVelocity += angularAcceleration * dt;
+    }
+
+    static public void UpdateAcceleration3D()
+    {
+
+    }
+
+    static public void UpdateAngularAcceleration3D()
+    {
+
     }
 }
