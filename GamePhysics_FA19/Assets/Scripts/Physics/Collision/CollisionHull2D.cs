@@ -141,7 +141,7 @@ public abstract class CollisionHull2D : MonoBehaviour
         float deltaSeperatingVelocity = newSeperatingVelocity - initalSeperatingVelocity;
 
 
-        //4. Caclulate total inverse mass
+        //4. Caclulate total inverse mass //FIX MATH HERE CHECK BOOK massB/massA + massB
         float totalInvMass = particleA.GetInvMass() + particleB.GetInvMass();
 
         //5. calculate impulse
