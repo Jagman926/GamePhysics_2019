@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Particle2D : MonoBehaviour
+public class Particle3D : MonoBehaviour
 {
     enum Shape
     {
@@ -18,7 +18,7 @@ public class Particle2D : MonoBehaviour
     private Shape shapeType = 0;
     public float height = 0.0f;
     public float length = 0.0f;
-    public float width= 0.0f;
+    public float width = 0.0f;
     public float radiusOuter = 0.0f;
     public float radiusInner = 0.0f;
 
@@ -62,7 +62,7 @@ public class Particle2D : MonoBehaviour
                                                                         // https://en.wikipedia.org/wiki/Drag_coefficient 
                                                                         // For: Fluid Density
                                                                         // https://en.wikipedia.org/wiki/Density_of_air
-    [SerializeField]                                                                  
+    [SerializeField]
     private GameObject anchorObject = null;
     private Vector2 anchorPosition = Vector2.zero;
     private float springRestingLength = 5.0f, springStiffnessCoefficient = 6.4f;
@@ -79,8 +79,8 @@ public class Particle2D : MonoBehaviour
     void FixedUpdate()
     {
         // Update position and rotation
-        J_Physics.UpdatePosition2D(ref position, ref velocity, ref acceleration, Time.fixedDeltaTime);
-        J_Physics.UpdateRotation2D(ref rotation, ref angularVelocity, ref angularAcceleration, Time.fixedDeltaTime);
+        J_Physics.UpdatePosition3D(ref position, ref velocity, ref acceleration, Time.fixedDeltaTime);
+        J_Physics.UpdateRotation3D(ref rotation, ref angularVelocity, ref angularAcceleration, Time.fixedDeltaTime);
 
         // apply to transform
         transform.position = position;
@@ -168,8 +168,8 @@ public class Particle2D : MonoBehaviour
     {
         velocity = newVelocity;
 
-       velocity.x = Mathf.Clamp(velocity.x, -maxVelocity, maxVelocity); 
-       velocity.y = Mathf.Clamp(velocity.y, -maxVelocity, maxVelocity);
+        velocity.x = Mathf.Clamp(velocity.x, -maxVelocity, maxVelocity);
+        velocity.y = Mathf.Clamp(velocity.y, -maxVelocity, maxVelocity);
     }
 
     public void AddForce(Vector2 newForce)
