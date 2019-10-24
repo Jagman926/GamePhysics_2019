@@ -32,9 +32,9 @@ public class Particle3D : MonoBehaviour
     [SerializeField]
     private float inertia = 0.0f, inertiaInv = 0.0f;
     private Vector3 force = Vector3.zero;
-    private float torque = 0.0f;
+    private Vector3 torque = Vector3.zero;
     //
-    Vector2 f_gravity, f_normal, f_sliding, f_friction, f_drag, f_spring;
+    Vector3 f_gravity, f_normal, f_sliding, f_friction, f_drag, f_spring;
     private float inclineDegrees = 340.0f;
     private float frictionCoeff_s = 0.61f, frictionCoeff_k = 0.47f;
     private Vector3 fluidVelocity;
@@ -55,7 +55,7 @@ public class Particle3D : MonoBehaviour
     private Vector3 acceleration = Vector3.zero;
 
     [Header("Rotation Variables")]
-    public Vector3 rotation = Vector3.zero;
+    public J_Quaternion rotation;
     [SerializeField]
     private Vector3 angularVelocity = Vector3.zero;
     [SerializeField]
@@ -74,7 +74,8 @@ public class Particle3D : MonoBehaviour
 
         // apply to transform
         transform.position = position;
-        transform.eulerAngles = rotation;
+        //transform.eulerAngles = rotation;
+        transform.rotation = rotation.ToUnityQuaterntion();
 
         // Update acceleration | angular acceleration
         J_Physics.UpdateAcceleration3D(ref acceleration, massInv, ref force);
@@ -89,9 +90,9 @@ public class Particle3D : MonoBehaviour
         SetInertia();
         // Init starting position and rotation
         position = transform.position;
-        rotation = transform.rotation.eulerAngles;
+        rotation.Zero();
         // Init anchorPosition
-        // anchorPosition = new Vector2(anchorObject.transform.position.x, anchorObject.transform.position.y);
+        anchorPosition = new Vector3(anchorObject.transform.position.x, anchorObject.transform.position.y, anchorObject.transform.position.z);
     }
 
     public void SetMass(float newMass)
@@ -182,7 +183,7 @@ public class Particle3D : MonoBehaviour
         // T = pf x F: T
         // pf = moment arm (point of applied force relative to center of mass)
         // F = applied force at pf
-        torque += (force * (momentArm - centerOfMass).magnitude);
+        torque += (force * (momentArm - centerOfMass)); //Got rid of mangitude to get working
     }
 
     public Vector2 GetPosition()

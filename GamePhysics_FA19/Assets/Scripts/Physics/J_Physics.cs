@@ -52,16 +52,16 @@ public class J_Physics
         velocity += acceleration * dt;
     }
 
-    static public void UpdateRotation3D(ref Vector3 rotation, ref Vector3 angularVelocity, ref Vector3 angularAcceleration, float dt)
+    static public void UpdateRotation3D(ref J_Quaternion rotation, ref Vector3 angularVelocity, ref Vector3 angularAcceleration, float dt)
     {
-        // x(t+dt) = x(t) + v(t+dt) + 1/2(a(t)(dt*dt))
-        rotation += (angularVelocity * dt) + (.5f * (angularAcceleration * (dt * dt)));
-        // clamp degrees between 0 and 360
-        rotation.x = rotation.x % 360;
-        rotation.y = rotation.y % 360;
-        rotation.z = rotation.z % 360;
-        // v(t+dt) = v(t) + a(t)dt
-        angularVelocity += angularAcceleration * dt;
+        //// x(t+dt) = x(t) + v(t+dt) + 1/2(a(t)(dt*dt))
+        //rotation += (angularVelocity * dt) + (.5f * (angularAcceleration * (dt * dt)));
+        //// clamp degrees between 0 and 360
+        //rotation.x = rotation.x % 360;
+        //rotation.y = rotation.y % 360;
+        //rotation.z = rotation.z % 360;
+        //// v(t+dt) = v(t) + a(t)dt
+        //angularVelocity += angularAcceleration * dt;
     }
 
     static public void UpdateAcceleration3D(ref Vector3 acceleration, float massInv, ref Vector3 force)
@@ -69,7 +69,7 @@ public class J_Physics
 
     }
 
-    static public void UpdateAngularAcceleration3D(ref Vector3 angularAcceleration, float inertiaInv, ref float torque)
+    static public void UpdateAngularAcceleration3D(ref Vector3 angularAcceleration, float inertiaInv, ref Vector3 torque)
     {
 
     }
