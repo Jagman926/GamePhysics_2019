@@ -5,12 +5,6 @@ using UnityEngine;
 public class J_Quaternion
 {
     public float x, y, z, w;
-    public J_Quaternion zero = new J_Quaternion();
-
-    public J_Quaternion()
-    {
-        SetQuaterntion(0,0,0,0);
-    }
 
     public void SetQuaterntion(float newX, float newY, float newZ, float newW)
     {
@@ -18,5 +12,10 @@ public class J_Quaternion
         y = newY;
         z = newZ;
         w = newW;
+    }
+
+    public void Zero()
+    {
+        SetQuaterntion(0, 0, 0, 0);
     }
 }
