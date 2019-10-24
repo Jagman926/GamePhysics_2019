@@ -71,6 +71,10 @@ public class J_Physics
 
     static public void UpdateAngularAcceleration3D(ref Vector3 angularAcceleration, float inertiaInv, ref Vector3 torque)
     {
-
+        /*  Angular accell is decomposed into an axis & a rate of angular changes (AKA)
+         *  Theta = RA | A is the axis and R is the tate of wich it is spinning (mesuared in radians per second)
+         *  New angular accelerations is given by Theta = theta + W | W is the direcion of the spin
+         *  
+         */
     }
 }
