@@ -14,6 +14,19 @@ public class J_Quaternion
         w = newW;
     }
 
+    public void SetQuaterntion(Quaternion newQuat)
+    {
+        x = newQuat.x;
+        y = newQuat.y;
+        z = newQuat.z;
+        w = newQuat.w;
+    }
+
+    public Quaternion ToUnityQuaterntion()
+    {
+        return new Quaternion(x, y, z, w);
+    }
+
     public void Zero()
     {
         SetQuaterntion(0, 0, 0, 0);
