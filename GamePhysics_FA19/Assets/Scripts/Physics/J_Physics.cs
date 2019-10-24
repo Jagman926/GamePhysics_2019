@@ -44,7 +44,7 @@ public class J_Physics
 
     // 3D ------------------------------------------------------------------------------------
 
-    static public void UpdatePosition3D(ref Vector2 position, ref Vector2 velocity, ref Vector2 acceleration, float dt)
+    static public void UpdatePosition3D(ref Vector3 position, ref Vector3 velocity, ref Vector3 acceleration, float dt)
     {
         // x(t+dt) = x(t) + v(t+dt) + 1/2(a(t)(dt*dt))
         position += (velocity * dt) + (.5f * (acceleration * (dt * dt)));
@@ -57,17 +57,19 @@ public class J_Physics
         // x(t+dt) = x(t) + v(t+dt) + 1/2(a(t)(dt*dt))
         rotation += (angularVelocity * dt) + (.5f * (angularAcceleration * (dt * dt)));
         // clamp degrees between 0 and 360
+        rotation.x = rotation.x % 360;
+        rotation.y = rotation.y % 360;
         rotation.z = rotation.z % 360;
         // v(t+dt) = v(t) + a(t)dt
         angularVelocity += angularAcceleration * dt;
     }
 
-    static public void UpdateAcceleration3D()
+    static public void UpdateAcceleration3D(ref Vector3 acceleration, float massInv, ref Vector3 force)
     {
 
     }
 
-    static public void UpdateAngularAcceleration3D()
+    static public void UpdateAngularAcceleration3D(ref Vector3 angularAcceleration, float inertiaInv, ref float torque)
     {
 
     }

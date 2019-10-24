@@ -26,33 +26,33 @@ public class Particle3D : MonoBehaviour
     private float startingMass = 0.0f;
     private float mass = 0.0f, massInv = 0.0f;
     [SerializeField]
-    private Vector2 centerOfMass = Vector2.zero;
+    private Vector3 centerOfMass = Vector3.zero;
 
     [Header("Force Variables")]
     [SerializeField]
     private float inertia = 0.0f, inertiaInv = 0.0f;
-    private Vector2 force = Vector2.zero;
+    private Vector3 force = Vector3.zero;
     private float torque = 0.0f;
     //
     Vector2 f_gravity, f_normal, f_sliding, f_friction, f_drag, f_spring;
     private float inclineDegrees = 340.0f;
     private float frictionCoeff_s = 0.61f, frictionCoeff_k = 0.47f;
-    private Vector2 fluidVelocity;
+    private Vector3 fluidVelocity;
     private float fluidDensity = 0.001225f, dragCoefficient = 1.05f;
     // Spring variables
     [SerializeField]
     private GameObject anchorObject = null;
-    private Vector2 anchorPosition = Vector2.zero;
+    private Vector3 anchorPosition = Vector3.zero;
     private float springRestingLength = 5.0f, springStiffnessCoefficient = 6.4f;
 
     [Header("Position Variables")]
-    public Vector2 position = Vector2.zero;
+    public Vector3 position = Vector3.zero;
     [SerializeField]
-    private Vector2 velocity = Vector2.zero;
+    private Vector3 velocity = Vector3.zero;
     [SerializeField]
     private float maxVelocity = 0.0f;
     [SerializeField]
-    private Vector2 acceleration = Vector2.zero;
+    private Vector3 acceleration = Vector3.zero;
 
     [Header("Rotation Variables")]
     public Vector3 rotation = Vector3.zero;
@@ -69,16 +69,16 @@ public class Particle3D : MonoBehaviour
     void FixedUpdate()
     {
         // Update position and rotation
-        J_Physics.UpdatePosition3D();
-        J_Physics.UpdateRotation3D();
+        J_Physics.UpdatePosition3D(ref position, ref velocity, ref acceleration, Time.fixedDeltaTime);
+        J_Physics.UpdateRotation3D(ref rotation, ref angularVelocity, ref angularAcceleration, Time.fixedDeltaTime);
 
         // apply to transform
         transform.position = position;
         transform.eulerAngles = rotation;
 
         // Update acceleration | angular acceleration
-        J_Physics.UpdateAcceleration3D();
-        J_Physics.UpdateAngularAcceleration3D();
+        J_Physics.UpdateAcceleration3D(ref acceleration, massInv, ref force);
+        J_Physics.UpdateAngularAcceleration3D(ref angularAcceleration, inertiaInv, ref torque);
     }
 
     private void InitStartingVariables()
@@ -162,7 +162,7 @@ public class Particle3D : MonoBehaviour
         velocity.y = Mathf.Clamp(velocity.y, -maxVelocity, maxVelocity);
     }
 
-    public void AddForce(Vector2 newForce)
+    public void AddForce(Vector3 newForce)
     {
         //D'Alembert
         force += newForce;
@@ -176,7 +176,7 @@ public class Particle3D : MonoBehaviour
         AddForce(rotatedVector);
     }
 
-    public void ApplyTorque(float force, Vector2 momentArm)
+    public void ApplyTorque(float force, Vector3 momentArm)
     {
         //D'Alembert
         // T = pf x F: T
