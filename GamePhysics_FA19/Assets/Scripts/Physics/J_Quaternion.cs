@@ -12,27 +12,6 @@ public class J_Quaternion
      *  z = zsin(theta/2)
      */
 
-    /* Quaturnien functions
-     * Angle (quatA, quatB)
-     * AngleAxis
-     * AxisAngle
-     * Dot
-     * Equals
-     * Euler
-     * EulerAngles
-     * EulterRotaion
-     * FromToRotation
-     * Identity
-     * Inverse
-     * kEpsilon
-     * Lerp
-     * LookRotaion
-     * Normilize
-     * RotateTowards
-     * Slerp
-     * ToEulerAngles
-     */
-
     public J_Quaternion()
     {
         SetQuaterntion(0, 0, 0, 0);
@@ -126,7 +105,7 @@ public class J_Quaternion
     public J_Quaternion FromToRotation(Vector3 fromDirection, Vector3 toDirection)
     {
         Quaternion quatA = new Quaternion();
-        Quaternion.FromToRotation(fromDirection, toDirection);
+        quatA = Quaternion.FromToRotation(fromDirection, toDirection);
         J_Quaternion newJQuat = new J_Quaternion(quatA);
         return newJQuat;
     }
@@ -139,17 +118,58 @@ public class J_Quaternion
 
     public J_Quaternion Inverse()
     {
-        return null;
+        Quaternion quatA = new Quaternion(x, y, z, w);
+        J_Quaternion newJQuat = new J_Quaternion(Quaternion.Inverse(quatA));
+        return newJQuat;
     }
 
-    /* Quaturnien functions
- * Inverse
- * kEpsilon
- * Lerp
- * LookRotaion
- * Normilize
- * RotateTowards
- * Slerp
- * ToEulerAngles
- */
+    public float kEpsilon()
+    {
+        return Quaternion.kEpsilon;
+    }
+
+    public J_Quaternion Lerp(J_Quaternion a, J_Quaternion b, float t)
+    {
+        Quaternion quatA = new Quaternion(a.x, a.y, a.z, a.w);
+        Quaternion quatB = new Quaternion(b.x, b.y, b.z, b.w);
+        J_Quaternion newJQuat = new J_Quaternion(Quaternion.Lerp(quatA, quatB, t));
+        return newJQuat;
+    }
+
+    public J_Quaternion LookRotation(Vector3 forwards, Vector3 upwards)
+    {
+        Quaternion quatA = new Quaternion(x, y, z, w);
+        quatA = Quaternion.LookRotation(forwards, upwards);
+        J_Quaternion newJQuat = new J_Quaternion(quatA);
+        return newJQuat;
+    }
+
+    public J_Quaternion Normalize()
+    {
+        Quaternion quatA = new Quaternion(x, y, z, w);
+        J_Quaternion newJQuat = new J_Quaternion(quatA.normalized);
+        return newJQuat;
+    }
+
+    public J_Quaternion RotateTowards(J_Quaternion from, J_Quaternion to, float maxDegreesDelta)
+    {
+        Quaternion quatA = new Quaternion(from.x, from.y, from.z, from.w);
+        Quaternion quatB = new Quaternion(to.x, to.y, to.z, to.w);
+        J_Quaternion newJQuat = new J_Quaternion(Quaternion.RotateTowards(quatA, quatB, maxDegreesDelta));
+        return newJQuat;
+    }
+
+    public J_Quaternion Slerp(J_Quaternion a, J_Quaternion b, float t)
+    {
+        Quaternion quatA = new Quaternion(a.x, a.y, a.z, a.w);
+        Quaternion quatB = new Quaternion(b.x, b.y, b.z, b.w);
+        J_Quaternion newJQuat = new J_Quaternion(Quaternion.Slerp(quatA, quatB, t));
+        return newJQuat;
+    }
+
+    public Vector3 ToEulerAngles()
+    {
+        Quaternion quatA = new Quaternion(x, y, z, w);
+        return quatA.eulerAngles;
+    }
 }
