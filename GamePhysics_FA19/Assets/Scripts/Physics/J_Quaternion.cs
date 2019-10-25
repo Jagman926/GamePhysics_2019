@@ -144,6 +144,12 @@ public class J_Quaternion
         return newJQuat;
     }
 
+    public Vector3 MultiplyVector3AndQuaternion(J_Quaternion a, Vector3 b)
+    {
+        Vector3 quatEuler = a.ToEulerAngles();
+        return Vector3.Scale(quatEuler, b);
+    }
+
     public J_Quaternion Normalize()
     {
         Quaternion quatA = new Quaternion(x, y, z, w);
@@ -156,6 +162,12 @@ public class J_Quaternion
         Quaternion quatA = new Quaternion(from.x, from.y, from.z, from.w);
         Quaternion quatB = new Quaternion(to.x, to.y, to.z, to.w);
         J_Quaternion newJQuat = new J_Quaternion(Quaternion.RotateTowards(quatA, quatB, maxDegreesDelta));
+        return newJQuat;
+    }
+
+    public J_Quaternion Scale(float scalar)
+    {
+        J_Quaternion newJQuat = new J_Quaternion(x * scalar, y * scalar, z * scalar, w * scalar);
         return newJQuat;
     }
 
