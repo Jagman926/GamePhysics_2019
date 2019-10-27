@@ -70,7 +70,7 @@ public class Particle3D : MonoBehaviour
     {
         // Update position and rotation
         J_Physics.UpdatePosition3D(ref position, ref velocity, ref acceleration, Time.fixedDeltaTime);
-        J_Physics.UpdateRotation3D(ref rotation, ref angularVelocity, ref angularAcceleration, Time.fixedDeltaTime);
+        J_Physics.UpdateRotation3D(ref rotation, ref angularVelocity, radiusOuter, velocity, Time.fixedDeltaTime);
 
         // apply to transform
         transform.position = position;
@@ -79,7 +79,7 @@ public class Particle3D : MonoBehaviour
 
         // Update acceleration | angular acceleration
         J_Physics.UpdateAcceleration3D(ref acceleration, massInv, ref force);
-        J_Physics.UpdateAngularAcceleration3D(ref angularAcceleration, inertiaInv, ref torque);
+        //J_Physics.UpdateAngularAcceleration3D(ref angularAcceleration, inertiaInv, ref rotation);
     }
 
     private void InitStartingVariables()
@@ -90,9 +90,10 @@ public class Particle3D : MonoBehaviour
         SetInertia();
         // Init starting position and rotation
         position = transform.position;
-        rotation.Zero();
+        rotation = new J_Quaternion();
+        //rotation.Zero();
         // Init anchorPosition
-        anchorPosition = new Vector3(anchorObject.transform.position.x, anchorObject.transform.position.y, anchorObject.transform.position.z);
+        //anchorPosition = new Vector3(anchorObject.transform.position.x, anchorObject.transform.position.y, anchorObject.transform.position.z);
     }
 
     public void SetMass(float newMass)

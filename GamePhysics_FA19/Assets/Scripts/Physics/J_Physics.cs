@@ -52,29 +52,40 @@ public class J_Physics
         velocity += acceleration * dt;
     }
 
-    static public void UpdateRotation3D(ref J_Quaternion rotation, ref Vector3 angularVelocity, ref Vector3 angularAcceleration, float dt)
+    static public void UpdateRotation3D(ref J_Quaternion rotation, ref Vector3 angularVelocity, float radius, Vector3 velocity, float dt)
     {
-        //// x(t+dt) = x(t) + v(t+dt) + 1/2(a(t)(dt*dt))
-        //rotation += (angularVelocity * dt) + (.5f * (angularAcceleration * (dt * dt)));
-        //// clamp degrees between 0 and 360
-        //rotation.x = rotation.x % 360;
-        //rotation.y = rotation.y % 360;
-        //rotation.z = rotation.z % 360;
-        //// v(t+dt) = v(t) + a(t)dt
-        //angularVelocity += angularAcceleration * dt;
+        // 1. calculate angular velocity
+        // 2. Calculate rotation 
+
+        // w = (r x v) / (||r||^2)
+        float radiusABS = Mathf.Abs(radius);
+        angularVelocity = (radius * velocity) / (radiusABS * radiusABS);
+
+        // 1/2 Wt * qt
+        rotation.MultiplyByVector3(angularVelocity);
+        rotation.Scale(.5f);
+
+        
     }
 
     static public void UpdateAcceleration3D(ref Vector3 acceleration, float massInv, ref Vector3 force)
     {
-
+        //Newton 2
+        acceleration = massInv * force;
+        // All forces are applied for a frame and then reset
+        force = Vector3.zero;
     }
 
-    static public void UpdateAngularAcceleration3D(ref Vector3 angularAcceleration, float inertiaInv, ref Vector3 torque)
+    static public void UpdateAngularAcceleration3D(ref Vector3 angularAcceleration, float inertiaInv, J_Quaternion quat)
     {
         /*  Angular accell is decomposed into an axis & a rate of angular changes (AKA)
          *  Theta = RA | A is the axis and R is the tate of wich it is spinning (mesuared in radians per second)
          *  New angular accelerations is given by Theta = theta + W | W is the direcion of the spin
          *  
          */
+
+
+
+
     }
 }

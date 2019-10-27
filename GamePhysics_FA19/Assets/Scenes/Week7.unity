@@ -149,7 +149,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4266133ac29ee2d45a0fe6e37b15e570, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  restitution: 0
+  restitution: 1
 --- !u!4 &51126933
 Transform:
   m_ObjectHideFlags: 0
@@ -226,7 +226,7 @@ MonoBehaviour:
   inertiaInv: 0
   position: {x: 4, y: 0}
   velocity: {x: 0, y: -1}
-  maxVelocity: 0
+  maxVelocity: 100
   acceleration: {x: 0, y: 0}
   rotation: {x: 0, y: 0, z: 0}
   angularVelocity: {x: 0, y: 0, z: 0}
@@ -531,7 +531,7 @@ MonoBehaviour:
   inertiaInv: 0
   position: {x: 0, y: 0}
   velocity: {x: 0, y: 0}
-  maxVelocity: 0
+  maxVelocity: 100
   acceleration: {x: 0, y: 0}
   rotation: {x: 0, y: 0, z: 0}
   angularVelocity: {x: 0, y: 0, z: 0}
@@ -659,7 +659,7 @@ MonoBehaviour:
   inertiaInv: 0
   position: {x: 0, y: 2}
   velocity: {x: 0, y: 0}
-  maxVelocity: 0
+  maxVelocity: 100
   acceleration: {x: 0, y: 0}
   rotation: {x: 0, y: 0, z: 0}
   angularVelocity: {x: 0, y: 0, z: 0}
@@ -787,7 +787,7 @@ MonoBehaviour:
   inertiaInv: 0
   position: {x: 0, y: -4}
   velocity: {x: 0, y: 0}
-  maxVelocity: 0
+  maxVelocity: 100
   acceleration: {x: 0, y: 0}
   rotation: {x: 0, y: 0, z: 0}
   angularVelocity: {x: 0, y: 0, z: 0}
