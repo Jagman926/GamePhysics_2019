@@ -69,8 +69,8 @@ public class Particle3D : MonoBehaviour
     void FixedUpdate()
     {
         // Update position and rotation
-        J_Physics.UpdatePosition3D(ref position, ref velocity, ref acceleration, Time.fixedDeltaTime);
-        J_Physics.UpdateRotation3D(ref rotation, ref angularVelocity, radiusOuter, velocity, Time.fixedDeltaTime);
+        J_Physics.UpdatePosition3DKinematic(ref position, ref velocity, ref acceleration, Time.fixedDeltaTime);
+        J_Physics.UpdateRotation3D(ref rotation, ref angularVelocity, angularAcceleration, Time.fixedDeltaTime);
 
         // apply to transform
         transform.position = position;
@@ -79,7 +79,8 @@ public class Particle3D : MonoBehaviour
 
         // Update acceleration | angular acceleration
         J_Physics.UpdateAcceleration3D(ref acceleration, massInv, ref force);
-        //J_Physics.UpdateAngularAcceleration3D(ref angularAcceleration, inertiaInv, ref rotation);
+        //Using a hard set angular acceleration for this lab update once toque is reintroduced
+        //J_Physics.UpdateAngularAcceleration3D(ref angularAcceleration, inertiaInv, torque);
     }
 
     private void InitStartingVariables()
@@ -91,6 +92,7 @@ public class Particle3D : MonoBehaviour
         // Init starting position and rotation
         position = transform.position;
         rotation = new J_Quaternion();
+        rotation.SetQuaterntion(transform.rotation);
         //rotation.Zero();
         // Init anchorPosition
         //anchorPosition = new Vector3(anchorObject.transform.position.x, anchorObject.transform.position.y, anchorObject.transform.position.z);

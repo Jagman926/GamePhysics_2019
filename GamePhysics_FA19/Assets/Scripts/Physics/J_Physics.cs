@@ -44,7 +44,7 @@ public class J_Physics
 
     // 3D ------------------------------------------------------------------------------------
 
-    static public void UpdatePosition3D(ref Vector3 position, ref Vector3 velocity, ref Vector3 acceleration, float dt)
+    static public void UpdatePosition3DKinematic(ref Vector3 position, ref Vector3 velocity, ref Vector3 acceleration, float dt)
     {
         // x(t+dt) = x(t) + v(t+dt) + 1/2(a(t)(dt*dt))
         position += (velocity * dt) + (.5f * (acceleration * (dt * dt)));
@@ -52,19 +52,48 @@ public class J_Physics
         velocity += acceleration * dt;
     }
 
-    static public void UpdateRotation3D(ref J_Quaternion rotation, ref Vector3 angularVelocity, float radius, Vector3 velocity, float dt)
+    static public void UpdatePosition3DEuler(ref Vector3 position, ref Vector3 velocity, ref Vector3 acceleration, float dt)
     {
-        // 1. calculate angular velocity
-        // 2. Calculate rotation 
+        // x(t+dt) = x(t) + v(t)dt
+        //Euler's method
+        //F(t+dt) = F(t) + f(t)dt
+        //               + (dF/dt)dt
+        position += velocity * dt;
 
-        // w = (r x v) / (||r||^2)
-        float radiusABS = Mathf.Abs(radius);
-        angularVelocity = (radius * velocity) / (radiusABS * radiusABS);
+        // v(t+dt) = v(t) + a(t)dt
+        velocity += acceleration * dt;
+    }
 
-        // 1/2 Wt * qt
-        rotation.MultiplyByVector3(angularVelocity);
-        rotation.Scale(.5f);
+    static public void UpdateRotation3D(ref J_Quaternion rotation, ref Vector3 angularVelocity, Vector3 angularAcceleration, float dt)
+    {
+        //Using the euler's method for rotation with quaternions
 
+        //Rotation formula
+        // w = angular velocity (It's omega but my computer can't make that symbol :( )
+        // q' = q + (1/2 * dt * w * q)
+        //Sets up values
+        J_Quaternion equationFirstPart = rotation;
+
+        //First part of formula
+        // 1/2 * dt
+        float dtHalf = dt * .5f;
+
+        //(1/2 * dt) * w
+        Vector3 angularAccelerationModifyed = angularVelocity * dtHalf;
+
+        //(1/2 * dt * w) * q
+        equationFirstPart.MultiplyByVector3(angularAccelerationModifyed);
+
+        //q + (1/2 * dt * w * q)
+        rotation.AddQuaternion(equationFirstPart);
+
+        //Normilizes to prevent weirdness with addition
+        rotation.Normalize();
+
+        //Update angular velocity
+        angularVelocity += angularAcceleration * dt;
+
+        //rotNew = rotNew + (.5f * angularAcceleration * dt * rotNew);
         
     }
 
@@ -76,7 +105,7 @@ public class J_Physics
         force = Vector3.zero;
     }
 
-    static public void UpdateAngularAcceleration3D(ref Vector3 angularAcceleration, float inertiaInv, J_Quaternion quat)
+    static public void UpdateAngularAcceleration3D(ref Vector3 angularAcceleration, float inertiaInv, Vector3 torqueCummalative)
     {
         /*  Angular accell is decomposed into an axis & a rate of angular changes (AKA)
          *  Theta = RA | A is the axis and R is the tate of wich it is spinning (mesuared in radians per second)
@@ -85,6 +114,8 @@ public class J_Physics
          */
 
 
+        //Not using torque calculations at the moment, so just hard set an acceleration
+        angularAcceleration = inertiaInv * torqueCummalative; //Updates angular acceleration based on the delta time
 
 
     }

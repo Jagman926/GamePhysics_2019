@@ -64,6 +64,14 @@ public class J_Quaternion
         SetQuaterntion(0, 0, 0, 0);
     }
 
+    public void AddQuaternion(J_Quaternion quatToAdd)
+    {
+        x += quatToAdd.x;
+        y += quatToAdd.y;
+        z += quatToAdd.z;
+        w += quatToAdd.w;
+    }
+
     public float Angle(J_Quaternion a, J_Quaternion b)
     {
         Quaternion quatA = new Quaternion(a.x, a.y, a.z, a.w);
