@@ -170,7 +170,8 @@ public class J_Quaternion
     public J_Quaternion Normalize()
     {
         Quaternion quatA = new Quaternion(x, y, z, w);
-        J_Quaternion newJQuat = new J_Quaternion(quatA.normalized);
+        quatA.Normalize();
+        J_Quaternion newJQuat = new J_Quaternion(quatA);
         return newJQuat;
     }
 

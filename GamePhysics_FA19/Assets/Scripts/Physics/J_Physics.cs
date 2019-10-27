@@ -70,31 +70,25 @@ public class J_Physics
 
         //Rotation formula
         // w = angular velocity (It's omega but my computer can't make that symbol :( )
-        // q' = q + (1/2 * dt * w * q)
+        // q' = q + (w * q * dt / 2 )
         //Sets up values
         J_Quaternion equationFirstPart = new J_Quaternion(rotation);
 
-        //First part of formula
-        // 1/2 * dt
-        float dtHalf = dt * .5f;
-
-        //(1/2 * dt) * w
-        Vector3 angularAccelerationModifyed = angularVelocity * dtHalf;
-
-        //(1/2 * dt * w) * q
-        equationFirstPart.MultiplyByVector3(angularAccelerationModifyed);
-
-        //q + (1/2 * dt * w * q)
+ 
+        //(w * q)
+        equationFirstPart.MultiplyByVector3(angularVelocity);
+        //(w * q) * dt
+        equationFirstPart.Scale(dt);
+        //(w * q * dt) / 2
+        equationFirstPart.Scale(.5f);
+        // q' = q + (w * q * dt / 2 )
         rotation.AddQuaternion(equationFirstPart);
 
         //Normilizes to prevent weirdness with addition
-        rotation.Normalize();
+        //rotation.Normalize();
 
         //Update angular velocity
-        angularVelocity += angularAcceleration * dt;
-
-        //rotNew = rotNew + (.5f * angularAcceleration * dt * rotNew);
-        
+        angularVelocity += angularAcceleration * dt;       
     }
 
     static public void UpdateAcceleration3D(ref Vector3 acceleration, float massInv, ref Vector3 force)
