@@ -72,7 +72,7 @@ public class J_Physics
         // w = angular velocity (It's omega but my computer can't make that symbol :( )
         // q' = q + (1/2 * dt * w * q)
         //Sets up values
-        J_Quaternion equationFirstPart = rotation;
+        J_Quaternion equationFirstPart = new J_Quaternion(rotation);
 
         //First part of formula
         // 1/2 * dt

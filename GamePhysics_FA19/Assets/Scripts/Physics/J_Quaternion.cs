@@ -33,6 +33,14 @@ public class J_Quaternion
         w = quaternion.w;
     }
 
+    public J_Quaternion(J_Quaternion quaternion)
+    {
+        x = quaternion.x;
+        y = quaternion.y;
+        z = quaternion.z;
+        w = quaternion.w;
+    }
+
     private void SetQuaterntion(float newX, float newY, float newZ, float newW)
     {
         x = newX;
