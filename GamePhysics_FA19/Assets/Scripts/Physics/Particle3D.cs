@@ -6,11 +6,14 @@ public class Particle3D : MonoBehaviour
 {
     enum Shape
     {
-        RECTANGLE = 0,  // I = 1/12 * m * (h^2 + w^2)
-        DISK,           // I = 1/2 * m * r^2
-        RING,           // I = 1/2 * m * (ro^2 + ri^2)
-        ROD,            // I = 1/12 * m * l^2
+        SolidSphere,
+        HollowSphere,
+        SolidBox,
+        HollowBox,
+        SolidCylinder,
+        SolidCone
     }
+
 
     [Header("Object Shape Variables")]
     [SerializeField]
@@ -30,7 +33,20 @@ public class Particle3D : MonoBehaviour
 
     [Header("Force Variables")]
     [SerializeField]
-    private float inertia = 0.0f, inertiaInv = 0.0f;
+    //private Matrix4x4 inertia = Matrix4x4.zero, inertiaInv = Matrix4x4.zero;
+    //Unity does not support 3x3 matrix so we can either make our own or use a 4x4 matrix
+    private static float[][] inertia =
+    {
+        new float[]{0, 0, 0},
+        new float[]{0, 0, 0},
+        new float[]{0, 0, 0}
+    };
+    private static float[][] inertiaInv =
+{
+        new float[]{0, 0, 0},
+        new float[]{0, 0, 0},
+        new float[]{0, 0, 0}
+    };
     private Vector3 force = Vector3.zero;
     private Vector3 torque = Vector3.zero;
     //
@@ -79,8 +95,7 @@ public class Particle3D : MonoBehaviour
 
         // Update acceleration | angular acceleration
         J_Physics.UpdateAcceleration3D(ref acceleration, massInv, ref force);
-        //Using a hard set angular acceleration for this lab update once toque is reintroduced
-        //J_Physics.UpdateAngularAcceleration3D(ref angularAcceleration, inertiaInv, torque);
+        J_Physics.UpdateAngularAcceleration3D(ref angularAcceleration, inertiaInv, torque);
     }
 
     private void InitStartingVariables()
@@ -107,40 +122,74 @@ public class Particle3D : MonoBehaviour
     public void SetInertia()
     {
         /*
-        Inertia Equations: Ian Millington - Game Physics Engine Development (pg 493)
+        Inertia Equations from slides in class (deck05angular.pdf)
         -----------------------------------------
-        RECTANGLE ||  I = 1/12 * m * (h^2 + w^2)
-        DISK      ||  I = 1/2 * m * r^2
-        RING      ||  I = 1/2 * m * (ro^2 + ri^2)
-        ROD       ||  I = 1/12 * m * l^2
+                Solid Sphere 
+        |-----------------------------|
+        |(2/5)mr^2|         |         |
+        |         |(2/5)mr^2|         |
+        |         |         |(2/5)mr^2|
+        |-----------------------------|
+                Hollow Sphere (shell)
+        |-----------------------------|
+        |(2/3)mr^2|         |         |
+        |         |(2/3)mr^2|         |
+        |         |         |(2/3)mr^2|
+        |-----------------------------|
+                Solid Box
+        |---------------------------------------------------|
+        |(1/12)m(h^2+d^2) |                |                |
+        |                 |(1/12)m(d^2+w^2)|                |
+        |                 |                |(1/12)m(w^2+h^2)|
+        |---------------------------------------------------|
+                Hollow Box
+        |-----------------------------------------------|
+        |(5/3)m(h^2+d^2)|               |               |
+        |               |(5/3)m(d^2+w^2)|               |
+        |               |               |(5/3)m(w^2+h^2)|
+        |-----------------------------------------------|
+                Solid Cylinder
+        |-----------------------------------------------|
+        |(1/12)m(3r^2+h^2)|                 |           |
+        |                 |(1/12)m(3r^2+h^2)|           |
+        |                 |                 |(1/2)mr^2  |
+        |-----------------------------------------------|
+                Solid Cone
+        |-----------------------------------------------------|
+        |(3/5)mh^2+(3/20)mr^2|                    |           |
+        |                    |(3/5)mh^2+(3/20)mr^2|           |
+        |                    |                    |(3/10)mr^2 |
+        |-----------------------------------------------------|
+
         -----------------------------------------
         */
         switch (shapeType)
         {
-            // Rectangle
-            case Shape.RECTANGLE:
-                inertia = 0.083f * mass * ((height * height) + (width * width));
+            // Solid Sphere
+            case Shape.SolidSphere:
                 break;
-            // Disk
-            case Shape.DISK:
-                inertia = 0.5f * mass * (radiusOuter * radiusOuter);
+            // Hollow Sphere
+            case Shape.HollowSphere:
                 break;
-            // Ring
-            case Shape.RING:
-                inertia = 0.5f * mass * ((radiusOuter * radiusOuter) + (radiusInner * radiusInner));
+            // Solid Box
+            case Shape.SolidBox:
                 break;
-            // Rod
-            case Shape.ROD:
-                inertia = 0.083f * mass * (length * length);
+            // Hollow Box
+            case Shape.HollowBox:
+                break;
+            // Solid Cylinder
+            case Shape.SolidCylinder:
+                break;
+            //Solid Cone
+            case Shape.SolidCone:
                 break;
             // Default Case
             default:
                 Debug.Log("Shape Type not set");
-                inertia = 0.0f;
                 break;
         }
-        inertia = Mathf.Max(0.0f, inertia);
-        inertiaInv = Mathf.Max(0.0f, 1.0f / inertia);
+        //inertia = Mathf.Max(0.0f, inertia);
+        //inertiaInv = Mathf.Max(0.0f, 1.0f / inertia);
     }
 
     public float GetMass()
