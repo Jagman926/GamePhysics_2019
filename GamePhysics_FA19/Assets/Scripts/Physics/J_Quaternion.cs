@@ -162,9 +162,16 @@ public class J_Quaternion
 
     public void MultiplyByVector3(Vector3 a)
     {
-        Vector3 quatEuler = new J_Quaternion(x,y,z,w).ToEulerAngles();
-        quatEuler = Vector3.Scale(quatEuler, a);
-        SetQuaterntion(Quaternion.Euler(quatEuler.x, quatEuler.y, quatEuler.z));
+
+        
+        x *= a.x;
+        y *= a.y;
+        z *= a.z;
+        
+
+        //Vector3 quatEuler = new J_Quaternion(x,y,z,w).ToEulerAngles();
+        //quatEuler = Vector3.Scale(quatEuler, a);
+        //SetQuaterntion(Quaternion.Euler(quatEuler.x, quatEuler.y, quatEuler.z));
     }
 
     public J_Quaternion Normalize()
