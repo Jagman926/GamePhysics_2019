@@ -73,10 +73,9 @@ public class J_Physics
         // q' = q + w * q * dt / 2 
         //Sets up values
         J_Quaternion equationFirstPart = new J_Quaternion(rotation);
+        J_Quaternion velQuat = new J_Quaternion(angularVelocity.x, angularVelocity.y, angularVelocity.z, 0);
 
- 
-        //(w * q)
-        equationFirstPart.MultiplyByVector3(angularVelocity);
+        equationFirstPart.MultiplyByQuat(velQuat);
         //(w * q) * dt
         equationFirstPart.Scale(dt * .5f);
         //(w * q * dt) / 2

@@ -153,8 +153,8 @@ MonoBehaviour:
   velocity: {x: 0, y: 0, z: 0}
   maxVelocity: 0
   acceleration: {x: 0, y: 0, z: 0}
-  angularVelocity: {x: 0, y: 1, z: 0}
-  angularAcceleration: {x: 0, y: 1, z: 0}
+  angularVelocity: {x: 1, y: 1, z: 1}
+  angularAcceleration: {x: 1, y: 1, z: 1}
 --- !u!1 &1535270717
 GameObject:
   m_ObjectHideFlags: 0
@@ -248,7 +248,7 @@ PrefabInstance:
     - target: {fileID: 8551449255319729446, guid: ad01465f661084249ade5c6e9199000c,
         type: 3}
       propertyPath: m_Name
-      value: Sphere
+      value: Cube
       objectReference: {fileID: 0}
     - target: {fileID: 8551449255319729449, guid: ad01465f661084249ade5c6e9199000c,
         type: 3}
@@ -305,6 +305,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8551449255319729450, guid: ad01465f661084249ade5c6e9199000c,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
     m_RemovedComponents:
     - {fileID: 8551449255319729445, guid: ad01465f661084249ade5c6e9199000c, type: 3}
     - {fileID: 8551449255319729444, guid: ad01465f661084249ade5c6e9199000c, type: 3}
