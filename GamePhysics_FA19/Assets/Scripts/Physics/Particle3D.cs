@@ -167,21 +167,39 @@ public class Particle3D : MonoBehaviour
         {
             // Solid Sphere
             case Shape.SolidSphere:
+                inertia[0][0] = (2 / 5) * mass * (radiusOuter * radiusOuter);
+                inertia[1][1] = (2 / 5) * mass * (radiusOuter * radiusOuter);
+                inertia[2][2] = (2 / 5) * mass * (radiusOuter * radiusOuter);
                 break;
             // Hollow Sphere
             case Shape.HollowSphere:
+                inertia[0][0] = (2 / 3) * mass * (radiusOuter * radiusOuter);
+                inertia[1][1] = (2 / 3) * mass * (radiusOuter * radiusOuter);
+                inertia[2][2] = (2 / 3) * mass * (radiusOuter * radiusOuter);
                 break;
             // Solid Box
             case Shape.SolidBox:
+                inertia[0][0] = (1 / 12) * mass * ((height * height) + (length * length));
+                inertia[1][1] = (1 / 12) * mass * ((length * length) + (width * width));
+                inertia[2][2] = (1 / 12) * mass * ((height * height) + (width * width));
                 break;
             // Hollow Box
             case Shape.HollowBox:
+                inertia[0][0] = (5 / 3) * mass * ((height * height) + (length * length));
+                inertia[1][1] = (5 / 3) * mass * ((length * length) + (width * width));
+                inertia[2][2] = (5 / 3) * mass * ((height * height) + (width * width));
                 break;
             // Solid Cylinder
             case Shape.SolidCylinder:
+                inertia[0][0] = (1 / 12) * mass * (3*(radiusOuter * radiusOuter) + (height * height));
+                inertia[1][1] = (1 / 12) * mass * (3*(radiusOuter * radiusOuter) + (height * height));
+                inertia[2][2] = (1 / 2) * mass * (radiusOuter * radiusOuter);
                 break;
             //Solid Cone
             case Shape.SolidCone:
+                inertia[0][0] = (3 / 5) * mass * (height * height) + (3/20) * mass * (radiusOuter * radiusOuter);
+                inertia[1][1] = (3 / 5) * mass * (height * height) + (3/20) * mass * (radiusOuter * radiusOuter);
+                inertia[2][2] = (3 / 10) * mass * (radiusOuter * radiusOuter);
                 break;
             // Default Case
             default:
