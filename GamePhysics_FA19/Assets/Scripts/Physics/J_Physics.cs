@@ -98,7 +98,7 @@ public class J_Physics
         force = Vector3.zero;
     }
 
-    static public void UpdateAngularAcceleration3D(ref Vector3 angularAcceleration, float[][] inertiaInv, Vector3 torqueCummalative)
+    static public void UpdateAngularAcceleration3D(ref Vector3 angularAcceleration, float[,] inertiaInv, Vector3 torqueCummalative)
     {
         /*  Angular accell is decomposed into an axis & a rate of angular changes (AKA)
          *  Theta = RA | A is the axis and R is the tate of wich it is spinning (mesuared in radians per second)

@@ -6,6 +6,7 @@ public class J_Quaternion
 {
     public float x, y, z, w;
 
+
     /*  w = cos(theta/2)
      *  x = xsin(theta/2)
      *  y = ysin(theta/2)
@@ -78,6 +79,50 @@ public class J_Quaternion
         y += quatToAdd.y;
         z += quatToAdd.z;
         w += quatToAdd.w;
+    }
+
+    public float[,] GetToRotationMatrix()
+    {
+        float[,] output = new float[3,3];
+        float wSquared = (w * w);
+        float xSquared = (x * x);
+        float ySquared = (y * y);
+        float zSquared = (z * z);
+
+
+        output[0, 0] = wSquared + xSquared - ySquared - zSquared;
+        output[0, 1] = 2 * (x * y - w * z);
+        output[0, 2] = 2 * (x * z + w * y);
+
+        output[1, 0] = 2 * (x * y + w * z);
+        output[1, 1] = wSquared - xSquared + ySquared - zSquared;
+        output[1, 2] = 2 * (y * z - w * x);
+
+        output[2, 0] = 2 * (x * z - w * y);
+        output[2, 1] = 2 * (z * y + w * x);
+        output[2, 2] = wSquared - xSquared - ySquared + zSquared;
+
+        return output;
+    }
+
+    public float[,] GetRotationMatrixInverse()
+    {
+        float[,] output = new float[3, 3];
+        float[,] rotMatrix = GetRotationMatrixInverse();
+
+        output[0, 0] = rotMatrix[0, 0];
+        output[0, 1] = rotMatrix[1, 0];
+        output[0, 2] = rotMatrix[2, 0];
+
+        output[1, 0] = rotMatrix[0, 1];
+        output[1, 1] = rotMatrix[1, 1];
+        output[1, 2] = rotMatrix[2, 1];
+
+        output[2, 0] = rotMatrix[0, 2];
+        output[2, 1] = rotMatrix[1, 2];
+        output[2, 2] = rotMatrix[2, 2];
+
+        return output;
     }
 
     public float Angle(J_Quaternion a, J_Quaternion b)
