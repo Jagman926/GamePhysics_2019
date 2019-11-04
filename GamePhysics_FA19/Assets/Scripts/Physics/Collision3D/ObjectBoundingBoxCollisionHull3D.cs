@@ -156,10 +156,10 @@ public class ObjectBoundingBoxCollisionHull3D : CollisionHull3D
         Vector3 obb2_maxExtent_transInv = transform.worldToLocalMatrix.MultiplyPoint(maxExtent);
         Vector3 obb2_minExtent_transInv = transform.worldToLocalMatrix.MultiplyPoint(minExtent);
 
-        obb1_maxExtent_transInv += center;
-        obb1_minExtent_transInv += center;
-        obb2_maxExtent_transInv += other.center;
-        obb2_minExtent_transInv += other.center;
+       //obb1_maxExtent_transInv += center;
+       //obb1_minExtent_transInv += center;
+       //obb2_maxExtent_transInv += other.center;
+       //obb2_minExtent_transInv += other.center;
 
         if (obb1_maxExtent_transInv.x > minExtent.x &&
             obb1_minExtent_transInv.x < maxExtent.x &&

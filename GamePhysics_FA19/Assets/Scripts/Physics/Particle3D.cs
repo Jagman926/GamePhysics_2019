@@ -89,14 +89,14 @@ public class Particle3D : MonoBehaviour
     {
         
         //Updates the moment arm
-        UpdateMomentArm();
+        //UpdateMomentArm();
         //Applying torque from testforce
         //ApplyTorque(testForce, momentArm);
         PlayerTestForceControl(); //Player controlled torque for testing
 
         // Update position and rotation
-        J_Physics.UpdatePosition3DKinematic(ref position, ref velocity, ref acceleration, Time.fixedDeltaTime);
-        J_Physics.UpdateRotation3D(ref rotation, ref angularVelocity, angularAcceleration, Time.fixedDeltaTime);
+        //J_Physics.UpdatePosition3DKinematic(ref position, ref velocity, ref acceleration, Time.fixedDeltaTime);
+        //J_Physics.UpdateRotation3D(ref rotation, ref angularVelocity, angularAcceleration, Time.fixedDeltaTime);
         UpdateTransformationMatrix();
 
         // apply to transform
@@ -114,7 +114,6 @@ public class Particle3D : MonoBehaviour
         // Init starting mass
         SetMass(startingMass);
         // Init starting inertia
-
         SetInertia();
         // Init starting position and rotation
         position = transform.position;
@@ -341,12 +340,12 @@ public class Particle3D : MonoBehaviour
 
     }
 
-    public Vector2 GetPosition()
+    public Vector3 GetPosition()
     {
         return position;
     }
 
-    public void SetPosition(Vector2 newPosition)
+    public void SetPosition(Vector3 newPosition)
     {
         position = newPosition;
     }

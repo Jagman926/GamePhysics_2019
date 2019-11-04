@@ -24,7 +24,7 @@ public class Collision3D_Manager : MonoBehaviour
     private void FixedUpdate()
     {
         collisionObjects = FindObjectsOfType(typeof(CollisionHull3D)) as CollisionHull3D[];
-        UpdateObjectTransforms();
+        //UpdateObjectTransforms();
         CheckObjectCollisions();
     }
 
@@ -47,16 +47,7 @@ public class Collision3D_Manager : MonoBehaviour
                 CollisionHull3D thisHull = collisionObjects[i];
                 CollisionHull3D otherHull = collisionObjects[j];
                 // Check for collision
-                if (thisHull.isColliding(otherHull, ref collision))
-                {
-                    //Checks if player is colliding
-                    if ((thisHull.gameObject.tag == "Player" || otherHull.gameObject.tag == "Player"))
-                    {
-                        //END GAME
-                        if (collision.status)
-                            gameManager.EndGame();
-                    }
-                }
+                thisHull.isColliding(otherHull, ref collision);
 
             }
     }
