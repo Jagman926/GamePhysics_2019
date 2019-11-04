@@ -87,7 +87,8 @@ public class J_Physics
         rotation.Normalize();
 
         //Update angular velocity
-        angularVelocity += angularAcceleration * dt;       
+        angularVelocity += angularAcceleration * dt;     
+        
     }
 
     static public void UpdateAcceleration3D(ref Vector3 acceleration, float massInv, ref Vector3 force)
@@ -98,17 +99,19 @@ public class J_Physics
         force = Vector3.zero;
     }
 
-    static public void UpdateAngularAcceleration3D(ref Vector3 angularAcceleration, float[,] inertiaInv, Vector3 torqueCummalative, Matrix4x4 transformMat)
+    static public void UpdateAngularAcceleration3D(ref Vector3 angularAcceleration, ref Vector3 torque, float[,] inertiaInv,  Matrix4x4 transformMat)
     {
 
         //Bring torque into local space using tranform matrix
-        Vector3 localTorque = J_Physics.WorldToLocalDirection(torqueCummalative, transformMat);
+        Vector3 localTorque = J_Physics.WorldToLocalDirection(torque, transformMat);
 
         //Apply inverse inertia tensor to locallized torque
         Vector3 torqueTensorCross = J_Physics.Mat3Vec3Cross(inertiaInv, localTorque);
 
         //Move back to world giving us angular acceleration by transformation matrix
         angularAcceleration = J_Physics.LocalToWorldDirection(torqueTensorCross, transformMat);
+
+        torque = Vector3.zero;
     }
 
     // Math Functions ------------------------------------------------------------------------------------

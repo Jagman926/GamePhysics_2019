@@ -87,11 +87,13 @@ public class Particle3D : MonoBehaviour
 
     void FixedUpdate()
     {
+        
         //Updates the moment arm
         UpdateMomentArm();
         //Applying torque from testforce
-        ApplyTorque(testForce, momentArm);
-        
+        //ApplyTorque(testForce, momentArm);
+        PlayerTestForceControl(); //Player controlled torque for testing
+
         // Update position and rotation
         J_Physics.UpdatePosition3DKinematic(ref position, ref velocity, ref acceleration, Time.fixedDeltaTime);
         J_Physics.UpdateRotation3D(ref rotation, ref angularVelocity, angularAcceleration, Time.fixedDeltaTime);
@@ -103,7 +105,7 @@ public class Particle3D : MonoBehaviour
         transform.rotation = rotation.ToUnityQuaterntion();
         // Update acceleration | angular acceleration
         J_Physics.UpdateAcceleration3D(ref acceleration, massInv, ref force);
-        J_Physics.UpdateAngularAcceleration3D(ref angularAcceleration, inertiaInv, torque, transformationMatrix);
+        J_Physics.UpdateAngularAcceleration3D(ref angularAcceleration, ref torque, inertiaInv,  transformationMatrix);
 
     }
 
@@ -122,6 +124,23 @@ public class Particle3D : MonoBehaviour
         //rotation.Zero();
         // Init anchorPosition
         //anchorPosition = new Vector3(anchorObject.transform.position.x, anchorObject.transform.position.y, anchorObject.transform.position.z);
+    }
+
+    void PlayerTestForceControl()
+    {
+        if (Input.GetKey(KeyCode.W))
+            ApplyTorque(new Vector3(0,1,0), momentArm);
+        if (Input.GetKey(KeyCode.S))
+            ApplyTorque(new Vector3(0, -1, 0), momentArm);
+        if (Input.GetKey(KeyCode.A))
+            ApplyTorque(new Vector3(-1, 0, 0), momentArm);
+        if (Input.GetKey(KeyCode.D))
+            ApplyTorque(new Vector3(1, 0, 0), momentArm);
+        if (Input.GetKey(KeyCode.Q))
+            ApplyTorque(new Vector3(0, 0, -1), momentArm);
+        if (Input.GetKey(KeyCode.E))
+            ApplyTorque(new Vector3(0, 0, 1), momentArm);
+
     }
 
     public void UpdateTransformationMatrix()
