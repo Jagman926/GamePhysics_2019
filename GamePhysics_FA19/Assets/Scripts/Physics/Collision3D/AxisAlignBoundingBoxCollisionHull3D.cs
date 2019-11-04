@@ -10,9 +10,9 @@ public class AxisAlignBoundingBoxCollisionHull3D : CollisionHull3D
     // 1. Min x/y
     // 2. Max x/y
     // 3. Center
-    public Vector2 center;
-    public Vector2 minExtent;
-    public Vector2 maxExtent;
+    public Vector3 center;
+    public Vector3 minExtent;
+    public Vector3 maxExtent;
 
     [Header("Debug Material")]
     bool colliding;
@@ -29,10 +29,10 @@ public class AxisAlignBoundingBoxCollisionHull3D : CollisionHull3D
     {
         center = particle.position;
 
-        Vector2 halfExtents = new Vector2(0.5f * particle.width, 0.5f * particle.height);
+        Vector2 halfExtents = new Vector3(0.5f * particle.width, 0.5f * particle.height);
 
-        minExtent = new Vector2(center.x - halfExtents.x, center.y - halfExtents.y);
-        maxExtent = new Vector2(center.x + halfExtents.x, center.y + halfExtents.y);
+        minExtent = new Vector3(center.x - halfExtents.x, center.y - halfExtents.y);
+        maxExtent = new Vector3(center.x + halfExtents.x, center.y + halfExtents.y);
     }
 
     public override bool isColliding(CollisionHull3D other, ref Collision c)
@@ -146,8 +146,8 @@ public class AxisAlignBoundingBoxCollisionHull3D : CollisionHull3D
         // 2. Get AABB max/min extents from world matrix inv of OBB
         // 3. use same AABB vs AABB test for both scenarios using the others normal max/min extents
 
-        Vector2 aabb_maxExtent_transInv = transform.worldToLocalMatrix.MultiplyPoint(maxExtent);
-        Vector2 aabb_minExtent_transInv = transform.worldToLocalMatrix.MultiplyPoint(minExtent);
+        Vector3 aabb_maxExtent_transInv = transform.worldToLocalMatrix.MultiplyPoint(maxExtent);
+        Vector3 aabb_minExtent_transInv = transform.worldToLocalMatrix.MultiplyPoint(minExtent);
 
         aabb_maxExtent_transInv += other.center;
         aabb_minExtent_transInv += other.center;
