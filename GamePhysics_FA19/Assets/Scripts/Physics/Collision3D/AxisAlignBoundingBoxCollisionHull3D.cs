@@ -55,8 +55,6 @@ public class AxisAlignBoundingBoxCollisionHull3D : CollisionHull3D
                         //clearContacts(ref c); //Clears the information used after contacts have been resolved
                         c.status = true;
                     }
-
-
                     Debug.Log(gameObject.name + " Colliding with " + other.name);
                     colliding = true;
                 }
@@ -67,8 +65,6 @@ public class AxisAlignBoundingBoxCollisionHull3D : CollisionHull3D
             case CollisionHullType3D.hull_aabb:
                 if (TestCollisionVsAABB((AxisAlignBoundingBoxCollisionHull3D)other, ref c))
                 {
-
-
                     Debug.Log(gameObject.name + " Colliding with " + other.name);
                     colliding = true;
                 }
@@ -88,12 +84,10 @@ public class AxisAlignBoundingBoxCollisionHull3D : CollisionHull3D
             default:
                 break;
         }
-        /*
-            if (colliding)
-                renderer.material = mat_red;
-            else
-                renderer.material = mat_green;
-        */
+        if (colliding)
+            renderer.material = mat_red;
+        else
+            renderer.material = mat_green;
 
         return colliding;
     }
@@ -129,9 +123,11 @@ public class AxisAlignBoundingBoxCollisionHull3D : CollisionHull3D
         // 2. pass if all cases are true
 
         if (maxExtent.x > other.minExtent.x &&
-           minExtent.x < other.maxExtent.x &&
-           maxExtent.y > other.minExtent.y &&
-           minExtent.y < other.maxExtent.y)
+            minExtent.x < other.maxExtent.x &&
+            maxExtent.y > other.minExtent.y &&
+            minExtent.y < other.maxExtent.y &&
+            maxExtent.z > other.minExtent.z &&
+            minExtent.z < other.maxExtent.z)
             return true;
         else
             return false;
@@ -152,15 +148,19 @@ public class AxisAlignBoundingBoxCollisionHull3D : CollisionHull3D
         aabb_maxExtent_transInv += other.center;
         aabb_minExtent_transInv += other.center;
 
-        if (maxExtent.x > other.minExtent_Rotated.x &&
-            minExtent.x < other.maxExtent_Rotated.x &&
-            maxExtent.y > other.minExtent_Rotated.y &&
-            minExtent.y < other.maxExtent_Rotated.y)
+        if (maxExtent.x > other.minExtent.x &&
+            minExtent.x < other.maxExtent.x &&
+            maxExtent.y > other.minExtent.y &&
+            minExtent.y < other.maxExtent.y &&
+            maxExtent.z > other.minExtent.z &&
+            minExtent.z < other.maxExtent.z)
         {
             if (aabb_maxExtent_transInv.x > other.minExtent.x &&
                 aabb_minExtent_transInv.x < other.maxExtent.x &&
                 aabb_maxExtent_transInv.y > other.minExtent.y &&
-                aabb_minExtent_transInv.y < other.maxExtent.y)
+                aabb_minExtent_transInv.y < other.maxExtent.y &&
+                aabb_maxExtent_transInv.z > other.minExtent.z &&
+                aabb_minExtent_transInv.z < other.maxExtent.z)
                 return true;
         }
         return false;
