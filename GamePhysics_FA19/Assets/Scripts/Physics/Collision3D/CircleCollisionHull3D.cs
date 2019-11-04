@@ -59,8 +59,6 @@ public class CircleCollisionHull3D : CollisionHull3D
                     Debug.Log(gameObject.name + " Colliding with " + other.name);
 
                     colliding = true;
-
-
                 }
                 else
                     colliding = false;
@@ -81,8 +79,6 @@ public class CircleCollisionHull3D : CollisionHull3D
                         //clearContacts(ref c); //Clears the information used after contacts have been resolved
                         c.status = true;
                     }
-
-
                     Debug.Log(gameObject.name + " Colliding with " + other.name);
                     colliding = true;
                 }
@@ -106,8 +102,6 @@ public class CircleCollisionHull3D : CollisionHull3D
                         //clearContacts(ref c); //Clears the information used after contacts have been resolved
                         c.status = true;
                     }
-
-
                     colliding = true;
                 }
                 else
@@ -116,12 +110,10 @@ public class CircleCollisionHull3D : CollisionHull3D
             default:
                 break;
         }
-        /*
         if (colliding)
             renderer.material = mat_red;
         else
             renderer.material = mat_green;
-        */
 
         return colliding;
     }
@@ -165,8 +157,9 @@ public class CircleCollisionHull3D : CollisionHull3D
 
         float clampX = Mathf.Clamp(center.x, other.minExtent.x, other.maxExtent.x);
         float clampY = Mathf.Clamp(center.y, other.minExtent.y, other.maxExtent.y);
+        float clampZ = Mathf.Clamp(center.z, other.minExtent.z, other.maxExtent.z);
 
-        Vector2 closestPoint = new Vector2(clampX, clampY);
+        Vector3 closestPoint = new Vector3(clampX, clampY, clampZ);
 
         if ((closestPoint - center).sqrMagnitude < radius * radius)
             return true;
@@ -182,20 +175,19 @@ public class CircleCollisionHull3D : CollisionHull3D
         // 2. Multiply inverse of matrix by center point of circle
         // 3. Same as collision vs AABB
 
-        Vector2 circleCenter = other.transform.InverseTransformPoint(center);
+        Vector3 circleCenter = other.transform.InverseTransformPoint(center);
 
         circleCenter += other.center;
 
         float clampX = Mathf.Clamp(circleCenter.x, other.minExtent.x, other.maxExtent.x);
         float clampY = Mathf.Clamp(circleCenter.y, other.minExtent.y, other.maxExtent.y);
+        float clampZ = Mathf.Clamp(center.z, other.minExtent.z, other.maxExtent.z);
 
-        Vector2 closestPoint = new Vector2(clampX, clampY);
+        Vector3 closestPoint = new Vector3(clampX, clampY, clampZ);
 
         if ((closestPoint - circleCenter).sqrMagnitude < radius * radius)
             return true;
         else
             return false;
     }
-
-
 }
