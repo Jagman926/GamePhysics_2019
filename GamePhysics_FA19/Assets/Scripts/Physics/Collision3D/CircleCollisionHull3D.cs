@@ -49,11 +49,11 @@ public class CircleCollisionHull3D : CollisionHull3D
                     {
                         c.status = true;
                         //Does the correct populate
-                        PopulateCollisionClassCircleVsCirlce(this, (CircleCollisionHull3D)other, ref c);
-                        //Resolves the collisions
-                        ResolveCollisions(ref c);
-
-                        clearContacts(ref c); //Clears the information used after contacts have been resolved
+                        //PopulateCollisionClassCircleVsCirlce(this, (CircleCollisionHull3D)other, ref c);
+                        ////Resolves the collisions
+                        //ResolveCollisions(ref c);
+                        //
+                        //clearContacts(ref c); //Clears the information used after contacts have been resolved
                     }
 
                     Debug.Log(gameObject.name + " Colliding with " + other.name);
@@ -75,10 +75,10 @@ public class CircleCollisionHull3D : CollisionHull3D
                     }
                     else
                     {
-                        PopulateCollisionClassAABBVSCircle(this, (AxisAlignBoundingBoxCollisionHull3D)other, ref c);
-                        //Resolves the collisions
-                        ResolveCollisions(ref c);
-                        clearContacts(ref c); //Clears the information used after contacts have been resolved
+                        //PopulateCollisionClassAABBVSCircle(this, (AxisAlignBoundingBoxCollisionHull3D)other, ref c);
+                        ////Resolves the collisions
+                        //ResolveCollisions(ref c);
+                        //clearContacts(ref c); //Clears the information used after contacts have been resolved
                         c.status = true;
                     }
 
