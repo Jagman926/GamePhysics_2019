@@ -11,12 +11,12 @@ public class ObjectBoundingBoxCollisionHull3D : CollisionHull3D
     // 2. Min x/y
     // 3. Max x/y
     // 4. Center
-    public Vector2 center;
-    public Vector2 halfExtents;
-    public Vector2 minExtent;
-    public Vector2 maxExtent;
-    public Vector2 minExtent_Rotated;
-    public Vector2 maxExtent_Rotated;
+    public Vector3 center;
+    public Vector3 halfExtents;
+    public Vector3 minExtent;
+    public Vector3 maxExtent;
+    public Vector3 minExtent_Rotated;
+    public Vector3 maxExtent_Rotated;
 
     [Header("Debug Material")]
     bool colliding;

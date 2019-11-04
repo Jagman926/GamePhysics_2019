@@ -12,7 +12,7 @@ public class CircleCollisionHull3D : CollisionHull3D
     [Range(0.0f, 100f)]
     public float radius;
     public float restitution;
-    public Vector2 center;
+    public Vector3 center;
 
     [Header("Debug Material")]
     bool colliding;
