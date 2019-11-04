@@ -98,21 +98,94 @@ public class J_Physics
         force = Vector3.zero;
     }
 
-    static public void UpdateAngularAcceleration3D(ref Vector3 angularAcceleration, float[,] inertiaInv, Vector3 torqueCummalative)
+    static public void UpdateAngularAcceleration3D(ref Vector3 angularAcceleration, float[,] inertiaInv, Vector3 torqueCummalative, Matrix4x4 transformMat)
     {
-        /*  Angular accell is decomposed into an axis & a rate of angular changes (AKA)
-         *  Theta = RA | A is the axis and R is the tate of wich it is spinning (mesuared in radians per second)
-         *  New angular accelerations is given by Theta = theta + W | W is the direcion of the spin
-         *  
-         */
 
+        //Bring torque into local space using tranform matrix
+        Vector3 localTorque = J_Physics.WorldToLocalDirection(torqueCummalative, transformMat);
 
-        //Not using torque calculations at the moment, so just hard set an acceleration
+        //Apply inverse inertia tensor to locallized torque
+        Vector3 torqueTensorCross = J_Physics.Mat3Vec3Cross(inertiaInv, localTorque);
 
+        //Move back to world giving us angular acceleration by transformation matrix
+        angularAcceleration = J_Physics.LocalToWorldDirection(torqueTensorCross, transformMat);
+    }
 
+    // Math Functions ------------------------------------------------------------------------------------
 
-        //angularAcceleration = inertiaInv * torqueCummalative; //Updates angular acceleration based on the delta time
+    static public Vector3 LocalToWorldDirection( Vector3 vector, Matrix4x4 matrix)
+    {
+        Vector3 output = new Vector3();
 
+        output.x = vector.x * matrix[0] +
+                    vector.y * matrix[1] +
+                    vector.z * matrix[2];
 
+        output.y = vector.x * matrix[4] +
+                    vector.y * matrix[5] +
+                    vector.z * matrix[6];
+
+        output.z = vector.x * matrix[8] +
+                    vector.y * matrix[9] +
+                    vector.z * matrix[10];
+
+        return output;
+    }
+
+    static public Vector3 WorldToLocalDirection( Vector3 vector, Matrix4x4 matrix)
+    {
+        Vector3 output = new Vector3();
+
+        output.x = vector.x * matrix[0] +
+                    vector.y * matrix[4] +
+                    vector.z * matrix[8];
+
+        output.y = vector.x * matrix[1] +
+                    vector.y * matrix[5] +
+                    vector.z * matrix[9];
+
+        output.z = vector.x * matrix[2] +
+                    vector.y * matrix[6] +
+                    vector.z * matrix[10];
+
+        return output;
+    }
+
+    static public Vector3 Mat3Vec3Cross(float[,] matrix, Vector3 vector)
+    {
+        Vector3 output = new Vector3();
+
+        output.x = vector.x * matrix[0,0] +
+            vector.y * matrix[1,0] +
+            vector.z * matrix[2,0];
+
+        output.y = vector.x * matrix[0,1] +
+                    vector.y * matrix[1,1] +
+                    vector.z * matrix[2,1];
+
+        output.z = vector.x * matrix[0,2] +
+                    vector.y * matrix[1,2] +
+                    vector.z * matrix[2,2];
+
+        return output;
+    }
+
+    static public float[,] GetMat3Inv(float[,] mat3)
+    {
+        float[,] output = new float[3, 3];
+
+        output[0, 0] = mat3[0, 0];
+        output[0, 1] = mat3[1, 0];
+        output[0, 2] = mat3[2, 0];
+
+        output[1, 0] = mat3[0, 1];
+        output[1, 1] = mat3[1, 1];
+        output[1, 2] = mat3[2, 1];
+
+        output[2, 0] = mat3[0, 2];
+        output[2, 1] = mat3[1, 2];
+        output[2, 2] = mat3[2, 2];
+
+        return output;
     }
 }

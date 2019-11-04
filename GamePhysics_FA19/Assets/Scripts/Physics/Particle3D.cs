@@ -29,7 +29,9 @@ public class Particle3D : MonoBehaviour
     private float startingMass = 0.0f;
     private float mass = 0.0f, massInv = 0.0f;
     [SerializeField]
-    private Vector3 centerOfMass = Vector3.zero;
+    private Vector3 centerOfMassLocal = Vector3.zero,
+                    centerOfMassWorld = Vector3.zero; //Multiply local by 
+
 
     [Header("Force Variables")]
     [SerializeField]
@@ -41,6 +43,7 @@ public class Particle3D : MonoBehaviour
     private Vector3 torque = Vector3.zero;
     //
     Vector3 f_gravity, f_normal, f_sliding, f_friction, f_drag, f_spring;
+
     private float inclineDegrees = 340.0f;
     private float frictionCoeff_s = 0.61f, frictionCoeff_k = 0.47f;
     private Vector3 fluidVelocity;
@@ -69,6 +72,14 @@ public class Particle3D : MonoBehaviour
     [SerializeField]
     private Vector3 angularAcceleration = Vector3.zero;
 
+    [Header("Test Variables")]
+    [SerializeField]
+    Vector3 testForce;
+    [SerializeField]
+    GameObject momentArmObject;
+    [SerializeField]
+    Vector3 momentArm;
+
     void Start()
     {
         InitStartingVariables();
@@ -76,19 +87,24 @@ public class Particle3D : MonoBehaviour
 
     void FixedUpdate()
     {
-
+        //Updates the moment arm
+        UpdateMomentArm();
+        //Applying torque from testforce
+        ApplyTorque(testForce, momentArm);
+        
         // Update position and rotation
         J_Physics.UpdatePosition3DKinematic(ref position, ref velocity, ref acceleration, Time.fixedDeltaTime);
         J_Physics.UpdateRotation3D(ref rotation, ref angularVelocity, angularAcceleration, Time.fixedDeltaTime);
+        UpdateTransformationMatrix();
 
         // apply to transform
         transform.position = position;
         //transform.eulerAngles = rotation;
         transform.rotation = rotation.ToUnityQuaterntion();
-
         // Update acceleration | angular acceleration
         J_Physics.UpdateAcceleration3D(ref acceleration, massInv, ref force);
-        J_Physics.UpdateAngularAcceleration3D(ref angularAcceleration, inertiaInv, torque);
+        J_Physics.UpdateAngularAcceleration3D(ref angularAcceleration, inertiaInv, torque, transformationMatrix);
+
     }
 
     private void InitStartingVariables()
@@ -96,11 +112,13 @@ public class Particle3D : MonoBehaviour
         // Init starting mass
         SetMass(startingMass);
         // Init starting inertia
+
         SetInertia();
         // Init starting position and rotation
         position = transform.position;
         rotation = new J_Quaternion();
         rotation.SetQuaterntion(transform.rotation);
+
         //rotation.Zero();
         // Init anchorPosition
         //anchorPosition = new Vector3(anchorObject.transform.position.x, anchorObject.transform.position.y, anchorObject.transform.position.z);
@@ -135,6 +153,12 @@ public class Particle3D : MonoBehaviour
         transformationMatrix[3, 3] = 1;
     }
 
+    void UpdateMomentArm()
+    {
+        //Updates momemnt arm position
+        momentArm = momentArmObject.transform.position;
+    }
+
     public void SetMass(float newMass)
     {
         mass = Mathf.Max(0.0f, newMass);
@@ -143,6 +167,7 @@ public class Particle3D : MonoBehaviour
 
     public void SetInertia()
     {
+
         /*
         Inertia Equations from slides in class (deck05angular.pdf)
         -----------------------------------------
@@ -185,51 +210,67 @@ public class Particle3D : MonoBehaviour
 
         -----------------------------------------
         */
+
+        //Zero's out the inertia
+        inertia[0, 0] = 0;
+        inertia[0, 1] = 0;
+        inertia[0, 2] = 0;
+        inertia[1, 0] = 0;
+        inertia[1, 1] = 0;
+        inertia[1, 2] = 0;
+        inertia[2, 0] = 0;
+        inertia[2, 1] = 0;
+        inertia[2, 2] = 0;
+
+
         switch (shapeType)
         {
             // Solid Sphere
             case Shape.SolidSphere:
-                inertia[0,0] = (2 / 5) * mass * (radiusOuter * radiusOuter);
-                inertia[1,1] = (2 / 5) * mass * (radiusOuter * radiusOuter);
-                inertia[2,2] = (2 / 5) * mass * (radiusOuter * radiusOuter);
+                inertia[0,0] = (2f / 5f) * mass * (radiusOuter * radiusOuter);
+                inertia[1,1] = (2f / 5f) * mass * (radiusOuter * radiusOuter);
+                inertia[2,2] = (2f / 5f) * mass * (radiusOuter * radiusOuter);
                 break;
             // Hollow Sphere
             case Shape.HollowSphere:
-                inertia[0,0] = (2 / 3) * mass * (radiusOuter * radiusOuter);
-                inertia[1,1] = (2 / 3) * mass * (radiusOuter * radiusOuter);
-                inertia[2,2] = (2 / 3) * mass * (radiusOuter * radiusOuter);
+                inertia[0,0] = (2f / 3f) * mass * (radiusOuter * radiusOuter);
+                inertia[1,1] = (2f / 3f) * mass * (radiusOuter * radiusOuter);
+                inertia[2,2] = (2f / 3f) * mass * (radiusOuter * radiusOuter);
                 break;
             // Solid Box
             case Shape.SolidBox:
-                inertia[0,0] = (1 / 12) * mass * ((height * height) + (length * length));
-                inertia[1,1] = (1 / 12) * mass * ((length * length) + (width * width));
-                inertia[2,2] = (1 / 12) * mass * ((height * height) + (width * width));
+                float temp = (1f / 12f) * mass * ((height * height) + (length * length));
+                inertia[0,0] = (1f / 12f) * mass * ((height * height) + (length * length));
+                inertia[1,1] = (1f / 12f) * mass * ((length * length) + (width * width));
+                inertia[2,2] = (1f / 12f) * mass * ((height * height) + (width * width));
                 break;
             // Hollow Box
             case Shape.HollowBox:
-                inertia[0,0] = (5 / 3) * mass * ((height * height) + (length * length));
-                inertia[1,1] = (5 / 3) * mass * ((length * length) + (width * width));
-                inertia[2,2] = (5 / 3) * mass * ((height * height) + (width * width));
+                inertia[0,0] = (5f / 3f) * mass * ((height * height) + (length * length));
+                inertia[1,1] = (5f / 3f) * mass * ((length * length) + (width * width));
+                inertia[2,2] = (5f / 3f) * mass * ((height * height) + (width * width));
                 break;
             // Solid Cylinder
             case Shape.SolidCylinder:
-                inertia[0,0] = (1 / 12) * mass * (3*(radiusOuter * radiusOuter) + (height * height));
-                inertia[1,1] = (1 / 12) * mass * (3*(radiusOuter * radiusOuter) + (height * height));
-                inertia[2,2] = (1 / 2) * mass * (radiusOuter * radiusOuter);
+                inertia[0,0] = (1f / 12f) * mass * (3*(radiusOuter * radiusOuter) + (height * height));
+                inertia[1,1] = (1f / 12f) * mass * (3*(radiusOuter * radiusOuter) + (height * height));
+                inertia[2,2] = (1f / 2f) * mass * (radiusOuter * radiusOuter);
                 break;
             //Solid Cone
             case Shape.SolidCone:
-                inertia[0,0] = (3 / 5) * mass * (height * height) + (3/20) * mass * (radiusOuter * radiusOuter);
-                inertia[1,1] = (3 / 5) * mass * (height * height) + (3/20) * mass * (radiusOuter * radiusOuter);
-                inertia[2,2] = (3 / 10) * mass * (radiusOuter * radiusOuter);
+                inertia[0,0] = (3f / 5f) * mass * (height * height) + (3/20) * mass * (radiusOuter * radiusOuter);
+                inertia[1,1] = (3f / 5f) * mass * (height * height) + (3/20) * mass * (radiusOuter * radiusOuter);
+                inertia[2,2] = (3f / 10f) * mass * (radiusOuter * radiusOuter);
                 break;
             // Default Case
             default:
                 Debug.Log("Shape Type not set");
                 break;
         }
-        //inertia = Mathf.Max(0.0f, inertia);
-        //inertiaInv = Mathf.Max(0.0f, 1.0f / inertia);
+
+        //Calcualte inverse inertia
+        inertiaInv = J_Physics.GetMat3Inv(inertia); 
+
     }
 
     public float GetMass()
@@ -269,13 +310,16 @@ public class Particle3D : MonoBehaviour
         AddForce(rotatedVector);
     }
 
-    public void ApplyTorque(float force, Vector3 momentArm)
+    public void ApplyTorque(Vector3 force, Vector3 momentArm)
     {
-        //D'Alembert
-        // T = pf x F: T
-        // pf = moment arm (point of applied force relative to center of mass)
-        // F = applied force at pf
-        torque += (force * (momentArm - centerOfMass)); //Got rid of mangitude to get working
+        //Torque in 3D
+        // momentarm = pos - center of mass
+        // torque += moment arm * force
+        //torque += (force * (momentArm - centerOfMassLocal).magnitude);
+        
+        torque += force * (momentArm - centerOfMassLocal).magnitude;
+
+
     }
 
     public Vector2 GetPosition()
