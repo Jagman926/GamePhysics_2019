@@ -49,10 +49,10 @@ public class AxisAlignBoundingBoxCollisionHull3D : CollisionHull3D
                     }
                     else
                     {
-                        PopulateCollisionClassAABBVSCircle((CircleCollisionHull3D)other, this, ref c);
-                        //Resolves the collisions
-                        ResolveCollisions(ref c);
-                        clearContacts(ref c); //Clears the information used after contacts have been resolved
+                        //PopulateCollisionClassAABBVSCircle((CircleCollisionHull3D)other, this, ref c);
+                        ////Resolves the collisions
+                        //ResolveCollisions(ref c);
+                        //clearContacts(ref c); //Clears the information used after contacts have been resolved
                         c.status = true;
                     }
 

@@ -8,8 +8,8 @@ public abstract class CollisionHull3D : MonoBehaviour
     {
         public struct Contact
         {
-            public Vector2 point;
-            public Vector2 normal;
+            public Vector3 point;
+            public Vector3 normal;
             public float penetration;
 
         }
@@ -23,7 +23,7 @@ public abstract class CollisionHull3D : MonoBehaviour
         public int itterations = 3; //Max itterations allowed
         public int iterationsUsed = 0;
 
-        Vector2 closingVelocity;
+        Vector3 closingVelocity;
     }
 
     public enum CollisionHullType3D
@@ -47,7 +47,7 @@ public abstract class CollisionHull3D : MonoBehaviour
     {
         particle = GetComponent<Particle3D>();
     }
-
+    /*
     public void ResolveCollisions(ref Collision collisionData)
     {
 
@@ -342,6 +342,7 @@ public abstract class CollisionHull3D : MonoBehaviour
 
         return false;
     }
+    */
 
     public abstract void UpdateTransform();
 

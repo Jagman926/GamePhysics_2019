@@ -100,10 +100,10 @@ public class CircleCollisionHull3D : CollisionHull3D
                     }
                     else
                     {
-                        PopulateCollisionClassOBBVSCircle(this, (ObjectBoundingBoxCollisionHull3D)other, ref c);
-                        //Resolves the collisions
-                        ResolveCollisions(ref c);
-                        clearContacts(ref c); //Clears the information used after contacts have been resolved
+                        //PopulateCollisionClassOBBVSCircle(this, (ObjectBoundingBoxCollisionHull3D)other, ref c);
+                        ////Resolves the collisions
+                        //ResolveCollisions(ref c);
+                        //clearContacts(ref c); //Clears the information used after contacts have been resolved
                         c.status = true;
                     }
 
