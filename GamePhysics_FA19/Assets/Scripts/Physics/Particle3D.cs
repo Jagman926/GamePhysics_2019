@@ -287,7 +287,7 @@ public class Particle3D : MonoBehaviour
         }
 
         //Calcualte inverse inertia
-        inertiaInv = J_Physics.GetMat3Inv(inertia); 
+        inertiaInv = J_Physics.GetMat3Inverse(inertia); 
 
     }
 

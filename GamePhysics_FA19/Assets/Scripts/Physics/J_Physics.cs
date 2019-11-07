@@ -173,7 +173,7 @@ public class J_Physics
         return output;
     }
 
-    static public float[,] GetMat3Inv(float[,] mat3)
+    static public float[,] GetMat3Transpose(float[,] mat3)
     {
         float[,] output = new float[3, 3];
 
@@ -188,6 +188,17 @@ public class J_Physics
         output[2, 0] = mat3[0, 2];
         output[2, 1] = mat3[1, 2];
         output[2, 2] = mat3[2, 2];
+
+        return output;
+    }
+
+    static public float[,] GetMat3Inverse(float[,] mat3)
+    {
+        float[,] output = mat3;
+
+        output[0, 0] = 1 / output[0, 0];
+        output[1, 1] = 1 / output[1, 1];
+        output[2, 2] = 1 / output[2, 2];
 
         return output;
     }
