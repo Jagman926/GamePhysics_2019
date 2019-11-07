@@ -34,6 +34,8 @@ public abstract class CollisionHull3D : MonoBehaviour
 
     }
 
+    public bool collisionDetededThisFrame = false;
+
     public CollisionHullType3D type { get; }
 
     protected CollisionHull3D(CollisionHullType3D type_set)
@@ -47,6 +49,12 @@ public abstract class CollisionHull3D : MonoBehaviour
     {
         particle = GetComponent<Particle3D>();
     }
+
+    private void FixedUpdate()
+    {
+        collisionDetededThisFrame = false;
+    }
+
     /*
     public void ResolveCollisions(ref Collision collisionData)
     {
@@ -353,4 +361,6 @@ public abstract class CollisionHull3D : MonoBehaviour
     public abstract bool TestCollisionVsAABB(AxisAlignBoundingBoxCollisionHull3D other, ref Collision c);
 
     public abstract bool TestCollisionVsOBB(ObjectBoundingBoxCollisionHull3D other, ref Collision c);
+
+    public abstract void ChangeMaterialBasedOnCollsion(bool testVariable);
 }

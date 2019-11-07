@@ -97,12 +97,14 @@ public class Particle3D : MonoBehaviour
         // Update position and rotation
         //J_Physics.UpdatePosition3DKinematic(ref position, ref velocity, ref acceleration, Time.fixedDeltaTime);
         //J_Physics.UpdateRotation3D(ref rotation, ref angularVelocity, angularAcceleration, Time.fixedDeltaTime);
-        UpdateTransformationMatrix();
 
         // apply to transform
         transform.position = position;
         //transform.eulerAngles = rotation;
         transform.rotation = rotation.ToUnityQuaterntion();
+
+        UpdateTransformationMatrix(); //Update transform matrix
+
         // Update acceleration | angular acceleration
         J_Physics.UpdateAcceleration3D(ref acceleration, massInv, ref force);
         J_Physics.UpdateAngularAcceleration3D(ref angularAcceleration, ref torque, inertiaInv,  transformationMatrix);

@@ -84,10 +84,7 @@ public class AxisAlignBoundingBoxCollisionHull3D : CollisionHull3D
             default:
                 break;
         }
-        if (colliding)
-            renderer.material = mat_red;
-        else
-            renderer.material = mat_green;
+
 
         return colliding;
     }
@@ -164,5 +161,16 @@ public class AxisAlignBoundingBoxCollisionHull3D : CollisionHull3D
                 return true;
         }
         return false;
+    }
+
+    public override void ChangeMaterialBasedOnCollsion(bool collisionTest)
+    {
+        if (collisionTest || collisionDetededThisFrame)
+        {
+            renderer.material = mat_red;
+            collisionDetededThisFrame = true;
+        }
+        else
+            renderer.material = mat_green;
     }
 }
