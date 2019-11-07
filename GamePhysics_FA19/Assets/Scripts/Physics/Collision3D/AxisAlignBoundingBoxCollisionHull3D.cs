@@ -29,10 +29,10 @@ public class AxisAlignBoundingBoxCollisionHull3D : CollisionHull3D
     {
         center = particle.position;
 
-        Vector2 halfExtents = new Vector3(0.5f * particle.width, 0.5f * particle.height);
+        Vector3 halfExtents = new Vector3(0.5f * particle.width, 0.5f * particle.height, 0.5f * particle.length);
 
-        minExtent = new Vector3(center.x - halfExtents.x, center.y - halfExtents.y);
-        maxExtent = new Vector3(center.x + halfExtents.x, center.y + halfExtents.y);
+        minExtent = new Vector3(center.x - halfExtents.x, center.y - halfExtents.y, center.z - halfExtents.z);
+        maxExtent = new Vector3(center.x + halfExtents.x, center.y + halfExtents.y, center.z + halfExtents.z);
     }
 
     public override bool isColliding(CollisionHull3D other, ref Collision c)

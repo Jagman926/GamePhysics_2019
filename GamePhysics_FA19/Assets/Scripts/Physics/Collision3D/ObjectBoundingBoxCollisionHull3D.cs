@@ -52,12 +52,12 @@ public class ObjectBoundingBoxCollisionHull3D : CollisionHull3D
         Vector3 corner7 = objectToWorldMatrix.MultiplyPoint3x4(new Vector3(-halfExtents.x, halfExtents.y, -halfExtents.z));
         Vector3 corner8 = objectToWorldMatrix.MultiplyPoint3x4(new Vector3(-halfExtents.x, -halfExtents.y, -halfExtents.z));
         // Calculate min/max rotated points 
-        minExtent_Rotated.x = Mathf.Min(corner1.x, Mathf.Min(corner2.x, Mathf.Min(corner3.x, corner4.x))); // TODO: Need to find min of 8 points
-        minExtent_Rotated.y = Mathf.Min(corner1.y, Mathf.Min(corner2.y, Mathf.Min(corner3.y, corner4.y)));
-        minExtent_Rotated.z = Mathf.Min(corner1.y, Mathf.Min(corner2.y, Mathf.Min(corner3.y, corner4.y)));
-        maxExtent_Rotated.x = Mathf.Max(corner1.x, Mathf.Max(corner2.x, Mathf.Max(corner3.x, corner4.x))); // TODO: Need to find max of 8 points
-        maxExtent_Rotated.y = Mathf.Max(corner1.y, Mathf.Max(corner2.y, Mathf.Max(corner3.y, corner4.y)));
-        maxExtent_Rotated.z = Mathf.Max(corner1.y, Mathf.Max(corner2.y, Mathf.Max(corner3.y, corner4.y)));
+        minExtent_Rotated.x = Mathf.Min(corner1.x, Mathf.Min(corner2.x, Mathf.Min(corner3.x, Mathf.Min(corner4.x, Mathf.Min(corner5.x, Mathf.Min(corner6.x, Mathf.Min(corner7.x, corner8.x))))))); 
+        minExtent_Rotated.y = Mathf.Min(corner1.y, Mathf.Min(corner2.y, Mathf.Min(corner3.y, Mathf.Min(corner4.y, Mathf.Min(corner5.y, Mathf.Min(corner6.y, Mathf.Min(corner7.y, corner8.y))))))); 
+        minExtent_Rotated.z = Mathf.Min(corner1.z, Mathf.Min(corner2.z, Mathf.Min(corner3.z, Mathf.Min(corner4.z, Mathf.Min(corner5.z, Mathf.Min(corner6.z, Mathf.Min(corner7.z, corner8.z))))))); 
+        maxExtent_Rotated.x = Mathf.Max(corner1.x, Mathf.Max(corner2.x, Mathf.Max(corner3.x, Mathf.Max(corner4.x, Mathf.Max(corner5.x, Mathf.Max(corner6.x, Mathf.Max(corner7.x, corner8.x))))))); 
+        maxExtent_Rotated.y = Mathf.Max(corner1.y, Mathf.Max(corner2.y, Mathf.Max(corner3.y, Mathf.Max(corner4.y, Mathf.Max(corner5.y, Mathf.Max(corner6.y, Mathf.Max(corner7.y, corner8.y))))))); 
+        maxExtent_Rotated.z = Mathf.Max(corner1.z, Mathf.Max(corner2.z, Mathf.Max(corner3.z, Mathf.Max(corner4.z, Mathf.Max(corner5.z, Mathf.Max(corner6.z, Mathf.Max(corner7.z, corner8.z))))))); 
 
         // Reset rotation
         transform.rotation = storedRotation;
