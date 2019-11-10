@@ -43,14 +43,14 @@ public class ObjectBoundingBoxCollisionHull3D : CollisionHull3D
         // Set rotation to identity
         transform.rotation = Quaternion.identity;
         // Transform points by world matrix
-        Vector3 corner1 = objectToWorldMatrix.MultiplyPoint3x4(new Vector3(halfExtents.x, halfExtents.y, halfExtents.z));
-        Vector3 corner2 = objectToWorldMatrix.MultiplyPoint3x4(new Vector3(halfExtents.x, -halfExtents.y, halfExtents.z));
-        Vector3 corner3 = objectToWorldMatrix.MultiplyPoint3x4(new Vector3(-halfExtents.x, halfExtents.y, halfExtents.z));
-        Vector3 corner4 = objectToWorldMatrix.MultiplyPoint3x4(new Vector3(-halfExtents.x, -halfExtents.y, halfExtents.z));
-        Vector3 corner5 = objectToWorldMatrix.MultiplyPoint3x4(new Vector3(halfExtents.x, halfExtents.y, -halfExtents.z));
-        Vector3 corner6 = objectToWorldMatrix.MultiplyPoint3x4(new Vector3(halfExtents.x, -halfExtents.y, -halfExtents.z));
-        Vector3 corner7 = objectToWorldMatrix.MultiplyPoint3x4(new Vector3(-halfExtents.x, halfExtents.y, -halfExtents.z));
-        Vector3 corner8 = objectToWorldMatrix.MultiplyPoint3x4(new Vector3(-halfExtents.x, -halfExtents.y, -halfExtents.z));
+        Vector3 corner1 = objectToWorldMatrix.MultiplyPoint(new Vector3(halfExtents.x, halfExtents.y, halfExtents.z));
+        Vector3 corner2 = objectToWorldMatrix.MultiplyPoint(new Vector3(halfExtents.x, -halfExtents.y, halfExtents.z));
+        Vector3 corner3 = objectToWorldMatrix.MultiplyPoint(new Vector3(-halfExtents.x, halfExtents.y, halfExtents.z));
+        Vector3 corner4 = objectToWorldMatrix.MultiplyPoint(new Vector3(-halfExtents.x, -halfExtents.y, halfExtents.z));
+        Vector3 corner5 = objectToWorldMatrix.MultiplyPoint(new Vector3(halfExtents.x, halfExtents.y, -halfExtents.z));
+        Vector3 corner6 = objectToWorldMatrix.MultiplyPoint(new Vector3(halfExtents.x, -halfExtents.y, -halfExtents.z));
+        Vector3 corner7 = objectToWorldMatrix.MultiplyPoint(new Vector3(-halfExtents.x, halfExtents.y, -halfExtents.z));
+        Vector3 corner8 = objectToWorldMatrix.MultiplyPoint(new Vector3(-halfExtents.x, -halfExtents.y, -halfExtents.z));
         // Calculate min/max rotated points 
         minExtent_Rotated.x = Mathf.Min(corner1.x, Mathf.Min(corner2.x, Mathf.Min(corner3.x, Mathf.Min(corner4.x, Mathf.Min(corner5.x, Mathf.Min(corner6.x, Mathf.Min(corner7.x, corner8.x))))))); 
         minExtent_Rotated.y = Mathf.Min(corner1.y, Mathf.Min(corner2.y, Mathf.Min(corner3.y, Mathf.Min(corner4.y, Mathf.Min(corner5.y, Mathf.Min(corner6.y, Mathf.Min(corner7.y, corner8.y))))))); 
@@ -61,7 +61,11 @@ public class ObjectBoundingBoxCollisionHull3D : CollisionHull3D
 
         // Reset rotation
         transform.rotation = storedRotation;
+
+
     }
+
+
 
     public override bool isColliding(CollisionHull3D other, ref Collision c)
     {
@@ -138,6 +142,32 @@ public class ObjectBoundingBoxCollisionHull3D : CollisionHull3D
             return false;
     }
 
+    public Vector3 obb1_maxExtent_transInv;
+    public Vector3 obb1_minExtent_transInv;
+    public Vector3 obb2_maxExtent_transInv;
+    public Vector3 obb2_minExtent_transInv;
+
+    private void OnDrawGizmos()
+    {
+
+        if (obb1_maxExtent_transInv != Vector3.zero || obb1_minExtent_transInv != Vector3.zero)
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawSphere(obb1_maxExtent_transInv, .05f);
+            Gizmos.color = Color.red;
+            Gizmos.DrawSphere(obb1_minExtent_transInv, .05f);
+        }
+
+
+        if (obb2_maxExtent_transInv != Vector3.zero || obb2_minExtent_transInv != Vector3.zero)
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawSphere(obb2_maxExtent_transInv, .05f);
+            Gizmos.color = Color.red;
+            Gizmos.DrawSphere(obb2_minExtent_transInv, .05f);
+        }
+    }
+
     public override bool TestCollisionVsOBB(ObjectBoundingBoxCollisionHull3D other, ref Collision c)
     {
         // same as AABB-OBB part 2, twice
@@ -146,44 +176,54 @@ public class ObjectBoundingBoxCollisionHull3D : CollisionHull3D
         // 3. For both test, and if both true, pass
 
         // Other object multiplied by inverse world matrix
-        Vector3 obb1_maxExtent_transInv = other.transform.worldToLocalMatrix.MultiplyPoint(other.maxExtent);
-        Vector3 obb1_minExtent_transInv = other.transform.worldToLocalMatrix.MultiplyPoint(other.minExtent);
+        obb1_maxExtent_transInv = other.transform.worldToLocalMatrix.MultiplyPoint(maxExtent);
+        obb1_minExtent_transInv = other.transform.worldToLocalMatrix.MultiplyPoint(minExtent);
         // This object multiplied by inverse world matrix
-        Vector3 obb2_maxExtent_transInv = transform.worldToLocalMatrix.MultiplyPoint(maxExtent);
-        Vector3 obb2_minExtent_transInv = transform.worldToLocalMatrix.MultiplyPoint(minExtent);
+        obb2_maxExtent_transInv = transform.worldToLocalMatrix.MultiplyPoint(other.maxExtent);
+        obb2_minExtent_transInv = transform.worldToLocalMatrix.MultiplyPoint(other.minExtent);
 
-       //obb1_maxExtent_transInv += center;
-       //obb1_minExtent_transInv += center;
-       //obb2_maxExtent_transInv += other.center;
-       //obb2_minExtent_transInv += other.center;
+       obb1_maxExtent_transInv += center;
+       obb1_minExtent_transInv += center;
+       obb2_maxExtent_transInv += other.center;
+       obb2_minExtent_transInv += other.center;
 
-        if (obb1_maxExtent_transInv.x > minExtent.x &&
-            obb1_minExtent_transInv.x < maxExtent.x &&
-            obb1_maxExtent_transInv.y > minExtent.y &&
-            obb1_minExtent_transInv.y < maxExtent.y &&
-            obb1_maxExtent_transInv.z > minExtent.z &&
-            obb1_minExtent_transInv.z < maxExtent.z)
-        {
-            if (obb2_maxExtent_transInv.x > other.minExtent.x &&
-                obb2_minExtent_transInv.x < other.maxExtent.x &&
-                obb2_maxExtent_transInv.y > other.minExtent.y &&
-                obb2_minExtent_transInv.y < other.maxExtent.y &&
-                obb2_maxExtent_transInv.z > other.minExtent.z &&
-                obb2_minExtent_transInv.z < other.maxExtent.z)
-                return true;
-        }
 
-        return false;
-    }
+/* AABB for refrence 
+ if (maxExtent.x > other.minExtent.x &&
+    minExtent.x < other.maxExtent.x &&
+    maxExtent.y > other.minExtent.y &&
+    minExtent.y < other.maxExtent.y &&
+    maxExtent.z > other.minExtent.z &&
+    minExtent.z < other.maxExtent.z)
+ */
 
-    public override void ChangeMaterialBasedOnCollsion(bool collisionTest)
-    {
-        if (collisionTest || collisionDetededThisFrame)
-        {
-            renderer.material = mat_red;
-            collisionDetededThisFrame = true;
-        }
-        else
-            renderer.material = mat_green;
-    }
+if (obb1_maxExtent_transInv.x > other.minExtent.x &&
+    obb1_minExtent_transInv.x < other.maxExtent.x &&
+    obb1_maxExtent_transInv.y > other.minExtent.y &&
+    obb1_minExtent_transInv.y < other.maxExtent.y &&
+    obb1_maxExtent_transInv.z > other.minExtent.z &&
+    obb1_minExtent_transInv.z < other.maxExtent.z)
+{
+    if (obb2_maxExtent_transInv.x > minExtent.x &&
+        obb2_minExtent_transInv.x < maxExtent.x &&
+        obb2_maxExtent_transInv.y > minExtent.y &&
+        obb2_minExtent_transInv.y < maxExtent.y &&
+        obb2_maxExtent_transInv.z > minExtent.z &&
+        obb2_minExtent_transInv.z < maxExtent.z)
+        return true;
+}
+
+return false;
+}
+
+public override void ChangeMaterialBasedOnCollsion(bool collisionTest)
+{
+if (collisionTest || collisionDetededThisFrame)
+{
+    renderer.material = mat_red;
+    collisionDetededThisFrame = true;
+}
+else
+    renderer.material = mat_green;
+}
 }

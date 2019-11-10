@@ -139,11 +139,12 @@ public class AxisAlignBoundingBoxCollisionHull3D : CollisionHull3D
         // 2. Get AABB max/min extents from world matrix inv of OBB
         // 3. use same AABB vs AABB test for both scenarios using the others normal max/min extents
 
-        Vector3 aabb_maxExtent_transInv = transform.worldToLocalMatrix.MultiplyPoint(maxExtent);
-        Vector3 aabb_minExtent_transInv = transform.worldToLocalMatrix.MultiplyPoint(minExtent);
-
-        aabb_maxExtent_transInv += other.center;
-        aabb_minExtent_transInv += other.center;
+        Vector3 aabb_maxExtent_transInv = other.transform.worldToLocalMatrix.MultiplyPoint(maxExtent);
+        Vector3 aabb_minExtent_transInv = other.transform.worldToLocalMatrix.MultiplyPoint(minExtent);
+        //Vector3 obb_maxExtent_transInv = transform.worldToLocalMatrix.MultiplyPoint(maxExtent);
+        //Vector3 obb_minExtent_transInv = transform.worldToLocalMatrix.MultiplyPoint(minExtent);
+        //aabb_maxExtent_transInv += other.center;
+        //aabb_minExtent_transInv += other.center;
 
         if (maxExtent.x > other.minExtent.x &&
             minExtent.x < other.maxExtent.x &&
