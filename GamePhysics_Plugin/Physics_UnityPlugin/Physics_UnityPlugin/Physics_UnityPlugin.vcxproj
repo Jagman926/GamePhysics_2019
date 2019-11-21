@@ -158,6 +158,7 @@
     <ClInclude Include="DebugCPP.h" />
     <ClInclude Include="foo.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="J_ForcePlugin.h" />
     <ClInclude Include="lib.h" />
     <ClInclude Include="MyUnityPlugin.h" />
     <ClInclude Include="pch.h" />
