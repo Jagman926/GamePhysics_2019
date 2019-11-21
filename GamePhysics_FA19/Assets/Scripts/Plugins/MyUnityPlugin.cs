@@ -12,4 +12,8 @@ public class MyUnityPlugin
     public static extern int DoFoo(int barS = 0);
     [DllImport("Physics_UnityPlugin")]
     public static extern int TermFoo();
+    [DllImport("Physics_UnityPlugin")]
+    public static extern void TestDebugCalls();
+
+
 }

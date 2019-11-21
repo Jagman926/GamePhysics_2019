@@ -12,6 +12,7 @@ extern "C"
 MYUNITYPLUGIN_SYMBOL int InitFoo(int f_new);
 MYUNITYPLUGIN_SYMBOL int DoFoo(int bar);
 MYUNITYPLUGIN_SYMBOL int TermFoo();
+MYUNITYPLUGIN_SYMBOL void TestDebugCalls();
 
 
 #ifdef __cplusplus

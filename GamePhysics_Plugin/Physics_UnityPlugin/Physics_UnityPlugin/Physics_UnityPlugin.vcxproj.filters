@@ -30,6 +30,9 @@
     <ClInclude Include="MyUnityPlugin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DebugCPP.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -42,6 +45,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MyUnityPlugin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugCPP.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

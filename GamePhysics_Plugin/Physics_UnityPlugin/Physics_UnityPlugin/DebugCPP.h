@@ -8,13 +8,14 @@
 #include <string>
 #include <stdio.h>
 #include <sstream>
+#include "lib.h"
 
 extern "C"
 {
 	//Create a callback delegate
 	typedef void(*FuncCallBack)(const char* message, int color, int size);
 	static FuncCallBack callbackInstance = nullptr;
-	__declspec(dllexport) void RegisterDebugCallback(FuncCallBack cb);
+	MYUNITYPLUGIN_SYMBOL void RegisterDebugCallback(FuncCallBack cb);
 }
 
 //Color Enum
