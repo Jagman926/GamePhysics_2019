@@ -804,6 +804,10 @@ MonoBehaviour:
   maxExtent_Rotated: {x: 0, y: 0, z: 0}
   mat_red: {fileID: 2100000, guid: 0b67b1e91a74eb94abc9d33add74cd21, type: 2}
   mat_green: {fileID: 2100000, guid: a8c23223342922647a1ab41717db816b, type: 2}
+  obb1_maxExtent_transInv: {x: 0, y: 0, z: 0}
+  obb1_minExtent_transInv: {x: 0, y: 0, z: 0}
+  obb2_maxExtent_transInv: {x: 0, y: 0, z: 0}
+  obb2_minExtent_transInv: {x: 0, y: 0, z: 0}
 --- !u!23 &1613157979
 MeshRenderer:
   m_ObjectHideFlags: 0
