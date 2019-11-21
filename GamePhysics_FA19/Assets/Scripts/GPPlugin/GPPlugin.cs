@@ -4,8 +4,9 @@ using System.Collections.Generic;
 
 using System.Runtime.InteropServices;
 
-public class MyUnityPlugin
+public class GPPlugin
 {
+    // Function imports from GPPlugin
     [DllImport("Physics_UnityPlugin")]
     public static extern int InitFoo(int f_new = 0);
     [DllImport("Physics_UnityPlugin")]
@@ -14,6 +15,4 @@ public class MyUnityPlugin
     public static extern int TermFoo();
     [DllImport("Physics_UnityPlugin")]
     public static extern void TestDebugCalls();
-
-
 }
