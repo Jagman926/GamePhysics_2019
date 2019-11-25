@@ -351,4 +351,9 @@ public class Particle3D : MonoBehaviour
     {
         position = newPosition;
     }
+
+    public Matrix4x4 GetTransformationMatrix()
+    {
+        return transformationMatrix;
+    }
 }

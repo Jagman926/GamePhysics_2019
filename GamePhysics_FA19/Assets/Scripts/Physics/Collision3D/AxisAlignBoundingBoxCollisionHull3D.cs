@@ -146,19 +146,19 @@ public class AxisAlignBoundingBoxCollisionHull3D : CollisionHull3D
         //aabb_maxExtent_transInv += other.center;
         //aabb_minExtent_transInv += other.center;
 
-        if (maxExtent.x > other.minExtent.x &&
-            minExtent.x < other.maxExtent.x &&
-            maxExtent.y > other.minExtent.y &&
-            minExtent.y < other.maxExtent.y &&
-            maxExtent.z > other.minExtent.z &&
-            minExtent.z < other.maxExtent.z)
+        if (maxExtent.x > other.minExtent_Local.x &&
+            minExtent.x < other.maxExtent_Local.x &&
+            maxExtent.y > other.minExtent_Local.y &&
+            minExtent.y < other.maxExtent_Local.y &&
+            maxExtent.z > other.minExtent_Local.z &&
+            minExtent.z < other.maxExtent_Local.z)
         {
-            if (aabb_maxExtent_transInv.x > other.minExtent.x &&
-                aabb_minExtent_transInv.x < other.maxExtent.x &&
-                aabb_maxExtent_transInv.y > other.minExtent.y &&
-                aabb_minExtent_transInv.y < other.maxExtent.y &&
-                aabb_maxExtent_transInv.z > other.minExtent.z &&
-                aabb_minExtent_transInv.z < other.maxExtent.z)
+            if (aabb_maxExtent_transInv.x > other.minExtent_Local.x &&
+                aabb_minExtent_transInv.x < other.maxExtent_Local.x &&
+                aabb_maxExtent_transInv.y > other.minExtent_Local.y &&
+                aabb_minExtent_transInv.y < other.maxExtent_Local.y &&
+                aabb_maxExtent_transInv.z > other.minExtent_Local.z &&
+                aabb_minExtent_transInv.z < other.maxExtent_Local.z)
                 return true;
         }
         return false;

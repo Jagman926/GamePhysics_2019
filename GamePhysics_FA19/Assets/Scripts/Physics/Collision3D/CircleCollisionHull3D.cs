@@ -176,9 +176,9 @@ public class CircleCollisionHull3D : CollisionHull3D
 
         circleCenter += other.center;
 
-        float clampX = Mathf.Clamp(circleCenter.x, other.minExtent.x, other.maxExtent.x);
-        float clampY = Mathf.Clamp(circleCenter.y, other.minExtent.y, other.maxExtent.y);
-        float clampZ = Mathf.Clamp(center.z, other.minExtent.z, other.maxExtent.z);
+        float clampX = Mathf.Clamp(circleCenter.x, other.minExtent_Local.x, other.maxExtent_Local.x);
+        float clampY = Mathf.Clamp(circleCenter.y, other.minExtent_Local.y, other.maxExtent_Local.y);
+        float clampZ = Mathf.Clamp(center.z, other.minExtent_Local.z, other.maxExtent_Local.z);
 
         Vector3 closestPoint = new Vector3(clampX, clampY, clampZ);
 

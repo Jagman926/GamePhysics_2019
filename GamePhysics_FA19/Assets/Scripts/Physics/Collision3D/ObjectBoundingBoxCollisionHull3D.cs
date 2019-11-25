@@ -13,59 +13,100 @@ public class ObjectBoundingBoxCollisionHull3D : CollisionHull3D
     // 4. Center
     public Vector3 center;
     public Vector3 halfExtents;
-    public Vector3 minExtent;
-    public Vector3 maxExtent;
-    public Vector3 minExtent_Rotated;
-    public Vector3 maxExtent_Rotated;
+    public Vector3 minExtent_Local;
+    public Vector3 maxExtent_Local;
+    public Vector3 minExtent_World;
+    public Vector3 maxExtent_World;
 
     [Header("Debug Material")]
     bool colliding;
     private Renderer renderer;
     public Material mat_red;
     public Material mat_green;
+    Vector3[] cornersLocal;
+    Vector3[] cornersWorld;
 
     void Awake()
     {
+        cornersLocal = new Vector3[8];
+        cornersWorld = new Vector3[8];
         renderer = gameObject.GetComponent<Renderer>();
+        cornersLocal[0]= new Vector3(halfExtents.x, halfExtents.y, halfExtents.z);
+        cornersLocal[1]= new Vector3(halfExtents.x, -halfExtents.y, halfExtents.z);
+        cornersLocal[2]= new Vector3(-halfExtents.x, halfExtents.y, halfExtents.z);
+        cornersLocal[3]= new Vector3(-halfExtents.x, -halfExtents.y, halfExtents.z);
+        cornersLocal[4]= new Vector3(halfExtents.x, halfExtents.y, -halfExtents.z);
+        cornersLocal[5]= new Vector3(halfExtents.x, -halfExtents.y, -halfExtents.z);
+        cornersLocal[6]= new Vector3(-halfExtents.x, halfExtents.y, -halfExtents.z);
+        cornersLocal[7]= new Vector3(-halfExtents.x, -halfExtents.y, -halfExtents.z);
+        halfExtents = new Vector3(0.5f * particle.width, 0.5f * particle.height, 0.5f * particle.length);
+
+
+        // Determine extents
+        minExtent_Local = new Vector3(-halfExtents.x, -halfExtents.y, -halfExtents.z);
+        maxExtent_Local = new Vector3(halfExtents.x, halfExtents.y, halfExtents.z);
     }
 
     public override void UpdateTransform()
     {
         center = particle.position;
-        Matrix4x4 objectToWorldMatrix = transform.localToWorldMatrix;
-        Quaternion storedRotation = transform.rotation;
 
-        // Determine extents
-        halfExtents = new Vector3(0.5f * particle.width, 0.5f * particle.height, 0.5f * particle.length);
-        minExtent = new Vector3(center.x - halfExtents.x, center.y - halfExtents.y, center.z - halfExtents.z);
-        maxExtent = new Vector3(center.x + halfExtents.x, center.x + halfExtents.y, center.z + halfExtents.z);
+        //Get corners in world space
+        for (int i = 0; i < cornersLocal.Length; i++)
+        {
+            cornersWorld[i] = J_Physics.LocalToWorldDirection(cornersLocal[i], particle.GetTransformationMatrix());
+        }
 
-        // Set rotation to identity
-        transform.rotation = Quaternion.identity;
-        // Transform points by world matrix
-        Vector3 corner1 = objectToWorldMatrix.MultiplyPoint(new Vector3(halfExtents.x, halfExtents.y, halfExtents.z));
-        Vector3 corner2 = objectToWorldMatrix.MultiplyPoint(new Vector3(halfExtents.x, -halfExtents.y, halfExtents.z));
-        Vector3 corner3 = objectToWorldMatrix.MultiplyPoint(new Vector3(-halfExtents.x, halfExtents.y, halfExtents.z));
-        Vector3 corner4 = objectToWorldMatrix.MultiplyPoint(new Vector3(-halfExtents.x, -halfExtents.y, halfExtents.z));
-        Vector3 corner5 = objectToWorldMatrix.MultiplyPoint(new Vector3(halfExtents.x, halfExtents.y, -halfExtents.z));
-        Vector3 corner6 = objectToWorldMatrix.MultiplyPoint(new Vector3(halfExtents.x, -halfExtents.y, -halfExtents.z));
-        Vector3 corner7 = objectToWorldMatrix.MultiplyPoint(new Vector3(-halfExtents.x, halfExtents.y, -halfExtents.z));
-        Vector3 corner8 = objectToWorldMatrix.MultiplyPoint(new Vector3(-halfExtents.x, -halfExtents.y, -halfExtents.z));
-        // Calculate min/max rotated points 
-        minExtent_Rotated.x = Mathf.Min(corner1.x, Mathf.Min(corner2.x, Mathf.Min(corner3.x, Mathf.Min(corner4.x, Mathf.Min(corner5.x, Mathf.Min(corner6.x, Mathf.Min(corner7.x, corner8.x))))))); 
-        minExtent_Rotated.y = Mathf.Min(corner1.y, Mathf.Min(corner2.y, Mathf.Min(corner3.y, Mathf.Min(corner4.y, Mathf.Min(corner5.y, Mathf.Min(corner6.y, Mathf.Min(corner7.y, corner8.y))))))); 
-        minExtent_Rotated.z = Mathf.Min(corner1.z, Mathf.Min(corner2.z, Mathf.Min(corner3.z, Mathf.Min(corner4.z, Mathf.Min(corner5.z, Mathf.Min(corner6.z, Mathf.Min(corner7.z, corner8.z))))))); 
-        maxExtent_Rotated.x = Mathf.Max(corner1.x, Mathf.Max(corner2.x, Mathf.Max(corner3.x, Mathf.Max(corner4.x, Mathf.Max(corner5.x, Mathf.Max(corner6.x, Mathf.Max(corner7.x, corner8.x))))))); 
-        maxExtent_Rotated.y = Mathf.Max(corner1.y, Mathf.Max(corner2.y, Mathf.Max(corner3.y, Mathf.Max(corner4.y, Mathf.Max(corner5.y, Mathf.Max(corner6.y, Mathf.Max(corner7.y, corner8.y))))))); 
-        maxExtent_Rotated.z = Mathf.Max(corner1.z, Mathf.Max(corner2.z, Mathf.Max(corner3.z, Mathf.Max(corner4.z, Mathf.Max(corner5.z, Mathf.Max(corner6.z, Mathf.Max(corner7.z, corner8.z))))))); 
-
-        // Reset rotation
-        transform.rotation = storedRotation;
+        // Get min & max extents in world space
+        minExtent_World = GetMinExtent(cornersWorld);
+        maxExtent_World = GetMaxExtent(cornersWorld);
 
 
     }
 
+    Vector3 GetMinExtent(Vector3[] vecArray)
+    {
+        Vector3 currentMinExtent = Vector3.zero;
 
+        for(int i = 0; i < vecArray.Length; i++)
+        {
+            if (i == 0)
+                currentMinExtent = vecArray[i];
+            else
+            {
+                if (vecArray[i].x == Mathf.Min(currentMinExtent.x, vecArray[i].x))
+                    currentMinExtent.x = vecArray[i].x;
+                if (vecArray[i].y == Mathf.Min(currentMinExtent.y, vecArray[i].y))
+                    currentMinExtent.y = vecArray[i].y;
+                if (vecArray[i].z == Mathf.Min(currentMinExtent.z, vecArray[i].z))
+                    currentMinExtent.z = vecArray[i].z;
+            }
+        }
+
+        return currentMinExtent;
+    }
+
+    Vector3 GetMaxExtent(Vector3[] vecArray)
+    {
+        Vector3 currentMaxExtent = Vector3.zero;
+
+        for (int i = 0; i < vecArray.Length; i++)
+        {
+            if (i == 0)
+                currentMaxExtent = vecArray[i];
+            else
+            {
+                if (vecArray[i].x == Mathf.Max(currentMaxExtent.x, vecArray[i].x))
+                    currentMaxExtent.x = vecArray[i].x;
+                if (vecArray[i].y == Mathf.Max(currentMaxExtent.y, vecArray[i].y))
+                    currentMaxExtent.y = vecArray[i].y;
+                if (vecArray[i].z == Mathf.Max(currentMaxExtent.z, vecArray[i].z))
+                    currentMaxExtent.z = vecArray[i].z;
+            }
+        }
+
+        return currentMaxExtent;
+    }
 
     public override bool isColliding(CollisionHull3D other, ref Collision c)
     {
@@ -142,29 +183,29 @@ public class ObjectBoundingBoxCollisionHull3D : CollisionHull3D
             return false;
     }
 
-    public Vector3 obb1_maxExtent_transInv;
-    public Vector3 obb1_minExtent_transInv;
-    public Vector3 obb2_maxExtent_transInv;
-    public Vector3 obb2_minExtent_transInv;
+    public Vector3 obbThis_maxExtent_transInv;
+    public Vector3 obbThis_minExtent_transInv;
+    public Vector3 obbOther_maxExtent_transInv;
+    public Vector3 obbOther_minExtent_transInv;
 
     private void OnDrawGizmos()
     {
 
-        if (obb1_maxExtent_transInv != Vector3.zero || obb1_minExtent_transInv != Vector3.zero)
+        if (obbThis_maxExtent_transInv != Vector3.zero || obbThis_minExtent_transInv != Vector3.zero)
         {
             Gizmos.color = Color.blue;
-            Gizmos.DrawSphere(obb1_maxExtent_transInv, .05f);
+            Gizmos.DrawSphere(obbThis_maxExtent_transInv, .05f);
             Gizmos.color = Color.red;
-            Gizmos.DrawSphere(obb1_minExtent_transInv, .05f);
+            Gizmos.DrawSphere(obbThis_minExtent_transInv, .05f);
         }
 
 
-        if (obb2_maxExtent_transInv != Vector3.zero || obb2_minExtent_transInv != Vector3.zero)
+        if (obbOther_maxExtent_transInv != Vector3.zero || obbOther_minExtent_transInv != Vector3.zero)
         {
             Gizmos.color = Color.blue;
-            Gizmos.DrawSphere(obb2_maxExtent_transInv, .05f);
+            Gizmos.DrawSphere(obbOther_maxExtent_transInv, .05f);
             Gizmos.color = Color.red;
-            Gizmos.DrawSphere(obb2_minExtent_transInv, .05f);
+            Gizmos.DrawSphere(obbOther_minExtent_transInv, .05f);
         }
     }
 
@@ -176,44 +217,29 @@ public class ObjectBoundingBoxCollisionHull3D : CollisionHull3D
         // 3. For both test, and if both true, pass
 
         // Other object multiplied by inverse world matrix
-        obb1_maxExtent_transInv = other.transform.worldToLocalMatrix.MultiplyPoint(maxExtent);
-        obb1_minExtent_transInv = other.transform.worldToLocalMatrix.MultiplyPoint(minExtent);
+        obbThis_maxExtent_transInv = J_Physics.WorldToLocalDirection(maxExtent_Local, other.particle.GetTransformationMatrix());
+        obbThis_minExtent_transInv = J_Physics.WorldToLocalDirection(minExtent_Local, other.particle.GetTransformationMatrix());
         // This object multiplied by inverse world matrix
-        obb2_maxExtent_transInv = transform.worldToLocalMatrix.MultiplyPoint(other.maxExtent);
-        obb2_minExtent_transInv = transform.worldToLocalMatrix.MultiplyPoint(other.minExtent);
+        obbOther_maxExtent_transInv = J_Physics.WorldToLocalDirection(other.maxExtent_Local, particle.GetTransformationMatrix());
+        obbOther_minExtent_transInv = J_Physics.WorldToLocalDirection(other.minExtent_Local, particle.GetTransformationMatrix());
 
-       obb1_maxExtent_transInv += center;
-       obb1_minExtent_transInv += center;
-       obb2_maxExtent_transInv += other.center;
-       obb2_minExtent_transInv += other.center;
+    if (obbThis_maxExtent_transInv.x > other.minExtent_Local.x &&
+        obbThis_minExtent_transInv.x < other.maxExtent_Local.x &&
+        obbThis_maxExtent_transInv.y > other.minExtent_Local.y &&
+        obbThis_minExtent_transInv.y < other.maxExtent_Local.y &&
+        obbThis_maxExtent_transInv.z > other.minExtent_Local.z &&
+        obbThis_minExtent_transInv.z < other.maxExtent_Local.z)
+    {
+        if (obbOther_maxExtent_transInv.x > minExtent_Local.x &&
+            obbOther_minExtent_transInv.x < maxExtent_Local.x &&
+            obbOther_maxExtent_transInv.y > minExtent_Local.y &&
+            obbOther_minExtent_transInv.y < maxExtent_Local.y &&
+            obbOther_maxExtent_transInv.z > minExtent_Local.z &&
+            obbOther_minExtent_transInv.z < maxExtent_Local.z)
+            return true;
+    }
 
-
-/* AABB for refrence 
- if (maxExtent.x > other.minExtent.x &&
-    minExtent.x < other.maxExtent.x &&
-    maxExtent.y > other.minExtent.y &&
-    minExtent.y < other.maxExtent.y &&
-    maxExtent.z > other.minExtent.z &&
-    minExtent.z < other.maxExtent.z)
- */
-
-if (obb1_maxExtent_transInv.x > other.minExtent.x &&
-    obb1_minExtent_transInv.x < other.maxExtent.x &&
-    obb1_maxExtent_transInv.y > other.minExtent.y &&
-    obb1_minExtent_transInv.y < other.maxExtent.y &&
-    obb1_maxExtent_transInv.z > other.minExtent.z &&
-    obb1_minExtent_transInv.z < other.maxExtent.z)
-{
-    if (obb2_maxExtent_transInv.x > minExtent.x &&
-        obb2_minExtent_transInv.x < maxExtent.x &&
-        obb2_maxExtent_transInv.y > minExtent.y &&
-        obb2_minExtent_transInv.y < maxExtent.y &&
-        obb2_maxExtent_transInv.z > minExtent.z &&
-        obb2_minExtent_transInv.z < maxExtent.z)
-        return true;
-}
-
-return false;
+    return false;
 }
 
 public override void ChangeMaterialBasedOnCollsion(bool collisionTest)
