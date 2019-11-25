@@ -99,7 +99,7 @@ public class Particle3D : MonoBehaviour
         //J_Physics.UpdateRotation3D(ref rotation, ref angularVelocity, angularAcceleration, Time.fixedDeltaTime);
 
         // apply to transform
-        transform.position = position;
+        position = transform.position;
         //transform.eulerAngles = rotation;
         transform.rotation = rotation.ToUnityQuaterntion();
 

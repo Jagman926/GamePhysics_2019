@@ -31,6 +31,7 @@ public class ObjectBoundingBoxCollisionHull3D : CollisionHull3D
         cornersLocal = new Vector3[8];
         cornersWorld = new Vector3[8];
         renderer = gameObject.GetComponent<Renderer>();
+        halfExtents = new Vector3(0.5f * particle.width, 0.5f * particle.height, 0.5f * particle.length);
         cornersLocal[0]= new Vector3(halfExtents.x, halfExtents.y, halfExtents.z);
         cornersLocal[1]= new Vector3(halfExtents.x, -halfExtents.y, halfExtents.z);
         cornersLocal[2]= new Vector3(-halfExtents.x, halfExtents.y, halfExtents.z);
@@ -39,7 +40,7 @@ public class ObjectBoundingBoxCollisionHull3D : CollisionHull3D
         cornersLocal[5]= new Vector3(halfExtents.x, -halfExtents.y, -halfExtents.z);
         cornersLocal[6]= new Vector3(-halfExtents.x, halfExtents.y, -halfExtents.z);
         cornersLocal[7]= new Vector3(-halfExtents.x, -halfExtents.y, -halfExtents.z);
-        halfExtents = new Vector3(0.5f * particle.width, 0.5f * particle.height, 0.5f * particle.length);
+
 
 
         // Determine extents
@@ -191,22 +192,22 @@ public class ObjectBoundingBoxCollisionHull3D : CollisionHull3D
     private void OnDrawGizmos()
     {
 
-        if (obbThis_maxExtent_transInv != Vector3.zero || obbThis_minExtent_transInv != Vector3.zero)
-        {
+        //if (obbThis_maxExtent_transInv != Vector3.zero || obbThis_minExtent_transInv != Vector3.zero)
+        //{
             Gizmos.color = Color.blue;
             Gizmos.DrawSphere(obbThis_maxExtent_transInv, .05f);
             Gizmos.color = Color.red;
             Gizmos.DrawSphere(obbThis_minExtent_transInv, .05f);
-        }
+        //}
 
 
-        if (obbOther_maxExtent_transInv != Vector3.zero || obbOther_minExtent_transInv != Vector3.zero)
-        {
-            Gizmos.color = Color.blue;
-            Gizmos.DrawSphere(obbOther_maxExtent_transInv, .05f);
-            Gizmos.color = Color.red;
-            Gizmos.DrawSphere(obbOther_minExtent_transInv, .05f);
-        }
+        //if (obbOther_maxExtent_transInv != Vector3.zero || obbOther_minExtent_transInv != Vector3.zero)
+        //{
+        //    Gizmos.color = Color.green;
+        //    Gizmos.DrawSphere(obbOther_maxExtent_transInv, .05f);
+        //    Gizmos.color = Color.yellow;
+        //    Gizmos.DrawSphere(obbOther_minExtent_transInv, .05f);
+        //}
     }
 
     public override bool TestCollisionVsOBB(ObjectBoundingBoxCollisionHull3D other, ref Collision c)
