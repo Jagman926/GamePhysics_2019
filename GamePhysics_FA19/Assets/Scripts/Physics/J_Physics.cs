@@ -138,22 +138,50 @@ public class J_Physics
     static public Vector3 WorldToLocalDirection( Vector3 vector, Matrix4x4 matrix)
     {
         Vector3 output = new Vector3();
+        Matrix4x4 inverseMatrix = matrix.inverse;
 
-        output.x = vector.x * matrix[0] +
-                    vector.y * matrix[4] +
-                    vector.z * matrix[8];
 
-        output.y = vector.x * matrix[1] +
-                    vector.y * matrix[5] +
-                    vector.z * matrix[9];
+        output.x = vector.x * inverseMatrix[0] +
+                    vector.y * inverseMatrix[4] +
+                    vector.z * inverseMatrix[8];
 
-        output.z = vector.x * matrix[2] +
-                    vector.y * matrix[6] +
-                    vector.z * matrix[10];
+        output.y = vector.x * inverseMatrix[1] +
+                    vector.y * inverseMatrix[5] +
+                    vector.z * inverseMatrix[9];
+
+        output.z = vector.x * inverseMatrix[2] +
+                    vector.y * inverseMatrix[6] +
+                    vector.z * inverseMatrix[10];
 
         return output;
     }
 
+    static public Vector3 WorldToLocalPosition(Vector3 vector, Matrix4x4 matrix)
+    {
+        Vector3 output = new Vector3();
+        Matrix4x4 inverseMatrix = matrix.inverse;
+
+
+        output.x = vector.x * matrix[3] + vector.x;
+        output.y = vector.y * matrix[7] + vector.y;
+        output.z = vector.z * matrix[11] + vector.z;
+
+        return output;
+    }
+
+    static public Vector3 LocalToWorldPosition(Vector3 vector, Matrix4x4 matrix)
+    {
+        Vector3 output = new Vector3();
+
+        //How transfomrPoint works
+        //transform.rotation*vector3.scale(myvecotr,transform.localScale) + transform.position;
+
+        output.x = vector.x * matrix[3] + vector.x;
+        output.y = vector.y * matrix[7] + vector.y;
+        output.z = vector.z * matrix[11] + vector.z;
+
+        return output;
+    }
     static public Vector3 Mat3Vec3Cross(float[,] matrix, Vector3 vector)
     {
         Vector3 output = new Vector3();

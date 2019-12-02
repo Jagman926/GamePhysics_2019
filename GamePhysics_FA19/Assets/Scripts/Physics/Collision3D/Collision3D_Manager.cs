@@ -9,8 +9,8 @@ public class Collision3D_Manager : MonoBehaviour
 
     private CollisionHull3D.Collision collision;
 
-    [SerializeField]
-    private GameManager gameManager;
+    //[SerializeField]
+    //private GameManager gameManager;
 
     public float restitution;
 

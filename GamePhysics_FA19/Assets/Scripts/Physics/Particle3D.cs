@@ -101,7 +101,7 @@ public class Particle3D : MonoBehaviour
         // apply to transform
         position = transform.position;
         //transform.eulerAngles = rotation;
-        transform.rotation = rotation.ToUnityQuaterntion();
+        rotation.SetQuaterntion(transform.rotation);
 
         UpdateTransformationMatrix(); //Update transform matrix
 
@@ -171,6 +171,10 @@ public class Particle3D : MonoBehaviour
         transformationMatrix[3, 1] = 0;
         transformationMatrix[3, 2] = 0;
         transformationMatrix[3, 3] = 1;
+
+        transformationMatrixInv = Matrix4x4.Inverse(transformationMatrix);
+
+
     }
 
     void UpdateMomentArm()
@@ -355,5 +359,10 @@ public class Particle3D : MonoBehaviour
     public Matrix4x4 GetTransformationMatrix()
     {
         return transformationMatrix;
+    }
+
+    public Matrix4x4 GetTransformationMatrixInv()
+    {
+        return transformationMatrixInv;
     }
 }
