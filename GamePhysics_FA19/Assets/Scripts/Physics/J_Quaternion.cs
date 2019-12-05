@@ -105,25 +105,15 @@ public class J_Quaternion
         return output;
     }
 
-    public float[,] GetRotationMatrixInverse()
-    {
-        float[,] output = new float[3, 3];
-        float[,] rotMatrix = GetRotationMatrixInverse();
-
-        output[0, 0] = rotMatrix[0, 0];
-        output[0, 1] = rotMatrix[1, 0];
-        output[0, 2] = rotMatrix[2, 0];
-
-        output[1, 0] = rotMatrix[0, 1];
-        output[1, 1] = rotMatrix[1, 1];
-        output[1, 2] = rotMatrix[2, 1];
-
-        output[2, 0] = rotMatrix[0, 2];
-        output[2, 1] = rotMatrix[1, 2];
-        output[2, 2] = rotMatrix[2, 2];
-
-        return output;
-    }
+    //public Vector3 MultiplyByRotationInverse(Vector3 vector)
+    //{
+    //    Vector3 output = new Vector3();
+    //
+    //    
+    //
+    //
+    //    return output;
+    //}
 
     public float Angle(J_Quaternion a, J_Quaternion b)
     {
@@ -217,14 +207,6 @@ public class J_Quaternion
         //Vector3 quatEuler = new J_Quaternion(x,y,z,w).ToEulerAngles();
         //quatEuler = Vector3.Scale(quatEuler, a);
         //SetQuaterntion(Quaternion.Euler(quatEuler.x, quatEuler.y, quatEuler.z));
-    }
-
-    // Multipy the inputed vector by the quat
-    public void MultiplyVector3ByQuat(ref Vector3 a)
-    {
-        a.x = x * a.x;
-        a.y = y * a.y;
-        a.z = z * a.z;
     }
 
     public void MultiplyByQuat(J_Quaternion a)

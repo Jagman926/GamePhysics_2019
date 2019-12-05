@@ -156,24 +156,23 @@ public class J_Physics
         return output;
     }
 
-    static public Vector3 WorldToLocalPosition(Vector3 vector, Matrix4x4 matrix)
+    static public Vector3 WorldToLocalPosition(Vector3 worldPosition, Vector3 center, float[,] rotationMatrixInverse)
     {
-        Vector3 output = new Vector3();
-        Matrix4x4 inverseMatrix = matrix.inverse;
+        Vector3 output = worldPosition;
 
+        output -= center;
 
-        output.x = vector.x * matrix[0,3] + vector.x;
-        output.y = vector.y * matrix[1,3] + vector.y;
-        output.z = vector.z * matrix[2,3] + vector.z;
+        output = Mat3Vec3Dot(rotationMatrixInverse, output);
+
 
         return output;
     }
 
-    static public Vector3 LocalToWorldPosition(Vector3 localPosition, Vector3 center, J_Quaternion rotation)
+    static public Vector3 LocalToWorldPosition(Vector3 localPosition, Vector3 center, float[,] rotationMatrix)
     {
         Vector3 output = new Vector3();
     
-        output = Mat3Vec3Dot(rotation.GetToRotationMatrix(), localPosition);
+        output = Mat3Vec3Dot(rotationMatrix, localPosition);
 
         output += center;
 

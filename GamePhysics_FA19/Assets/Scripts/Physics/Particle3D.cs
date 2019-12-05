@@ -365,4 +365,38 @@ public class Particle3D : MonoBehaviour
     {
         return transformationMatrixInv;
     }
+
+    public float[,] GetRotationMatrix()
+    {
+        float[,] rotationMatrix = new float[3, 3];
+        rotationMatrix[0, 0] = transformationMatrix[0, 0];
+        rotationMatrix[0, 1] = transformationMatrix[0, 1];
+        rotationMatrix[0, 2] = transformationMatrix[0, 2];
+
+        rotationMatrix[1, 0] = transformationMatrix[1, 0];
+        rotationMatrix[1, 1] = transformationMatrix[1, 1];
+        rotationMatrix[1, 2] = transformationMatrix[1, 2];
+
+        rotationMatrix[2, 0] = transformationMatrix[2, 0];
+        rotationMatrix[2, 1] = transformationMatrix[2, 1];
+        rotationMatrix[2, 2] = transformationMatrix[2, 2];
+        return rotationMatrix;
+    }
+
+    public float[,] GetRotationMatrixInverse()
+    {
+        float[,] rotationMatrixInverse = new float[3, 3];
+        rotationMatrixInverse[0, 0] = transformationMatrixInv[0, 0];
+        rotationMatrixInverse[0, 1] = transformationMatrixInv[0, 1];
+        rotationMatrixInverse[0, 2] = transformationMatrixInv[0, 2];
+
+        rotationMatrixInverse[1, 0] = transformationMatrixInv[1, 0];
+        rotationMatrixInverse[1, 1] = transformationMatrixInv[1, 1];
+        rotationMatrixInverse[1, 2] = transformationMatrixInv[1, 2];
+
+        rotationMatrixInverse[2, 0] = transformationMatrixInv[2, 0];
+        rotationMatrixInverse[2, 1] = transformationMatrixInv[2, 1];
+        rotationMatrixInverse[2, 2] = transformationMatrixInv[2, 2];
+        return rotationMatrixInverse;
+    }
 }

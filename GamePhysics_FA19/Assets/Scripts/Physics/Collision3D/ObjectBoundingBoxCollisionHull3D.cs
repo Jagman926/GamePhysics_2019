@@ -55,7 +55,7 @@ public class ObjectBoundingBoxCollisionHull3D : CollisionHull3D
         //Get corners in world space
         for (int i = 0; i < cornersLocal.Length; i++)
         {
-            cornersWorld[i] = J_Physics.LocalToWorldPosition(cornersLocal[i], center, particle.rotation);
+            cornersWorld[i] = J_Physics.LocalToWorldPosition(cornersLocal[i], center, particle.GetRotationMatrix());
         }
 
         // Get min & max extents in world space
@@ -194,11 +194,11 @@ public class ObjectBoundingBoxCollisionHull3D : CollisionHull3D
         // 3. For both test, and if both true, pass
 
         // Other object multiplied by inverse world matrix
-        obbThis_maxExtent_transInv = J_Physics.WorldToLocalPosition(maxExtent_World, other.particle.GetTransformationMatrix());
-        obbThis_minExtent_transInv = J_Physics.WorldToLocalPosition(minExtent_World, other.particle.GetTransformationMatrix());
+        obbThis_maxExtent_transInv = J_Physics.WorldToLocalPosition(maxExtent_World, other.center, other.particle.GetRotationMatrixInverse());
+        obbThis_minExtent_transInv = J_Physics.WorldToLocalPosition(minExtent_World, other.center, other.particle.GetRotationMatrixInverse());
         // This object multiplied by inverse world matrix
-        obbOther_maxExtent_transInv = J_Physics.WorldToLocalPosition(other.maxExtent_World, particle.GetTransformationMatrixInv());
-        obbOther_minExtent_transInv = J_Physics.WorldToLocalPosition(other.minExtent_World, particle.GetTransformationMatrixInv());
+        obbOther_maxExtent_transInv = J_Physics.WorldToLocalPosition(other.maxExtent_World, center, particle.GetRotationMatrixInverse());
+        obbOther_minExtent_transInv = J_Physics.WorldToLocalPosition(other.minExtent_World, center, particle.GetRotationMatrixInverse());
 
     if (obbThis_maxExtent_transInv.x > other.minExtent_World.x &&
         obbThis_minExtent_transInv.x < other.maxExtent_World.x &&
