@@ -24,7 +24,8 @@ public class ObjectBoundingBoxCollisionHull3D : CollisionHull3D
     public Material mat_red;
     public Material mat_green;
     Vector3[] cornersLocal = new Vector3[0];
-    Vector3[] cornersWorld = new Vector3[0];
+    [HideInInspector]
+    public Vector3[] cornersWorld = new Vector3[0];
 
     void Awake()
     {
@@ -55,7 +56,7 @@ public class ObjectBoundingBoxCollisionHull3D : CollisionHull3D
         //Get corners in world space
         for (int i = 0; i < cornersLocal.Length; i++)
         {
-            cornersWorld[i] = J_Physics.LocalToWorldPosition(cornersLocal[i], center, particle.GetRotationMatrix());
+            cornersWorld[i] = J_Physics.LocalToWorldPosition(cornersLocal[i], center, particle.rotation.GetToRotationMatrix());
         }
 
         // Get min & max extents in world space
@@ -184,6 +185,17 @@ public class ObjectBoundingBoxCollisionHull3D : CollisionHull3D
         {
             Gizmos.DrawSphere(point, 0.05f);
         }
+
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawSphere(maxExtent_World, 0.05f);
+        Gizmos.DrawSphere(minExtent_World, 0.05f);
+        Gizmos.color = Color.red;
+        Gizmos.DrawSphere(obbThis_maxExtent_transInv, 0.05f);
+        Gizmos.DrawSphere(obbThis_minExtent_transInv, 0.05f);
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawSphere(obbOther_maxExtent_transInv, 0.05f);
+        Gizmos.DrawSphere(obbOther_minExtent_transInv, 0.05f);
     }
 
     public override bool TestCollisionVsOBB(ObjectBoundingBoxCollisionHull3D other, ref Collision c)
@@ -193,14 +205,16 @@ public class ObjectBoundingBoxCollisionHull3D : CollisionHull3D
         // 2. Get OBB2 max/min extents from world matrix inv of OBB1
         // 3. For both test, and if both true, pass
 
-        // Other object multiplied by inverse world matrix
-        obbThis_maxExtent_transInv = J_Physics.WorldToLocalPosition(maxExtent_World, other.center, other.particle.GetRotationMatrixInverse());
-        obbThis_minExtent_transInv = J_Physics.WorldToLocalPosition(minExtent_World, other.center, other.particle.GetRotationMatrixInverse());
-        // This object multiplied by inverse world matrix
-        obbOther_maxExtent_transInv = J_Physics.WorldToLocalPosition(other.maxExtent_World, center, particle.GetRotationMatrixInverse());
-        obbOther_minExtent_transInv = J_Physics.WorldToLocalPosition(other.minExtent_World, center, particle.GetRotationMatrixInverse());
+        //obbThis_maxExtent_transInv = other.transform.InverseTransformPoint(maxExtent_World);
+        //obbThis_minExtent_transInv = other.transform.InverseTransformPoint(minExtent_World);
+        //// This object multiplied by inverse world matrix
+        //obbOther_maxExtent_transInv = transform.InverseTransformPoint(other.maxExtent_World);
+        //obbOther_minExtent_transInv = transform.InverseTransformPoint(other.minExtent_World);
 
-    if (obbThis_maxExtent_transInv.x > other.minExtent_World.x &&
+        WorldToLocalExtents(cornersWorld,ref obbThis_minExtent_transInv,ref obbThis_maxExtent_transInv, other.transform);
+        WorldToLocalExtents(other.cornersWorld,ref obbOther_minExtent_transInv,ref obbOther_maxExtent_transInv, transform);
+
+        if (obbThis_maxExtent_transInv.x > other.minExtent_World.x &&
         obbThis_minExtent_transInv.x < other.maxExtent_World.x &&
         obbThis_maxExtent_transInv.y > other.minExtent_World.y &&
         obbThis_minExtent_transInv.y < other.maxExtent_World.y &&
@@ -219,6 +233,21 @@ public class ObjectBoundingBoxCollisionHull3D : CollisionHull3D
     return false;
 }
 
+
+    public void WorldToLocalExtents(Vector3[] worldCornersIn, ref Vector3 minExtentOutput, ref Vector3 maxExtentOutput, Transform transformIn)
+    {
+
+        Vector3[] cornersInLocal = new Vector3[worldCornersIn.Length];
+        for (int i = 0; i < worldCornersIn.Length; i++)
+        {
+            //cornersInLocal[i] = transformIn.InverseTransformPoint(worldCornersIn[i]);
+            cornersInLocal[i] = J_Physics.WorldToLocalPosition(worldCornersIn[i], transformIn.position, particle.rotation.GetByRotationInverse());
+        }
+
+        // Get min & max extents in world space
+        minExtentOutput = GetMinExtent(cornersInLocal);
+        maxExtentOutput = GetMaxExtent(cornersInLocal);
+    }
 public override void ChangeMaterialBasedOnCollsion(bool collisionTest)
 {
 if (collisionTest || collisionDetededThisFrame)

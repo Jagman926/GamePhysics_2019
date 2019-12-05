@@ -105,15 +105,52 @@ public class J_Quaternion
         return output;
     }
 
-    //public Vector3 MultiplyByRotationInverse(Vector3 vector)
-    //{
-    //    Vector3 output = new Vector3();
-    //
-    //    
-    //
-    //
-    //    return output;
-    //}
+    public float[,] GetByRotationInverse()
+    {
+        float[,] output = GetToRotationMatrix();
+
+        output[0, 0] = output[0, 0] * -1.0f;
+        output[0, 1] = output[0, 1] * -1.0f;
+        output[0, 2] = output[0, 2] * -1.0f;
+        output[1, 0] = output[1, 0] * -1.0f;
+        output[1, 1] = output[1, 1] * -1.0f;
+        output[1, 2] = output[1, 2] * -1.0f;
+        output[2, 0] = output[2, 0] * -1.0f;
+        output[2, 1] = output[2, 1] * -1.0f;
+        output[2, 2] = output[2, 2] * -1.0f;
+
+        //Matrix4x4 tempOutput = new Matrix4x4();
+
+        //tempOutput[0, 0] = output[0, 0];
+        //tempOutput[0, 1] = output[0, 1];
+        //tempOutput[0, 2] = output[0, 2];
+        //
+        //tempOutput[1, 0] = output[1, 0];
+        //tempOutput[1, 1] = output[1, 1];
+        //tempOutput[1, 2] = output[1, 2];
+        //
+        //tempOutput[2, 0] = output[2, 0];
+        //tempOutput[2, 1] = output[2, 1];
+        //tempOutput[2, 2] = output[2, 2];
+        //
+        //tempOutput[3, 3] = 1;
+        //
+        //tempOutput = tempOutput.inverse;
+        //
+        //output[0, 0] = tempOutput[0, 0];
+        //output[0, 1] = tempOutput[0, 1];
+        //output[0, 2] = tempOutput[0, 2];
+        //
+        //output[1, 0] = tempOutput[1, 0];
+        //output[1, 1] = tempOutput[1, 1];
+        //output[1, 2] = tempOutput[1, 2];
+        //
+        //output[2, 0] = tempOutput[2, 0];
+        //output[2, 1] = tempOutput[2, 1];
+        //output[2, 2] = tempOutput[2, 2];
+
+        return output;
+    }
 
     public float Angle(J_Quaternion a, J_Quaternion b)
     {

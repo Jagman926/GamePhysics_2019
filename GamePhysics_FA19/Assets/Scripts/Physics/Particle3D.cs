@@ -363,6 +363,13 @@ public class Particle3D : MonoBehaviour
 
     public Matrix4x4 GetTransformationMatrixInv()
     {
+        Matrix4x4 inverse = new Matrix4x4();
+        //Transpose rot matrix
+        
+        // transposRotMatrix Dot -translationVector
+        
+
+
         return transformationMatrixInv;
     }
 
