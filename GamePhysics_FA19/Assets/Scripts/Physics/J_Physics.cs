@@ -162,26 +162,24 @@ public class J_Physics
         Matrix4x4 inverseMatrix = matrix.inverse;
 
 
-        output.x = vector.x * matrix[3] + vector.x;
-        output.y = vector.y * matrix[7] + vector.y;
-        output.z = vector.z * matrix[11] + vector.z;
+        output.x = vector.x * matrix[0,3] + vector.x;
+        output.y = vector.y * matrix[1,3] + vector.y;
+        output.z = vector.z * matrix[2,3] + vector.z;
 
         return output;
     }
 
-    static public Vector3 LocalToWorldPosition(Vector3 vector, Matrix4x4 matrix)
+    static public Vector3 LocalToWorldPosition(Vector3 localPosition, Vector3 center, J_Quaternion rotation)
     {
         Vector3 output = new Vector3();
+    
+        output = Mat3Vec3Dot(rotation.GetToRotationMatrix(), localPosition);
 
-        //How transfomrPoint works
-        //transform.rotation*vector3.scale(myvecotr,transform.localScale) + transform.position;
-
-        output.x = vector.x * matrix[3] + vector.x;
-        output.y = vector.y * matrix[7] + vector.y;
-        output.z = vector.z * matrix[11] + vector.z;
+        output += center;
 
         return output;
     }
+
     static public Vector3 Mat3Vec3Cross(float[,] matrix, Vector3 vector)
     {
         Vector3 output = new Vector3();
@@ -197,6 +195,25 @@ public class J_Physics
         output.z = vector.x * matrix[0,2] +
                     vector.y * matrix[1,2] +
                     vector.z * matrix[2,2];
+
+        return output;
+    }
+
+    static public Vector3 Mat3Vec3Dot(float[,] matrix, Vector3 vector)
+    {
+        Vector3 output = new Vector3();
+
+        output.x = vector.x * matrix[0, 0] +
+            vector.y * matrix[0, 1] +
+            vector.z * matrix[0, 2];
+
+        output.y = vector.x * matrix[1, 0] +
+                    vector.y * matrix[1, 1] +
+                    vector.z * matrix[1, 2];
+
+        output.z = vector.x * matrix[2, 0] +
+                    vector.y * matrix[2, 1] +
+                    vector.z * matrix[2, 2];
 
         return output;
     }

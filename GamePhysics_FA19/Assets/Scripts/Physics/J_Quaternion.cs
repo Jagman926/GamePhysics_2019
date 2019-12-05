@@ -219,6 +219,14 @@ public class J_Quaternion
         //SetQuaterntion(Quaternion.Euler(quatEuler.x, quatEuler.y, quatEuler.z));
     }
 
+    // Multipy the inputed vector by the quat
+    public void MultiplyVector3ByQuat(ref Vector3 a)
+    {
+        a.x = x * a.x;
+        a.y = y * a.y;
+        a.z = z * a.z;
+    }
+
     public void MultiplyByQuat(J_Quaternion a)
     {
         Quaternion quatA = new Quaternion(a.x, a.y, a.z, a.w);
