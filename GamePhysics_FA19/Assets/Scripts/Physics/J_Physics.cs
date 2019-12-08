@@ -156,15 +156,18 @@ public class J_Physics
         return output;
     }
 
-    static public Vector3 WorldToLocalPosition(Vector3 worldPosition, Vector3 center, float[,] rotationMatrixInverse)
+    static public Vector3 WorldToLocalPosition(Vector3 worldPosition, Particle3D worldBasis)
     {
         Vector3 output = worldPosition;
+        //Vector3 worldBasisTranslation = worldBasis.GetPositionFromMatrix();
+        //
+        //output.x *= worldBasisTranslation.x;
+        //output.y *= worldBasisTranslation.y;
+        //output.z *= worldBasisTranslation.z;
+        output = Mat3Vec3Dot(worldBasis.GetRotationMatrixInverse(), worldPosition);
 
-        output -= center;
-
-        output = Mat3Vec3Dot(rotationMatrixInverse, output);
-
-
+        //output += worldBasis.GetPositionFromInvMatrix();
+        //Debug.Log("! Invserse: " + worldBasis.GetPositionFromInvMatrix() + " NonInvsers " + worldBasis.GetPositionFromMatrix());
 
         return output;
     }

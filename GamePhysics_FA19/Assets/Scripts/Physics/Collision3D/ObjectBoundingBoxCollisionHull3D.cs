@@ -187,15 +187,17 @@ public class ObjectBoundingBoxCollisionHull3D : CollisionHull3D
         }
 
 
-        Gizmos.color = Color.blue;
+        Gizmos.color = Color.blue; //This extents
         Gizmos.DrawSphere(maxExtent_World, 0.05f);
         Gizmos.DrawSphere(minExtent_World, 0.05f);
-        Gizmos.color = Color.red;
-        Gizmos.DrawSphere(obbThis_maxExtent_transInv, 0.05f);
-        Gizmos.DrawSphere(obbThis_minExtent_transInv, 0.05f);
-        Gizmos.color = Color.yellow;
+        Gizmos.color = Color.red; //This max & min
+        Gizmos.DrawSphere(obbThis_maxExtent_transInv, 0.1f);
+        Gizmos.DrawSphere(obbThis_minExtent_transInv, 0.1f);
+        Gizmos.color = Color.yellow; //Other max & min
         Gizmos.DrawSphere(obbOther_maxExtent_transInv, 0.05f);
         Gizmos.DrawSphere(obbOther_minExtent_transInv, 0.05f);
+        Gizmos.color = Color.black; //This inverse pos
+        Gizmos.DrawSphere(particle.GetPositionFromInvMatrix(), 0.1f);
     }
 
     public override bool TestCollisionVsOBB(ObjectBoundingBoxCollisionHull3D other, ref Collision c)
@@ -211,8 +213,8 @@ public class ObjectBoundingBoxCollisionHull3D : CollisionHull3D
         //obbOther_maxExtent_transInv = transform.InverseTransformPoint(other.maxExtent_World);
         //obbOther_minExtent_transInv = transform.InverseTransformPoint(other.minExtent_World);
 
-        WorldToLocalExtents(cornersWorld,ref obbThis_minExtent_transInv,ref obbThis_maxExtent_transInv, other.transform);
-        WorldToLocalExtents(other.cornersWorld,ref obbOther_minExtent_transInv,ref obbOther_maxExtent_transInv, transform);
+        WorldToLocalExtents(cornersWorld,ref obbThis_minExtent_transInv,ref obbThis_maxExtent_transInv, other.particle);
+        WorldToLocalExtents(other.cornersWorld,ref obbOther_minExtent_transInv,ref obbOther_maxExtent_transInv, particle);
 
         if (obbThis_maxExtent_transInv.x > other.minExtent_World.x &&
         obbThis_minExtent_transInv.x < other.maxExtent_World.x &&
@@ -234,14 +236,15 @@ public class ObjectBoundingBoxCollisionHull3D : CollisionHull3D
 }
 
 
-    public void WorldToLocalExtents(Vector3[] worldCornersIn, ref Vector3 minExtentOutput, ref Vector3 maxExtentOutput, Transform transformIn)
+    public void WorldToLocalExtents(Vector3[] worldCornersIn, ref Vector3 minExtentOutput, ref Vector3 maxExtentOutput, Particle3D worldBasis)
     {
 
         Vector3[] cornersInLocal = new Vector3[worldCornersIn.Length];
+
         for (int i = 0; i < worldCornersIn.Length; i++)
         {
-            //cornersInLocal[i] = transformIn.InverseTransformPoint(worldCornersIn[i]);
-            cornersInLocal[i] = J_Physics.WorldToLocalPosition(worldCornersIn[i], transformIn.position, particle.rotation.GetByRotationInverse());
+            //cornersInLocal[i] = worldBasis.transform.InverseTransformPoint(worldCornersIn[i]);
+            cornersInLocal[i] = J_Physics.WorldToLocalPosition(worldCornersIn[i], worldBasis);
         }
 
         // Get min & max extents in world space

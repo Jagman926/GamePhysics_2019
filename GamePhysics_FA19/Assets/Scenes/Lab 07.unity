@@ -750,7 +750,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1613157977
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -804,6 +804,7 @@ MonoBehaviour:
   maxExtent_World: {x: 0, y: 0, z: 0}
   mat_red: {fileID: 2100000, guid: 0b67b1e91a74eb94abc9d33add74cd21, type: 2}
   mat_green: {fileID: 2100000, guid: a8c23223342922647a1ab41717db816b, type: 2}
+  cornersWorld: []
   obbThis_maxExtent_transInv: {x: 0, y: 0, z: 0}
   obbThis_minExtent_transInv: {x: 0, y: 0, z: 0}
   obbOther_maxExtent_transInv: {x: 0, y: 0, z: 0}
@@ -941,6 +942,7 @@ MonoBehaviour:
   maxExtent_World: {x: 0, y: 0, z: 0}
   mat_red: {fileID: 2100000, guid: 0b67b1e91a74eb94abc9d33add74cd21, type: 2}
   mat_green: {fileID: 2100000, guid: a8c23223342922647a1ab41717db816b, type: 2}
+  cornersWorld: []
   obbThis_maxExtent_transInv: {x: 0, y: 0, z: 0}
   obbThis_minExtent_transInv: {x: 0, y: 0, z: 0}
   obbOther_maxExtent_transInv: {x: 0, y: 0, z: 0}

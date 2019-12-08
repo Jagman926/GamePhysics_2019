@@ -99,11 +99,12 @@ public class Particle3D : MonoBehaviour
         //J_Physics.UpdateRotation3D(ref rotation, ref angularVelocity, angularAcceleration, Time.fixedDeltaTime);
 
         // apply to transform
+        UpdateTransformationMatrix(); //Update transform matrix
+
         position = transform.position;
         //transform.eulerAngles = rotation;
         rotation.SetQuaterntion(transform.rotation);
 
-        UpdateTransformationMatrix(); //Update transform matrix
 
         // Update acceleration | angular acceleration
         J_Physics.UpdateAcceleration3D(ref acceleration, massInv, ref force);
@@ -172,7 +173,7 @@ public class Particle3D : MonoBehaviour
         transformationMatrix[3, 2] = 0;
         transformationMatrix[3, 3] = 1;
 
-        transformationMatrixInv = Matrix4x4.Inverse(transformationMatrix);
+        UpdateTransformationMatrixInv();
 
 
     }
@@ -358,19 +359,103 @@ public class Particle3D : MonoBehaviour
 
     public Matrix4x4 GetTransformationMatrix()
     {
-        return transformationMatrix;
+        //Transfers the transformation matrix into a new matrix because c# hates us
+        Matrix4x4 output = new Matrix4x4();
+
+        output[0, 0] = transformationMatrix[0, 0]; 
+        output[0, 1] = transformationMatrix[0, 1]; 
+        output[0, 2] = transformationMatrix[0, 2]; 
+        output[0, 3] = transformationMatrix[0, 3];
+
+        output[1, 0] = transformationMatrix[1, 0];
+        output[1, 1] = transformationMatrix[1, 1];
+        output[1, 2] = transformationMatrix[1, 2];
+        output[1, 3] = transformationMatrix[1, 3];
+
+        output[2, 0] = transformationMatrix[2, 0];
+        output[2, 1] = transformationMatrix[2, 1];
+        output[2, 2] = transformationMatrix[2, 2];
+        output[2, 3] = transformationMatrix[2, 3];
+
+        output[3, 0] = transformationMatrix[3, 0];
+        output[3, 1] = transformationMatrix[3, 1];
+        output[3, 2] = transformationMatrix[3, 2];
+        output[3, 3] = transformationMatrix[3, 3];
+
+        return output;
     }
 
-    public Matrix4x4 GetTransformationMatrixInv()
+    void UpdateTransformationMatrixInv()
     {
         Matrix4x4 inverse = new Matrix4x4();
         //Transpose rot matrix
-        
+        inverse[0, 0] = transformationMatrix[0, 0];
+        inverse[0, 1] = transformationMatrix[1, 0];
+        inverse[0, 2] = transformationMatrix[2, 0];
+
+        inverse[1, 0] = transformationMatrix[0, 1];
+        inverse[1, 1] = transformationMatrix[1, 1];
+        inverse[1, 2] = transformationMatrix[2, 1];
+
+        inverse[2, 0] = transformationMatrix[0, 2];
+        inverse[2, 1] = transformationMatrix[1, 2];
+        inverse[2, 2] = transformationMatrix[2, 2];
         // transposRotMatrix Dot -translationVector
+
+        //Vector3 translationVector = 
+        //    new Vector3(-transformationMatrix[0, 3], -transformationMatrix[1, 3], -transformationMatrix[2, 3]);
+
+        Vector3 translationVector =
+            new Vector3(-position.x, -position.y, -position.z);
+
+        Vector3 invserseTranslationVector = J_Physics.Mat3Vec3Dot(GetRotationMatrixInverse(), translationVector);
+
+        inverse[0, 3] = invserseTranslationVector.x;
+        inverse[1, 3] = invserseTranslationVector.y;
+        inverse[2, 3] = invserseTranslationVector.z;
+
+        inverse[3, 0] = 0;
+        inverse[3, 1] = 0;
+        inverse[3, 2] = 0;
+        inverse[3, 3] = 1;
+
+        transformationMatrixInv = inverse;
+
+    }
+
+    public Vector3 GetPositionFromInvMatrix()
+    {
+        Vector3 output = new Vector3();
+
+        //output.x = transformationMatrixInv[0, 3];
+        //output.y = transformationMatrixInv[1, 3];
+        //output.z = transformationMatrixInv[2, 3];
+
+
+        Vector3 translationVector =
+            new Vector3(-position.x, -position.y, -position.z);
         
+        output = J_Physics.Mat3Vec3Dot(rotation.GetByRotationInverse(), translationVector);
 
+        return output;
+    }
 
-        return transformationMatrixInv;
+    public Vector3 GetPositionFromMatrix()
+    {
+        Vector3 output = new Vector3();
+
+        output.x = transformationMatrix[0, 3];
+        output.y = transformationMatrix[1, 3];
+        output.z = transformationMatrix[2, 3];
+
+        return output;
+    }
+    public Matrix4x4 GetTransformationMatrixInv()
+    {
+        Matrix4x4 matrix = new Matrix4x4();
+        matrix = transformationMatrix;
+
+        return matrix;
     }
 
     public float[,] GetRotationMatrix()
@@ -393,17 +478,17 @@ public class Particle3D : MonoBehaviour
     public float[,] GetRotationMatrixInverse()
     {
         float[,] rotationMatrixInverse = new float[3, 3];
-        rotationMatrixInverse[0, 0] = transformationMatrixInv[0, 0];
-        rotationMatrixInverse[0, 1] = transformationMatrixInv[0, 1];
-        rotationMatrixInverse[0, 2] = transformationMatrixInv[0, 2];
+        rotationMatrixInverse[0, 0] = transformationMatrix[0, 0];
+        rotationMatrixInverse[0, 1] = transformationMatrix[1, 0];
+        rotationMatrixInverse[0, 2] = transformationMatrix[2, 0];
 
-        rotationMatrixInverse[1, 0] = transformationMatrixInv[1, 0];
-        rotationMatrixInverse[1, 1] = transformationMatrixInv[1, 1];
-        rotationMatrixInverse[1, 2] = transformationMatrixInv[1, 2];
+        rotationMatrixInverse[1, 0] = transformationMatrix[0, 1];
+        rotationMatrixInverse[1, 1] = transformationMatrix[1, 1];
+        rotationMatrixInverse[1, 2] = transformationMatrix[2, 1];
 
-        rotationMatrixInverse[2, 0] = transformationMatrixInv[2, 0];
-        rotationMatrixInverse[2, 1] = transformationMatrixInv[2, 1];
-        rotationMatrixInverse[2, 2] = transformationMatrixInv[2, 2];
+        rotationMatrixInverse[2, 0] = transformationMatrix[0, 2];
+        rotationMatrixInverse[2, 1] = transformationMatrix[1, 2];
+        rotationMatrixInverse[2, 2] = transformationMatrix[2, 2];
         return rotationMatrixInverse;
     }
 }
