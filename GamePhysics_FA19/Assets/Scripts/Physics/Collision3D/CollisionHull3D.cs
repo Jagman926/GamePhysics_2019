@@ -73,11 +73,11 @@ public abstract class CollisionHull3D : MonoBehaviour
 
             for (i = 0; i < collisionData.contactCount; i++)
             {
-                Vector2 contactNormal = collisionData.contact[i].normal;
+                Vector3 contactNormal = collisionData.contact[i].normal;
                 float seperatingVelocity = (particleA.GetVelocity() - particleB.GetVelocity()).magnitude * contactNormal.magnitude; //NOTE Might need to be a float instead of a vector 3
 
                 if (seperatingVelocity < max &&
-                    seperatingVelocity > 0 && collisionData.contact[i].penetration > 0)
+                    seperatingVelocity > 0 && collisionData.contact[i].penetration < 0)
                 {
                     max = seperatingVelocity;
                     maxIndex = i;
@@ -201,7 +201,8 @@ public abstract class CollisionHull3D : MonoBehaviour
         float totalInvMass = particleA.GetInvMass() + particleB.GetInvMass();
 
         //4. find amount of penitration per inverse mass
-        Vector3 movmentPerInvMass = collisionData.contact[contactBeingCalculated].normal * (collisionData.contact[contactBeingCalculated].penetration / totalInvMass);
+        Vector3 movmentPerInvMass = 
+            collisionData.contact[contactBeingCalculated].normal * (collisionData.contact[contactBeingCalculated].penetration / totalInvMass);
 
         //if (movmentPerInvMass.x <= 0 && movmentPerInvMass.y <= 0)
         //    return;
@@ -225,6 +226,19 @@ public abstract class CollisionHull3D : MonoBehaviour
     public bool PopulateCollisionClassOBBVsOBB(ObjectBoundingBoxCollisionHull3D a, ObjectBoundingBoxCollisionHull3D b, ref Collision c)
     {
 
+        //Calculate the normal
+        c.contact[0].normal = (a.particle.position - b.particle.position); 
+        c.contact[0].normal = c.contact[0].normal.normalized;
+        //Calculate the penetration
+        c.contact[0].penetration = (a.particle.position - b.particle.position).magnitude; 
+        //c.contact[0].penetration += a.halfExtents + b.halfExtents;
+        //Calculate the point
+        c.contact[0].point = (a.particle.position + b.particle.position) * .5f; //Bit fuzzy on this one, the adverage of the positions might work?
+
+        c.a = a;
+        c.b = b;
+
+        c.contactCount = 1; //There will most likly be more contacts, this can be better
 
         return true;
     }
@@ -303,7 +317,7 @@ public abstract class CollisionHull3D : MonoBehaviour
 
     }
 
-    /*
+    
     public bool PopulateCollisionClassOBBVSCircle(CircleCollisionHull3D cirlce, ObjectBoundingBoxCollisionHull3D obb, ref Collision c)
     {
         // 1. Calculate the closest point by clamping the circle into the square
@@ -316,8 +330,8 @@ public abstract class CollisionHull3D : MonoBehaviour
         Vector2 closestPoint = new Vector2(0, 0);
 
         // 1. Calculate the closest point by clamping the circle into the square
-        closestPoint.x = Mathf.Clamp(cirlce.particle.position.x, obb.minExtent_Rotated.x, obb.maxExtent_Rotated.x);
-        closestPoint.y = Mathf.Clamp(cirlce.particle.position.y, obb.minExtent_Rotated.y, obb.maxExtent_Rotated.y);
+        closestPoint.x = Mathf.Clamp(cirlce.particle.position.x, obb.minExtent_World.x, obb.maxExtent_World.x);
+        closestPoint.y = Mathf.Clamp(cirlce.particle.position.y, obb.minExtent_World.y, obb.maxExtent_World.y);
 
         // 2. Get the normal by minising the center by the closest point
         c.contact[0].normal = center - closestPoint;
@@ -337,7 +351,7 @@ public abstract class CollisionHull3D : MonoBehaviour
         return true;
 
     }
-    */
+    
     public void clearContacts(ref Collision c)
     {
         for (int i = 0; i < c.contactCount; i++)
@@ -371,4 +385,6 @@ public abstract class CollisionHull3D : MonoBehaviour
     public abstract bool TestCollisionVsOBB(ObjectBoundingBoxCollisionHull3D other, ref Collision c);
 
     public abstract void ChangeMaterialBasedOnCollsion(bool testVariable);
+
+    public abstract void DestroyOnCollision(string tag);
 }

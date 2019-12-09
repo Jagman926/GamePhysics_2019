@@ -4,28 +4,28 @@ using UnityEngine;
 
 public class J_Force
 {
-    public static Vector2 GenerateForce_Gravity(float particleMass, float gravitationalConstant, Vector2 worldUp)
+    public static Vector3 GenerateForce_Gravity(float particleMass, float gravitationalConstant, Vector3 worldUp)
     {
         // f = mg
-        Vector2 f_gravity = particleMass * gravitationalConstant * worldUp;
+        Vector3 f_gravity = particleMass * gravitationalConstant * worldUp;
         return f_gravity;
     }
 
-    public static Vector2 GenerateForce_Normal(Vector2 f_gravity, Vector2 surfaceNormal_unit)
+    public static Vector3 GenerateForce_Normal(Vector3 f_gravity, Vector3 surfaceNormal_unit)
     {
         // f_normal = proj(-f_gravity, surfaceNormal_unit)
-        Vector2 f_normal = Vector3.ProjectOnPlane(-f_gravity, surfaceNormal_unit);
+        Vector3 f_normal = Vector3.ProjectOnPlane(-f_gravity, surfaceNormal_unit);
         return f_normal;
     }
 
-    public static Vector2 GenerateForce_Sliding(Vector2 f_gravity, Vector2 f_normal)
+    public static Vector3 GenerateForce_Sliding(Vector3 f_gravity, Vector3 f_normal)
     {
         // f_sliding = f_gravity + f_normal
-        Vector2 f_sliding = f_gravity + f_normal;
+        Vector3 f_sliding = f_gravity + f_normal;
         return f_sliding;
     }
 
-    public static Vector2 GenerateForce_Friction(Vector2 f_normal, Vector2 particleVelocity, Vector2 f_opposing, float frictionCoefficient_static, float frictionCoefficient_kinetic)
+    public static Vector3 GenerateForce_Friction(Vector3 f_normal, Vector3 particleVelocity, Vector3 f_opposing, float frictionCoefficient_static, float frictionCoefficient_kinetic)
     {
         // static max
         float staticFrictionMax = f_normal.magnitude * frictionCoefficient_static;
@@ -48,23 +48,23 @@ public class J_Force
             // f_friction_s = -f_opposing if less than max, else -coeff*f_normal (max amount is coeff*|f_normal|)
             return -frictionCoefficient_static * f_normal;
         }
-        return Vector2.zero;
+        return Vector3.zero;
     }
 
-    public static Vector2 GenerateForce_Drag(Vector2 fluidVelocity, float fluidDensity, float objectArea_crossSection, float objectDragCoefficient)
+    public static Vector3 GenerateForce_Drag(Vector3 fluidVelocity, float fluidDensity, float objectArea_crossSection, float objectDragCoefficient)
     {
         // v^2
-        Vector2 vsqr = fluidVelocity.magnitude * fluidVelocity;
+        Vector3 vsqr = fluidVelocity.magnitude * fluidVelocity;
         // f_drag = (p * u^2 * area * coeff)/2
-        Vector2 f_drag = -0.5f * (fluidDensity * vsqr * objectArea_crossSection * objectDragCoefficient);
+        Vector3 f_drag = -0.5f * (fluidDensity * vsqr * objectArea_crossSection * objectDragCoefficient);
         return f_drag;
     }
 
-    public static Vector2 GenerateForce_Spring(Vector2 particlePosition, Vector2 anchorPosition, float springRestingLength, float springStiffnessCoefficient)
+    public static Vector3 GenerateForce_Spring(Vector3 particlePosition, Vector3 anchorPosition, float springRestingLength, float springStiffnessCoefficient)
     {
         // f_spring = -coeff*(spring length - spring resting length)
-        Vector2 springLength = particlePosition - anchorPosition;
-        Vector2 f_spring = -springStiffnessCoefficient * (springLength - new Vector2(0.0f, springRestingLength));
+        Vector3 springLength = particlePosition - anchorPosition;
+        Vector3 f_spring = -springStiffnessCoefficient * (springLength - new Vector3(0.0f, springRestingLength));
         return f_spring;
     }
 

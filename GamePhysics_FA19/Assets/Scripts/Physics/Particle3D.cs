@@ -80,6 +80,10 @@ public class Particle3D : MonoBehaviour
     [SerializeField]
     Vector3 momentArm;
 
+    [Header("Constraints")]
+    [SerializeField]
+    public bool isKinematic = false;
+
     void Start()
     {
         InitStartingVariables();
@@ -93,15 +97,20 @@ public class Particle3D : MonoBehaviour
         //Applying torque from testforce
         //ApplyTorque(testForce, momentArm);
         PlayerTestForceControl(); //Player controlled torque for testing
-
-        // Update position and rotation
-        //J_Physics.UpdatePosition3DKinematic(ref position, ref velocity, ref acceleration, Time.fixedDeltaTime);
-        //J_Physics.UpdateRotation3D(ref rotation, ref angularVelocity, angularAcceleration, Time.fixedDeltaTime);
-
+        position = transform.position;
         // apply to transform
         UpdateTransformationMatrix(); //Update transform matrix
 
-        position = transform.position;
+        // Update position and rotation
+        if (isKinematic)
+        {
+            J_Physics.UpdatePosition3DKinematic(ref position, ref velocity, ref acceleration, Time.fixedDeltaTime);
+            J_Physics.UpdateRotation3D(ref rotation, ref angularVelocity, angularAcceleration, Time.fixedDeltaTime);
+            f_gravity = J_Force.GenerateForce_Gravity(mass, -9.8f, Vector3.up);
+            AddForce(f_gravity);
+            transform.position = position;
+        }
+
         //transform.eulerAngles = rotation;
         rotation.SetQuaterntion(transform.rotation);
 
@@ -142,6 +151,8 @@ public class Particle3D : MonoBehaviour
             ApplyTorque(new Vector3(0, 0, -1), momentArm);
         if (Input.GetKey(KeyCode.E))
             ApplyTorque(new Vector3(0, 0, 1), momentArm);
+        if (Input.GetKey(KeyCode.Space))
+            AddForce(testForce);
 
     }
 

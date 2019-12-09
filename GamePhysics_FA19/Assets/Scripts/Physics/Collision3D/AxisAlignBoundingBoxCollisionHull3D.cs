@@ -49,14 +49,17 @@ public class AxisAlignBoundingBoxCollisionHull3D : CollisionHull3D
                     }
                     else
                     {
-                        //PopulateCollisionClassAABBVSCircle((CircleCollisionHull3D)other, this, ref c);
-                        ////Resolves the collisions
-                        //ResolveCollisions(ref c);
-                        //clearContacts(ref c); //Clears the information used after contacts have been resolved
+                        PopulateCollisionClassAABBVSCircle((CircleCollisionHull3D)other, this, ref c);
+                        //Resolves the collisions
+                        ResolveCollisions(ref c);
+                        clearContacts(ref c); //Clears the information used after contacts have been resolved
                         c.status = true;
                     }
                     Debug.Log(gameObject.name + " Colliding with " + other.name);
                     colliding = true;
+
+                    if (gameObject.tag == "Ground" || gameObject.tag == "Goal")
+                        other.DestroyOnCollision(gameObject.tag);
                 }
                 else
                     colliding = false;
@@ -173,5 +176,9 @@ public class AxisAlignBoundingBoxCollisionHull3D : CollisionHull3D
         }
         else
             renderer.material = mat_green;
+    }
+
+    public override void DestroyOnCollision(string tag)
+    {
     }
 }

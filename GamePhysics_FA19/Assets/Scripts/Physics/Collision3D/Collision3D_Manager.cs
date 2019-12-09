@@ -51,8 +51,8 @@ public class Collision3D_Manager : MonoBehaviour
                 bool collisionTest = thisHull.isColliding(otherHull, ref collision);
 
                 //Change color based on collision test
-                thisHull.ChangeMaterialBasedOnCollsion(collisionTest);
-                otherHull.ChangeMaterialBasedOnCollsion(collisionTest);
+                //thisHull.ChangeMaterialBasedOnCollsion(collisionTest);
+                //otherHull.ChangeMaterialBasedOnCollsion(collisionTest);
 
             }
     }

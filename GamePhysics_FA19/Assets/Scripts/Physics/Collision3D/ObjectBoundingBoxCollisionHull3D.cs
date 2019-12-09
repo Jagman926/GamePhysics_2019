@@ -140,7 +140,9 @@ public class ObjectBoundingBoxCollisionHull3D : CollisionHull3D
                 if (TestCollisionVsOBB((ObjectBoundingBoxCollisionHull3D)other, ref c))
                 {
                     Debug.Log(gameObject.name + " Colliding with " + other.name);
-
+                    PopulateCollisionClassOBBVsOBB((ObjectBoundingBoxCollisionHull3D)other, this, ref c);
+                    ResolveCollisions(ref c);
+                    clearContacts(ref c); //Clears the information used after contacts have been resolved
                     colliding = true;
                 }
                 else
@@ -181,23 +183,23 @@ public class ObjectBoundingBoxCollisionHull3D : CollisionHull3D
     
     private void OnDrawGizmos()
     {
-        foreach(Vector3 point in cornersWorld)
-        {
-            Gizmos.DrawSphere(point, 0.05f);
-        }
-
-
-        Gizmos.color = Color.blue; //This extents
-        Gizmos.DrawSphere(maxExtent_World, 0.05f);
-        Gizmos.DrawSphere(minExtent_World, 0.05f);
-        Gizmos.color = Color.red; //This max & min
-        Gizmos.DrawSphere(obbThis_maxExtent_transInv, 0.1f);
-        Gizmos.DrawSphere(obbThis_minExtent_transInv, 0.1f);
-        Gizmos.color = Color.yellow; //Other max & min
-        Gizmos.DrawSphere(obbOther_maxExtent_transInv, 0.05f);
-        Gizmos.DrawSphere(obbOther_minExtent_transInv, 0.05f);
-        Gizmos.color = Color.black; //This inverse pos
-        Gizmos.DrawSphere(particle.GetPositionFromInvMatrix(), 0.1f);
+        //foreach(Vector3 point in cornersWorld)
+        //{
+        //    Gizmos.DrawSphere(point, 0.05f);
+        //}
+        //
+        //
+        //Gizmos.color = Color.blue; //This extents
+        //Gizmos.DrawSphere(maxExtent_World, 0.05f);
+        //Gizmos.DrawSphere(minExtent_World, 0.05f);
+        //Gizmos.color = Color.red; //This max & min
+        //Gizmos.DrawSphere(obbThis_maxExtent_transInv, 0.1f);
+        //Gizmos.DrawSphere(obbThis_minExtent_transInv, 0.1f);
+        //Gizmos.color = Color.yellow; //Other max & min
+        //Gizmos.DrawSphere(obbOther_maxExtent_transInv, 0.05f);
+        //Gizmos.DrawSphere(obbOther_minExtent_transInv, 0.05f);
+        //Gizmos.color = Color.black; //This inverse pos
+        //Gizmos.DrawSphere(particle.GetPositionFromInvMatrix(), 0.1f);
     }
 
     public override bool TestCollisionVsOBB(ObjectBoundingBoxCollisionHull3D other, ref Collision c)
@@ -251,14 +253,19 @@ public class ObjectBoundingBoxCollisionHull3D : CollisionHull3D
         minExtentOutput = GetMinExtent(cornersInLocal);
         maxExtentOutput = GetMaxExtent(cornersInLocal);
     }
-public override void ChangeMaterialBasedOnCollsion(bool collisionTest)
-{
-if (collisionTest || collisionDetededThisFrame)
-{
-    renderer.material = mat_red;
-    collisionDetededThisFrame = true;
+    public override void ChangeMaterialBasedOnCollsion(bool collisionTest)
+    {
+    if (collisionTest || collisionDetededThisFrame)
+    {
+        renderer.material = mat_red;
+        collisionDetededThisFrame = true;
+    }
+    else
+        renderer.material = mat_green;
+    }
+
+    public override void DestroyOnCollision(string tag)
+    {
+    }
 }
-else
-    renderer.material = mat_green;
-}
-}
+

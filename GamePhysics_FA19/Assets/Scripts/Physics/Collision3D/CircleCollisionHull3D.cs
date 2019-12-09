@@ -15,14 +15,16 @@ public class CircleCollisionHull3D : CollisionHull3D
     public Vector3 center;
 
     [Header("Debug Material")]
-    bool colliding;
+    public bool colliding;
     private Renderer renderer;
     public Material mat_red;
     public Material mat_green;
+    private BasketBallManager gm = null;
 
     void Awake()
     {
         renderer = gameObject.GetComponent<Renderer>();
+        gm = GameObject.Find("BasketBallManager").GetComponent<BasketBallManager>();
     }
 
     public override void UpdateTransform()
@@ -49,11 +51,12 @@ public class CircleCollisionHull3D : CollisionHull3D
                     {
                         c.status = true;
                         //Does the correct populate
-                        //PopulateCollisionClassCircleVsCirlce(this, (CircleCollisionHull3D)other, ref c);
-                        ////Resolves the collisions
-                        //ResolveCollisions(ref c);
-                        //
-                        //clearContacts(ref c); //Clears the information used after contacts have been resolved
+                        PopulateCollisionClassCircleVsCirlce(this, (CircleCollisionHull3D)other, ref c);
+                        //Resolves the collisions
+                        ResolveCollisions(ref c);
+                        
+                        clearContacts(ref c); //Clears the information used after contacts have been resolved
+
                     }
 
                     Debug.Log(gameObject.name + " Colliding with " + other.name);
@@ -73,14 +76,18 @@ public class CircleCollisionHull3D : CollisionHull3D
                     }
                     else
                     {
-                        //PopulateCollisionClassAABBVSCircle(this, (AxisAlignBoundingBoxCollisionHull3D)other, ref c);
-                        ////Resolves the collisions
-                        //ResolveCollisions(ref c);
-                        //clearContacts(ref c); //Clears the information used after contacts have been resolved
+                        PopulateCollisionClassAABBVSCircle(this, (AxisAlignBoundingBoxCollisionHull3D)other, ref c);
+                        //Resolves the collisions
+                        ResolveCollisions(ref c);
+                        clearContacts(ref c); //Clears the information used after contacts have been resolved
                         c.status = true;
                     }
                     Debug.Log(gameObject.name + " Colliding with " + other.name);
                     colliding = true;
+
+
+                    if (other.gameObject.tag == "Ground" || other.gameObject.tag == "Goal")
+                        DestroyOnCollision(other.gameObject.tag);
                 }
                 else
                     colliding = false;
@@ -198,5 +205,15 @@ public class CircleCollisionHull3D : CollisionHull3D
         else
             renderer.material = mat_green;
 
+    }
+
+    public override void DestroyOnCollision(string tag)
+    {
+        if(tag == "Goal")
+        {
+            //End game
+            gm.EndGame();
+        }
+        //Destroy(this.gameObject);
     }
 }
