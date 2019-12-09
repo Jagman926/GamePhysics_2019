@@ -104,13 +104,14 @@ public class Particle3D : MonoBehaviour
         // Update position and rotation
         if (isKinematic)
         {
-            J_Physics.UpdatePosition3DKinematic(ref position, ref velocity, ref acceleration, Time.fixedDeltaTime);
-            J_Physics.UpdateRotation3D(ref rotation, ref angularVelocity, angularAcceleration, Time.fixedDeltaTime);
+
             f_gravity = J_Force.GenerateForce_Gravity(mass, -9.8f, Vector3.up);
             AddForce(f_gravity);
-            transform.position = position;
+            
         }
-
+        J_Physics.UpdatePosition3DKinematic(ref position, ref velocity, ref acceleration, Time.fixedDeltaTime);
+        J_Physics.UpdateRotation3D(ref rotation, ref angularVelocity, angularAcceleration, Time.fixedDeltaTime);
+        transform.position = position;
         //transform.eulerAngles = rotation;
         rotation.SetQuaterntion(transform.rotation);
 
@@ -319,12 +320,12 @@ public class Particle3D : MonoBehaviour
         return massInv;
     }
 
-    public Vector2 GetVelocity()
+    public Vector3 GetVelocity()
     {
         return velocity;
     }
 
-    public void SetVelocity(Vector2 newVelocity)
+    public void SetVelocity(Vector3 newVelocity)
     {
         velocity = newVelocity;
 
@@ -341,7 +342,7 @@ public class Particle3D : MonoBehaviour
     public void AddForceForward(float forceIntensity)
     {
         // Get rotated vector
-        Vector2 rotatedVector = gameObject.transform.rotation * Vector3.up * forceIntensity;
+        Vector3 rotatedVector = gameObject.transform.rotation * Vector3.up * forceIntensity;
         // add force
         AddForce(rotatedVector);
     }

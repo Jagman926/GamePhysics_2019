@@ -309,7 +309,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9315e7cf7403ccf44b1abaefe3ce5cc2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  restitution: 0
+  restitution: 0.7
 --- !u!4 &70566973
 Transform:
   m_ObjectHideFlags: 0
@@ -6562,7 +6562,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3dc8d0d2bf7592242821844a6c91845c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ballPrefab: {fileID: 638899817743301238, guid: ffa370acc1aa9d947afb6cdc56eb0bb4,
+  ballPrefab: {fileID: 8838986554041590102, guid: d3f1487b2c450084880bb16e3c2ea0ad,
     type: 3}
 --- !u!23 &629193337
 MeshRenderer:
@@ -8725,13 +8725,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9be5048e500d36842bf6154c31abab9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shapeType: 0
+  shapeType: 2
   height: 5
   length: 125
   width: 250
   radiusOuter: 0
   radiusInner: 0
-  startingMass: 1
+  startingMass: 111
   centerOfMassLocal: {x: 0, y: 0, z: 0}
   centerOfMassWorld: {x: 0, y: 0, z: 0}
   anchorObject: {fileID: 0}
